@@ -1,6 +1,44 @@
 \section{Related Work}
 \label{sec:related-work}
 
+In this section we describe two relevant aspects of related work:
+software engineering approaches to fault localization, and 
+programming languages approaches to pinpointing type errors. 
+
+Given a defect, fault localization is the task of identifying
+``suspicious'' program elements (e.g., lines, statements) that are likely
+implicated in the defect (i.e., that should be changed to fix the defect). 
+Perhaps the best-known is Tarantula, which uses a simple mathematical
+formula based on measured information from dynamic normal and buggy
+runs~\cite{FIXME}. Other similar approaches, including those of
+Jacquard~\cite{FIXME} and Ochiai~\cite{FIXME} consider alternate features
+of information or refined formulae and generally obtain more precise
+results; see Wong for a survey~\cite{FIXME}. While some researchers have
+approached such fault localization with an eye toward optimality (e.g.,
+Harman et al. determine optimal coefficients~\cite{FIXME}), in general
+such fault localization approaches are limited by their reliance on either
+running tests or including relevant features. For example, Tarantula-based 
+techniques require a normal and a buggy run of the program. By contrast,
+we consider incomplete programs with type errors that may not be executed
+in any standard sense. Similarly, the features available influence the
+classes of defects that can be localized. A fault localization scheme based
+purely on control flow features lines will have difficulty with cross-site
+scripting or SQL code injection attacks, which follow the same control flow
+path on normal and buggy runs (differing only in the user-supplied data).
+By contrast, we FIXME-ERIC.
+
+Languages with static type systems and type inference produce type errors
+that novices often perceive as difficult to interpret~\cite{FIXME}.  For
+example, approaches based on Hindley-Milner or other constraint systems 
+typically have the issue that when the constraint $A=B$ is violated, 
+the system cannot know whether the user should intend to fix $A$ or $B$ and
+must thus report the discrepancy in a generic manner. As a result, a number
+of approaches have been proposed to either give clearer error messages
+(e.g.,~\cite{FIXME}) or more precisely localize the type error
+(e.g.,~\cite{FIXME}). The technique most related to our work is FIXME-ERIC. 
+It has been shown to be quite good at FIXME-ERIC. However, we choose to 
+focus on FIXME-ERIC, and our approach contains FIXME-ERIC, which is not
+present in previous work. 
 
 %%% Local Variables:
 %%% mode: latex
