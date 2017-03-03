@@ -1,0 +1,81 @@
+\section{Learning to Blame}
+\label{sec:learning}
+
+\subsection{Syntax}
+\label{sec:syntax}
+\input{syntax}
+%
+\autoref{fig:syntax} describes the syntax of \lang, a simple lambda
+calculus with integers, booleans, pairs, and lists.
+
+\subsection{Features}
+\label{sec:features}
+The first issue we must tackle is formulating our learning task in
+machine learning terms.
+%
+We are given expressions $e$, but the learning algorithms expect to work
+with \emph{feature vectors} --- vectors of real numbers, where each
+column describes a particular feature of the input.
+%
+Thus, our first task is to convert expressions to feature vectors.
+
+We choose to model a program as a \emph{set} of feature vectors, where
+each element corresponds a sub-expression in the program. We group the
+features into four categories.
+
+\paragraph{Local syntactic features}
+These features describe the syntactic category of each sub-expression
+$e$.
+%
+In other words, for each production of $e$ in \autoref{fig:syntax} we
+introduce a feature that is enabled (set to $1$) \emph{iff} the
+sub-expression was built with that production.
+
+\paragraph{Contextual syntactic features}
+These are like local syntactic features, but lifted to describe the
+parent and children of the current sub-expression.
+%
+If a particular $e$ does not have children (\eg a variable $x$) or a
+parent (\ie the root expression), we leave the corresponding features
+disabled (set to $0$).
+%
+This gives us a notion of the \emph{context} in which an expression
+occurs, similar to the \emph{n-grams} commonly found in linguistic
+models.
+
+Instead of just describing the immediate context, we could describe
+whether a particular syntax element occurs in the neighboring
+sub-expressions (or even a count of how many times it occurs).
+%
+Such fuzzier notions of context may enable increased precision in the
+model, but they also introduce opportunities for \emph{overfitting} ---
+where the model memorizes particular inputs rather than learning general
+patterns.
+%
+We will investigate (\ES{maybe..}) the impact of these alternatives
+in \autoref{sec:evaluation}.
+
+\paragraph{Expression size}
+We also add a feature representing the \emph{size} of each expression,
+\ie how many sub-expressions does it contain?
+%
+This allows the model to learn that, \eg, expressions closer to the
+leaves are more likely to be blamed than expressions closer to the root.
+
+\paragraph{Typing features}
+
+
+\subsection{Labels}
+\label{sec:labels}
+
+\subsection{Models}
+\label{sec:models}
+
+
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

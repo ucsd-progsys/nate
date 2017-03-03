@@ -16,6 +16,12 @@
 \usepackage{subcaption} %% For complex figures with subfigures/subcaptions
                         %% http://ctan.org/pkg/subcaption
 
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xspace}
+
+
+\usepackage{commands}
 
 \makeatletter\if@ACM@journal\makeatother
 %% Journal information (used by PACMPL format)
@@ -61,16 +67,18 @@
 \begin{document}
 
 %% Title information
-\title[Short Title]{Full Title}         %% [Short Title] is optional;
-                                        %% when present, will be used in
-                                        %% header instead of Full Title.
-\titlenote{with title note}             %% \titlenote is optional;
-                                        %% can be repeated if necessary;
-                                        %% contents suppressed with 'anonymous'
-\subtitle{Subtitle}                     %% \subtitle is optional
-\subtitlenote{with subtitle note}       %% \subtitlenote is optional;
-                                        %% can be repeated if necessary;
-                                        %% contents suppressed with 'anonymous'
+%% [Short Title] is optional; when present, will be used in header
+%% instead of Full Title.
+\title[Short Title]{Learning to Blame}
+
+% \titlenote{with title note}             %% \titlenote is optional;
+%                                         %% can be repeated if necessary;
+%                                         %% contents suppressed with 'anonymous'
+%% \subtitle is optional
+\subtitle{Improving Type Errors with Small Data}
+% \subtitlenote{with subtitle note}       %% \subtitlenote is optional;
+%                                         %% can be repeated if necessary;
+%                                         %% contents suppressed with 'anonymous'
 
 
 %% Author information
@@ -204,6 +212,7 @@ Text of abstract \ldots.
 
 \input{introduction}
 \input{overview}
+\input{learning}
 \input{evaluation}
 \input{related}
 

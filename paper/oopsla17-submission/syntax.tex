@@ -1,0 +1,23 @@
+\begin{figure}
+$$
+\begin{array}{rrcl}
+\emphbf{Expressions}
+  & e & ::=    & x \spmid \efun{x}{e} \spmid \eapp{e}{e} \spmid \elet{x}{e}{e} \\
+  &   & \spmid & n \spmid \eplus{e}{e}\\
+  &   & \spmid & b \spmid \eif{e}{e}{e} \\
+  &   & \spmid & \epair{e}{e} \spmid \epcase{e}{x}{x}{e} \\
+  &   & \spmid & \enil \spmid \econs{e}{e} \spmid \ecase{e}{e}{x}{x}{e} \\[0.05in]
+
+\emphbf{Integers}
+  & n & ::= &  0, 1, -1, \ldots \\[0.05in]
+
+\emphbf{Booleans}
+  & b & ::= &  \etrue \spmid \efalse \\[0.05in]
+
+\emphbf{Types}
+  & t & ::= & \alpha \spmid \tbool \spmid \tint \spmid \tfun{t}{t} \spmid \tprod{t}{t} \spmid \tlist{t} \\[0.05in]
+\end{array}
+$$
+\caption{Syntax of \lang}
+\label{fig:syntax}
+\end{figure}
