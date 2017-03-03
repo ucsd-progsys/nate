@@ -1,0 +1,46 @@
+20 pages total (weird!!)
+* Intro [2p]
+* Overview [4p]
+* Learning To Blame [4p]
+** Features
+*** Local syntactic
+*** Contextual syntactic
+*** Contextual typing
+*** Expression size
+*** Type error slice
+** Labels
+*** Good/Bad
+*** Based on AST diff
+*** Rank by confidence, select top $k$
+** Models
+*** Linear
+*** Decision Tree
+*** Multilayer Perceptron
+* Evaluation [7p]
+** Performance (quantitative)
+*** Start with SP14 data
+*** "Full" model (~300 features)
+**** Linear vs decision vs perceptron
+*** Drop samples outside of slice
+**** Too important to leave up to the model
+**** Also drastically reduces search space
+*** Drop contextual typing features (~100 features)
+**** Possible source of overfitting
+**** Remaining features resemble info available to typechecker (+ size)
+*** Generalize to FA15
+*** Compress perceptron model?
+*** Compare to ocaml/sherrloc/mycroft
+*** SOMEDAY Generalize to Seminal data?
+*** SOMEDAY Impact of adding N-Gram features?
+** What did the model learn?
+*** Relative importance of features
+** Qualitative, i.e. mini-gallery
+* Related [3p]
+** Type Errors
+*** Locating
+*** Explaining
+*** Fixing
+** Fault Localization
+** Machine Learning for PL
+*** Predicting Program Properties from BigCode
+*** ??
