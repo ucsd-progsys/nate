@@ -21,7 +21,7 @@ Thus, our first task is to convert expressions to feature vectors.
 
 We choose to model a program as a \emph{set} of feature vectors, where
 each element corresponds a sub-expression in the program. We group the
-features into four categories.
+features into the following categories.
 
 \paragraph{Local syntactic features}
 These features describe the syntactic category of each sub-expression
@@ -63,7 +63,38 @@ This allows the model to learn that, \eg, expressions closer to the
 leaves are more likely to be blamed than expressions closer to the root.
 
 \paragraph{Typing features}
+A natural way of summarizing the context in which an expression occurs
+is with \emph{types}.
+%
+A difficulty that arises here is that, due to the parametric type
+constructors $\tfun{\cdot}{\cdot}$, $\tprod{\cdot}{\cdot}$, and
+$\tlist{\cdot}$, there is an \emph{infinite} set of possible types ---
+but we must have a \emph{finite} set of features.
+%
+Thus, we add features for each type \emph{constructor} that describe
+whether a given type \emph{mentions} the type constructor.
+%
+For example, the type $\tint$ would only enable the $\tint$ feature,
+while the type $\tfun{\tint}{\tbool}$ would enable the
+$\tfun{\cdot}{\cdot}$, $\tint$, and $\tbool$ features.
+%
+We add these features for parent and child expressions to summarize the
+context, but also for the current expression, as the type of an
+expression is not always clear \emph{syntactically} (\eg for variables
+and applications).
+\ES{note the possibility of traversal bias from typing features}
 
+\paragraph{Type error slice}
+Finally, we would like the model to be able to distinguish between
+changes that could fix the error, and changes that
+\emph{cannot possibly} fix the error.
+%
+Thus, we compute a minimal type error \emph{slice} for the program
+(\ie the set of expressions that contribute to the error), and add a
+feature that is enabled \emph{iff} an expression is part of the slice.
+%
+If the program contains multiple type errors, we will compute a minimal
+slice for each error.
 
 \subsection{Labels}
 \label{sec:labels}
