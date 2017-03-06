@@ -1,39 +1,45 @@
 \section{Learning to Blame}
 \label{sec:learning}
-
-\subsection{Syntax}
-\label{sec:syntax}
+Next, we describe our approach to localizing type errors, in the context
+of \lang (\autoref{fig:syntax}), a simple lambda calculus with integers,
+booleans, pairs, and lists.
+%
 \input{syntax}
 %
-\autoref{fig:syntax} describes the syntax of \lang, a simple lambda
-calculus with integers, booleans, pairs, and lists.
+First, we define the inputs to the model, a set of \emph{features}
+(\autoref{sec:features}) that we will use to describe programs.
+%
+Second, we define the expected outputs of the model, a set of
+\emph{labels} (\autoref{sec:labels}) that we will use to assign blame.
+%
+Third, we define the actual \emph{models} (\autoref{sec:models}) that we
+will evaluate.
 
 \subsection{Features}
 \label{sec:features}
 The first issue we must tackle is formulating our learning task in
 machine learning terms.
 %
-We are given expressions $e$, but the learning algorithms expect to work
+We are given programs over $e$, but the learning algorithms expect to work
 with \emph{feature vectors} --- vectors of real numbers, where each
-column describes a particular feature of the input.
+column describes a particular aspect of the input.
 %
-Thus, our first task is to convert expressions to feature vectors.
+Thus, our first task is to convert programs to feature vectors.
 
 We choose to model a program as a \emph{set} of feature vectors, where
-each element corresponds a sub-expression in the program. We group the
+each element corresponds an expression in the program. We group the
 features into the following categories.
 
 \paragraph{Local syntactic features}
-These features describe the syntactic category of each sub-expression
-$e$.
+These features describe the syntactic category of each expression $e$.
 %
 In other words, for each production of $e$ in \autoref{fig:syntax} we
 introduce a feature that is enabled (set to $1$) \emph{iff} the
-sub-expression was built with that production.
+expression was built with that production.
 
 \paragraph{Contextual syntactic features}
 These are like local syntactic features, but lifted to describe the
-parent and children of the current sub-expression.
+parent and children of the current expression.
 %
 If a particular $e$ does not have children (\eg a variable $x$) or a
 parent (\ie the root expression), we leave the corresponding features
@@ -45,7 +51,7 @@ models.
 
 Instead of just describing the immediate context, we could describe
 whether a particular syntax element occurs in the neighboring
-sub-expressions (or even a count of how many times it occurs).
+expressions (or even a count of how many times it occurs).
 %
 Such fuzzier notions of context may enable increased precision in the
 model, but they also introduce opportunities for \emph{overfitting} ---
@@ -71,8 +77,10 @@ constructors $\tfun{\cdot}{\cdot}$, $\tprod{\cdot}{\cdot}$, and
 $\tlist{\cdot}$, there is an \emph{infinite} set of possible types ---
 but we must have a \emph{finite} set of features.
 %
-Thus, we add features for each type \emph{constructor} that describe
-whether a given type \emph{mentions} the type constructor.
+Thus, we abstract the type of an expression to the set of type
+constructors it \emph{mentions}, and add features for each type
+constructor that describe whether a given type mentions the type
+constructor.
 %
 For example, the type $\tint$ would only enable the $\tint$ feature,
 while the type $\tfun{\tint}{\tbool}$ would enable the
@@ -82,6 +90,7 @@ We add these features for parent and child expressions to summarize the
 context, but also for the current expression, as the type of an
 expression is not always clear \emph{syntactically} (\eg for variables
 and applications).
+%
 \ES{note the possibility of traversal bias from typing features}
 
 \paragraph{Type error slice}
@@ -98,6 +107,20 @@ slice for each error.
 
 \subsection{Labels}
 \label{sec:labels}
+We define the outputs of the model to be a simple ``good'' or ``bad''
+label, where ``good'' means the expression \emph{should not} change and
+``bad'' means the expression \emph{should} change.
+%
+This allows us to predict whether any individual expression should
+change, but we would actually like to predict the \emph{most likely}
+expressions to change.
+%
+Many learning algorithms produce not only a prediction, but also a
+metric that can be interpreted as a \emph{confidence} in the prediction.
+%
+Thus, we add a post-processing step where we \emph{rank} the expressions
+by the model's confidence that they will change, and select only the top
+$k$ (in practice $k=3$) to present to the user.
 
 \subsection{Models}
 \label{sec:models}
