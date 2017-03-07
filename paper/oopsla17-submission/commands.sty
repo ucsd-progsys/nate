@@ -44,10 +44,10 @@
 \newcommand\elet[3]{\ensuremath{\mathtt{let}\ #1 = #2\ \mathtt{in}\ #3}\xspace}
 \newcommand\econs[2]{\ensuremath{#1 :: #2}\xspace}
 \newcommand\enil{\ensuremath{\mathtt{[]}}\xspace}
-\newcommand\ecase[5]{\ensuremath{\mathtt{case}\ #1\ \mathtt{of} \begin{cases} \enil \to #2\\ \econs{#3}{#4} \to #5 \end{cases}}\xspace}
+\newcommand\ecase[5]{\ensuremath{\mathtt{match}\ #1\ \mathtt{with} \begin{cases} \enil \to #2\\ \econs{#3}{#4} \to #5 \end{cases}}\xspace}
 \newcommand\thole{\ensuremath{\alpha}\xspace}
 \newcommand\epair[2]{\ensuremath{\langle #1, #2 \rangle}\xspace}
-\newcommand\epcase[4]{\ensuremath{\mathtt{case}\ #1\ \mathtt{of}\ \epair{#2}{#3} \to #4}\xspace}
+\newcommand\epcase[4]{\ensuremath{\mathtt{match}\ #1\ \mathtt{with}\ \epair{#2}{#3} \to #4}\xspace}
 
 % \newcommand\erec[3]{\ensuremath{\mu #1.\lambda #2. #3}}
 % \newcommand\etabs[2]{\ensuremath{\left[\Lambda #1\right] #2}}
@@ -96,3 +96,12 @@
 \newcommand\toolname{\nanomaly}
 
 \newcommand\mc[1]{\ensuremath{\mathsf{#1}}}
+
+
+\newcommand\IsNil{Is-[]\xspace}
+\newcommand\IsCaseListP{Is-Match-List-P\xspace}
+\newcommand\CountVarP{Count-Var-P\xspace}
+\newcommand\ExprSize{Size\xspace}
+\newcommand\HasTypeIntCOne{Type-Int-C1\xspace}
+\newcommand\HasTypeList{Type-List\xspace}
+\newcommand\InSlice{In-Error-Slice\xspace}

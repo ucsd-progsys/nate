@@ -12,11 +12,64 @@ First, we define the inputs to the model, a set of \emph{features}
 Second, we define the expected outputs of the model, a set of
 \emph{labels} (\autoref{sec:labels}) that we will use to assign blame.
 %
-Third, we define the actual \emph{models} (\autoref{sec:models}) that we
+Third, we describe the actual \emph{models} (\autoref{sec:models}) that we
 will evaluate.
 
 \subsection{Features}
 \label{sec:features}
+
+\begin{figure}[ht]
+\begin{minipage}{0.6\linewidth}
+\begin{lstlisting}
+  let rec sumList xs =
+    match xs with
+    | []     -> []
+    | hd::tl -> hd + sumList tl
+\end{lstlisting}
+\end{minipage}
+\begin{minipage}{0.3\linewidth}
+\begin{lstlisting}[numbers=left]
+[]
+hd + sumList tl
+sumList tl
+tl
+\end{lstlisting}
+\end{minipage}
+\caption{An ill-typed program (left) and a selection of its
+  sub-expressions (right).}
+\label{fig:sumList}
+\end{figure}
+\begin{table}[ht]
+\begin{tabular}{lrrrrrrr}
+\toprule
+Expression
+  & \IsNil & \IsCaseListP & \CountVarP & \ExprSize
+  & \HasTypeIntCOne & \HasTypeList & \InSlice \\
+\midrule
+\lstinline![]!
+  & 1 & 1 & 3 & 1 & 0 & 1 & 1 \\
+\lstinline!hd + sumList tl!
+  & 0 & 1 & 3 & 5 & 1 & 0 & 1 \\
+\lstinline!sumList tl!
+  & 0 & 0 & 3 & 3 & 0 & 1 & 1 \\
+\lstinline!tl!
+  & 0 & 0 & 2 & 1 & 0 & 1 & 0 \\
+\bottomrule
+\end{tabular}
+\caption{A selection of the features we would extract from the
+  \lstinline!sumList! program in \autoref{fig:sumList}. A feature is
+  considered \emph{enabled} if it has a non-zero value, and
+  \emph{disabled} otherwise. A ``-P'' suffix indicates that the feature
+  describes the parent of the current expression, a ``-C$n$'' suffix
+  indicates that the feature describes the $n$-th (left-to-right) child
+  of the current expression.  Note that, since we rely on a partial
+  typing derivation, we are subject to the well-known traversal bias and
+  label the expression \lstinline!sumList tl! as having type
+  $\tlist{\cdot}$. The model will have to learn to correct for this
+  bias.}
+\label{tab:sumList}
+\end{table}
+
 The first issue we must tackle is formulating our learning task in
 machine learning terms.
 %
@@ -27,23 +80,50 @@ column describes a particular aspect of the input.
 Thus, our first task is to convert programs to feature vectors.
 
 We choose to model a program as a \emph{set} of feature vectors, where
-each element corresponds an expression in the program. We group the
-features into the following categories.
+each element corresponds an expression in the program.
+%
+Thus, given the \lstinline!sumList! program in \autoref{fig:sumList} we
+would first split it into its constituent sub-expressions and then
+transform each sub-expression into a single feature vector.
+%
+We group the features into five categories, using \autoref{tab:sumList}
+as a running example of the feature extraction process.
 
 \paragraph{Local syntactic features}
 These features describe the syntactic category of each expression $e$.
 %
 In other words, for each production of $e$ in \autoref{fig:syntax} we
-introduce a feature that is enabled (set to $1$) \emph{iff} the
-expression was built with that production.
+introduce a feature that is enabled (set to $1$) if the expression was
+built with that production, and disabled (set to $0$) otherwise.
+%
+For example, the \IsNil feature in \autoref{tab:sumList} describes
+whether the current expression is the empty list $\enil$.
+
+We distinguish between matching on a list vs.\ on a pair, as this
+affects the typing derivation.
+%
+We also assume that all pattern matches are well-formed --- \ie all
+patterns must match on the same type.
+%
+Ill-formed match expressions would lead to a type error; however, they
+are already effectively localized to the match expression itself.
+%
+This is not a \emph{fundamental} limitation though, one could easily add
+features that specify whether a match \emph{contains} a particular
+pattern, and thus have a match expression that enables multiple
+features. \ES{This is actually sort of what we do, we just ignore
+  programs that have patterns of different types..}
 
 \paragraph{Contextual syntactic features}
 These are like local syntactic features, but lifted to describe the
 parent and children of the current expression.
 %
+For example, the \IsCaseListP feature in \autoref{tab:sumList} describes
+whether current expression's \emph{parent} matches on a list.
+%
 If a particular $e$ does not have children (\eg a variable $x$) or a
 parent (\ie the root expression), we leave the corresponding features
-disabled (set to $0$).
+disabled.
 %
 This gives us a notion of the \emph{context} in which an expression
 occurs, similar to the \emph{n-grams} commonly found in linguistic
@@ -52,6 +132,10 @@ models.
 Instead of just describing the immediate context, we could describe
 whether a particular syntax element occurs in the neighboring
 expressions (or even a count of how many times it occurs).
+%
+For example, the \CountVarP feature in \autoref{tab:sumList} describes
+how many variables are contained in the expression \emph{rooted} at the
+current expression's parent.
 %
 Such fuzzier notions of context may enable increased precision in the
 model, but they also introduce opportunities for \emph{overfitting} ---
@@ -65,6 +149,10 @@ in \autoref{sec:evaluation}.
 We also add a feature representing the \emph{size} of each expression,
 \ie how many sub-expressions does it contain?
 %
+For example, the \ExprSize feature in \autoref{tab:sumList} is set to 3
+for the expression \lstinline!sumList tl! as it contains 3 expressions:
+the two variables and the application itself.
+%
 This allows the model to learn that, \eg, expressions closer to the
 leaves are more likely to be blamed than expressions closer to the root.
 
@@ -72,6 +160,10 @@ leaves are more likely to be blamed than expressions closer to the root.
 A natural way of summarizing the context in which an expression occurs
 is with \emph{types}.
 %
+Of course, the programs we are given are \emph{untypeable}, but we can
+still extract a \emph{partial} typing derivation from the type checker
+and use it to provide more information to the model.
+
 A difficulty that arises here is that, due to the parametric type
 constructors $\tfun{\cdot}{\cdot}$, $\tprod{\cdot}{\cdot}$, and
 $\tlist{\cdot}$, there is an \emph{infinite} set of possible types ---
@@ -85,13 +177,23 @@ constructor.
 For example, the type $\tint$ would only enable the $\tint$ feature,
 while the type $\tfun{\tint}{\tbool}$ would enable the
 $\tfun{\cdot}{\cdot}$, $\tint$, and $\tbool$ features.
-%
+
 We add these features for parent and child expressions to summarize the
 context, but also for the current expression, as the type of an
-expression is not always clear \emph{syntactically} (\eg for variables
-and applications).
+expression is not always clear \emph{syntactically}.
 %
-\ES{note the possibility of traversal bias from typing features}
+For example, the expressions \lstinline!tl! and \lstinline!sumList tl!
+in \autoref{tab:sumList} both enable the feature \HasTypeList, as they
+are both inferred to have a type that mentions the $\tlist{\cdot}$
+constructor.
+
+Note that our use of typing features in an \emph{ill-typed} program
+subjects us to the infamous traversal
+bias~\cite{McAdam1998-ub,Yang2000-yr} --- in particular with the
+\lstinline!sumList tl! expression, which might alternatively be assigned
+the type $\tint$.
+%
+We rely on the model to counteract this bias.
 
 \paragraph{Type error slice}
 Finally, we would like the model to be able to distinguish between
@@ -102,8 +204,13 @@ Thus, we compute a minimal type error \emph{slice} for the program
 (\ie the set of expressions that contribute to the error), and add a
 feature that is enabled \emph{iff} an expression is part of the slice.
 %
-If the program contains multiple type errors, we will compute a minimal
-slice for each error.
+The \InSlice feature in \autoref{tab:sumList} indicates whether an
+expression is part of such a minimal slice, and is enabled for all of
+the sampled expressions except for \lstinline!tl!, which does not affect
+the type error.
+%
+If the program contains multiple type errors, we will compute
+a minimal slice for each error.
 
 \subsection{Labels}
 \label{sec:labels}
@@ -124,15 +231,48 @@ $k$ (in practice $k=3$) to present to the user.
 
 \subsection{Models}
 \label{sec:models}
+\ES{TODO: trade-off between ease of training/interpreting and
+  complexity, \ie actually fitting the data..}
 
 \paragraph{Linear models}
+The simplest model we investigate is a linear model, which learns a
+linear function of the features.
+%
+The goal is to learn a set of weights $W$ and biases $b$ such that the
+function
+%
+$$
+y = Wx + b
+$$
+%
+effectively maps feature vectors $x$ to labels $y$.
+
+\ES{TODO: talk about logistic regression and the loss function?}
+
+Linear models are popular for their ease of training and of interpreting
+the resulting model; however, they can be quite limited in their
+applicability.
+%
+As the name implies, linear models will perform poorly when asked to
+learn an inherently \emph{nonlinear} function.
+%
+This limitation can be mitigated to some extent by adding more features
+to the model (\eg combinations of the existing features \ES{CITE?}), but
+the fundamental issue remains.
 
 \paragraph{Decision trees}
+\ES{TODO: Maybe Huma?}
 
 \paragraph{Random forests}
+\ES{TODO: Maybe Huma?}
 
 \paragraph{Neural networks}
+The last (and most complex) model we discuss is Artificial Neural
+Networks (ANN).
 
+The fundamental building block of an ANN is the linear model, the
+nonlinearity arises from the \emph{activation functions} that govern
+whether an individual linear model propagates its signal to the next layer.
 
 
 
