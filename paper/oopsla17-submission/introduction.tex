@@ -1,6 +1,34 @@
 \section{Introduction}
 \label{sec:introduction}
 
+\subsection{Contributions}
+\label{sec:contributions}
+Thus, we identify the following novel contributions of our work.
+%
+\begin{enumerate}
+\item An experimental evaluation of state-of-the-art type-error
+  localization techniques based not on expert \emph{opinion}, but
+  on the eventual \emph{fix} implemented by a novice user.
+  %
+  \ES{need to explain \emph{why} this is superior..}
+\item A machine learning approach to \emph{modeling} (novice) type
+  errors that can outperform the state-of-the-art by 10--30\% in
+  localizing errors.
+  %
+  Our model can be trained on a relatively small amount of data --- we
+  used a single class of around 50 students --- and appears to
+  generalize to other instances of the same class.
+  %
+  \ES{and hopefully completely separate classes!}
+  %
+  In contrast to many approaches to \emph{fault localization} from the
+  software engineering community, our model does not use any linguistic
+  modeling techniques, \eg \emph{n-grams} over the token stream; rather,
+  it relies entirely on features of the abstract syntax tree and a
+  partial typing derivation.
+  %
+  \ES{if there's time, investigate adding Wes' n-gram model}
+\end{enumerate}
 
 %%% Local Variables:
 %%% mode: latex

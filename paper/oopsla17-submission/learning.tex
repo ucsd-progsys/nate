@@ -73,7 +73,7 @@ Expression
 The first issue we must tackle is formulating our learning task in
 machine learning terms.
 %
-We are given programs over $e$, but the learning algorithms expect to work
+We are given programs over \lang, but the learning algorithms expect to work
 with \emph{feature vectors} --- vectors of real numbers, where each
 column describes a particular aspect of the input.
 %
@@ -229,13 +229,21 @@ Thus, we add a post-processing step where we \emph{rank} the expressions
 by the model's confidence that they will change, and select only the top
 $k$ (in practice $k=3$) to present to the user.
 
-\subsection{Models}
+\subsection{Learning Algorithms}
 \label{sec:models}
-\ES{TODO: trade-off between ease of training/interpreting and
-  complexity, \ie actually fitting the data..}
+\ES{TODO: mention that this is a SUPERVISED, CLASSIFICATION problem}
+%
+There are a large number of learning algorithms to choose from, existing
+on a spectrum that balances expressiveness with ease of training (and of
+interpreting the learned model).
+%
+In this section we present the learning algorithms we will investigate,
+beginning with the simplest.
+%
+For each algorithm, we describe \ES{TODO...}
 
-\paragraph{Linear models}
-The simplest model we investigate is a linear model, which learns a
+\paragraph{Logistic regression}
+The simplest model we investigate is logistic regression, which learns a
 linear function of the features.
 %
 The goal is to learn a set of weights $W$ and biases $b$ such that the
@@ -249,11 +257,11 @@ effectively maps feature vectors $x$ to labels $y$.
 
 \ES{TODO: talk about logistic regression and the loss function?}
 
-Linear models are popular for their ease of training and of interpreting
-the resulting model; however, they can be quite limited in their
-applicability.
+Linear models like logistic regression are popular for their ease of
+training and of interpreting the resulting model; however, they can be
+limited in their applicability.
 %
-As the name implies, linear models will perform poorly when asked to
+As the name implies, linear models may perform poorly when asked to
 learn an inherently \emph{nonlinear} function.
 %
 This limitation can be mitigated to some extent by adding more features
