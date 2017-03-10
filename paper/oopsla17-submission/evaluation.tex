@@ -6,6 +6,8 @@
 \pgfplotstablevertcat{\spring}{../../data/sp14/ocaml/results.csv}
 \pgfplotstablevertcat{\spring}{../../data/sp14/mycroft/results.csv}
 \pgfplotstablevertcat{\spring}{../../data/sp14/sherrloc/results.csv}
+\pgfplotstablevertcat{\spring}{../../data/sp14/op+type+size/linear/results.csv}
+\pgfplotstablevertcat{\spring}{../../data/sp14/op+type+size/hidden-10/results.csv}
 \pgfplotstablevertcat{\spring}{../../data/sp14/op+type+size/hidden-500/results.csv}
 
 \definecolor{blue1}{HTML}{DEEBF7}
@@ -24,10 +26,13 @@
   ymax=1,
   yticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
   ymajorgrids = true,
-  symbolic x coords={baseline, ocaml, mycroft, sherrloc, op+type+size/hidden-500},
-  enlarge x limits=0.25,
+  symbolic x coords={baseline, ocaml, mycroft, sherrloc,
+                     op+type+size/linear, op+type+size/hidden-10,
+                     op+type+size/hidden-500},
+  % enlarge x limits=0.25,
   xtick=data,
-  xticklabels={\baseline, \ocaml, \mycroft, \sherrloc, \hiddenFH},
+  xticklabels={\baseline, \ocaml, \mycroft, \sherrloc,
+               \linear, \hiddenT, \hiddenFH},
   x tick label style={rotate=45},
   reverse legend,
   legend style={legend pos = north west},
