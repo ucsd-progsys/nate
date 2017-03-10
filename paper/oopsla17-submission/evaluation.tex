@@ -1,6 +1,52 @@
 \section{Evaluation}
 \label{sec:evaluation}
 
+\pgfplotstableset{col sep=comma}
+\pgfplotstableread{../../data/sp14/baseline.csv}{\spring}
+\pgfplotstablevertcat{\spring}{../../data/sp14/ocaml/results.csv}
+\pgfplotstablevertcat{\spring}{../../data/sp14/mycroft/results.csv}
+\pgfplotstablevertcat{\spring}{../../data/sp14/sherrloc/results.csv}
+\pgfplotstablevertcat{\spring}{../../data/sp14/op+type+size/hidden-500/results.csv}
+
+\definecolor{blue1}{HTML}{DEEBF7}
+\definecolor{blue2}{HTML}{9ECAE1}
+\definecolor{blue3}{HTML}{3182BD}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  ybar stacked,
+  title={Spring 2014},
+  ylabel={Accuracy},
+  bar width=20pt,
+  %ymin=0,
+  ymax=1,
+  yticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\%},
+  ymajorgrids = true,
+  symbolic x coords={baseline, ocaml, mycroft, sherrloc, op+type+size/hidden-500},
+  enlarge x limits=0.25,
+  xtick=data,
+  xticklabels={\baseline, \ocaml, \mycroft, \sherrloc, \hiddenFH},
+  x tick label style={rotate=45},
+  reverse legend,
+  legend style={legend pos = north west},
+]
+\addplot[draw=black, fill=blue1] table[x=tool, y=top-1] {\spring};
+\addplot[draw=black, fill=blue2] table[x=tool, y expr=\thisrow{top-2} - \thisrow{top-1}] {\spring};
+\addplot[draw=black, fill=blue3] table[x=tool, y expr=\thisrow{top-3} - \thisrow{top-2}] {\spring};
+\legend{Top 1, Top 2, Top 3}
+% \addplot[draw=black, fill=blue!20] table[col sep=comma, x=tool, y=top-1] {../../data/sp14/ocaml/results.csv};
+% \addplot[draw=black, fill=blue!20] table[col sep=comma, x=tool, y=top-1] {../../data/sp14/mycroft/results.csv};
+% \addplot[draw=black, fill=blue!20] table[col sep=comma, x=tool, y=top-1] {../../data/sp14/op+type+size/hidden-500/results.csv};
+% \addplot[draw=black, fill=blue!40] table[col sep=comma, x=tool, y=top-2] {../../data/sp14/op+type+size/hidden-500/results.csv};
+% \addplot[draw=black, fill=blue!60] table[col sep=comma, x=tool, y=top-3] {../../data/sp14/op+type+size/hidden-500/results.csv};
+\end{axis}
+\end{tikzpicture}
+
+\caption{reuslts!}
+\label{fig:results}
+\end{figure}
 
 %%% Local Variables:
 %%% mode: latex
