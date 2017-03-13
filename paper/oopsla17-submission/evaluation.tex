@@ -3,15 +3,18 @@
 
 \pgfplotstableset{col sep=comma}
 
-\pgfplotstableread{../../data/sp14/baseline.csv}{\FeatureBench}
-\pgfplotstablevertcat{\FeatureBench}{../../data/sp14/op+type+size/linear/results.csv}
-\pgfplotstablevertcat{\FeatureBench}{../../data/sp14/op+context+type+size/linear/results.csv}
-\pgfplotstablevertcat{\FeatureBench}{../../data/sp14/op+context-has+type+size/linear/results.csv}
-\pgfplotstablevertcat{\FeatureBench}{../../data/sp14/op+context-count+type+size/linear/results.csv}
-\pgfplotstablevertcat{\FeatureBench}{../../data/sp14/op+type+size/hidden-500/results.csv}
-\pgfplotstablevertcat{\FeatureBench}{../../data/sp14/op+context+type+size/hidden-500/results.csv}
-\pgfplotstablevertcat{\FeatureBench}{../../data/sp14/op+context-has+type+size/hidden-500/results.csv}
-\pgfplotstablevertcat{\FeatureBench}{../../data/sp14/op+context-count+type+size/hidden-500/results.csv}
+\pgfplotstableread{../../data/sp14/op+type+size/linear/results.csv}{\FeatureLinearBench}
+\pgfplotstablevertcat{\FeatureLinearBench}{../../data/sp14/op+context+type+size/linear/results.csv}
+\pgfplotstablevertcat{\FeatureLinearBench}{../../data/sp14/op+context-has+type+size/linear/results.csv}
+\pgfplotstablevertcat{\FeatureLinearBench}{../../data/sp14/op+context-count+type+size/linear/results.csv}
+\pgfplotstableread{../../data/sp14/op+type+size/hidden-10/results.csv}{\FeatureHiddenTBench}
+\pgfplotstablevertcat{\FeatureHiddenTBench}{../../data/sp14/op+context+type+size/hidden-10/results.csv}
+\pgfplotstablevertcat{\FeatureHiddenTBench}{../../data/sp14/op+context-has+type+size/hidden-10/results.csv}
+\pgfplotstablevertcat{\FeatureHiddenTBench}{../../data/sp14/op+context-count+type+size/hidden-10/results.csv}
+\pgfplotstableread{../../data/sp14/op+type+size/hidden-500/results.csv}{\FeatureHiddenFHBench}
+\pgfplotstablevertcat{\FeatureHiddenFHBench}{../../data/sp14/op+context+type+size/hidden-500/results.csv}
+\pgfplotstablevertcat{\FeatureHiddenFHBench}{../../data/sp14/op+context-has+type+size/hidden-500/results.csv}
+\pgfplotstablevertcat{\FeatureHiddenFHBench}{../../data/sp14/op+context-count+type+size/hidden-500/results.csv}
 
 \pgfplotstableread{../../data/sp14/op+type+size/hidden-10/results.csv}{\HiddenBench}
 \pgfplotstablevertcat{\HiddenBench}{../../data/sp14/op+type+size/hidden-25/results.csv}
@@ -50,10 +53,68 @@
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-  %ybar stacked,
+  % ybar stacked,
   width=12cm,
   height=8cm,
-  title={Spring 2014},
+  title={Impact of Feature Set on Accuracy},
+  ylabel={Accuracy},
+  %ymin=0.2,
+  ymax=1,
+  yticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\,\%},
+  ytick style={draw=none},
+  ymajorgrids = true,
+  symbolic x coords={op+type+size, op+context+type+size, op+context-has+type+size, op+context-count+type+size},
+  % enlarge x limits=0.25,
+  xtick=data,
+  xtick style={draw=none},
+  xticklabels={Type, Context, Context-Has, Context-Count},
+  x tick label style={rotate=45},
+  reverse legend,
+  transpose legend,
+  legend style={legend pos = outer north east, legend columns=4},
+]
+% \addplot[draw=black, fill=blue1] table[x=tool, y=top-1] {\HiddenBench};
+% \addplot[draw=black, fill=blue2] table[x=tool, y expr=\thisrow{top-2} - \thisrow{top-1}] {\HiddenBench};
+% \addplot[draw=black, fill=blue3] table[x=tool, y expr=\thisrow{top-3} - \thisrow{top-2}] {\HiddenBench};
+
+\addplot[mark options={fill=blue1, scale=1.5}, mark=square*]
+  table[x=features, y=top-1] {\FeatureHiddenFHBench};
+\addplot[mark options={fill=blue2, scale=1.5}, mark=square*]
+  table[x=features, y=top-2] {\FeatureHiddenFHBench};
+\addplot[mark options={fill=blue3, scale=1.5}, mark=square*]
+  table[x=features, y=top-3] {\FeatureHiddenFHBench};
+\addlegendentry{Top 1}
+\addlegendentry{Top 2}
+\addlegendentry{Top 3}
+\addlegendimage{empty legend}
+\addlegendentry{\hiddenFH}
+
+\addplot[mark options={fill=blue1, scale=1.5}, mark=*]
+  table[x=features, y=top-1] {\FeatureLinearBench};
+\addplot[mark options={fill=blue2, scale=1.5}, mark=*]
+  table[x=features, y=top-2] {\FeatureLinearBench};
+\addplot[mark options={fill=blue3, scale=1.5}, mark=*]
+  table[x=features, y=top-3] {\FeatureLinearBench};
+\addlegendentry{Top 1}
+\addlegendentry{Top 2}
+\addlegendentry{Top 3}
+\addlegendimage{empty legend}
+\addlegendentry{\linear}
+
+\end{axis}
+\end{tikzpicture}
+\caption{reuslts!}
+\label{fig:results}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  ybar stacked,
+  width=12cm,
+  height=8cm,
+  title={Impact of Hidden Layer Size on Accuracy},
   ylabel={Accuracy},
   bar width=20pt,
   %ymin=0.2,
@@ -71,12 +132,12 @@
   reverse legend,
   legend style={legend pos = north west},
 ]
+\addplot[draw=black, fill=blue1] table[x=tool, y=top-1] {\HiddenBench};
+\addplot[draw=black, fill=blue2] table[x=tool, y expr=\thisrow{top-2} - \thisrow{top-1}] {\HiddenBench};
+\addplot[draw=black, fill=blue3] table[x=tool, y expr=\thisrow{top-3} - \thisrow{top-2}] {\HiddenBench};
 % \addplot[draw=black, fill=blue1] table[x=tool, y=top-1] {\HiddenBench};
-% \addplot[draw=black, fill=blue2] table[x=tool, y expr=\thisrow{top-2} - \thisrow{top-1}] {\HiddenBench};
-% \addplot[draw=black, fill=blue3] table[x=tool, y expr=\thisrow{top-3} - \thisrow{top-2}] {\HiddenBench};
-\addplot table[x=tool, y=top-1] {\HiddenBench};
-\addplot table[x=tool, y=top-2] {\HiddenBench};
-\addplot table[x=tool, y=top-3] {\HiddenBench};
+% \addplot[draw=black, fill=blue2] table[x=tool, y=top-2] {\HiddenBench};
+% \addplot[draw=black, fill=blue3] table[x=tool, y=top-3] {\HiddenBench};
 \legend{Top 1, Top 2, Top 3}
 \end{axis}
 \end{tikzpicture}
