@@ -34,16 +34,18 @@
 \pgfplotstablevertcat{\SpringBench}{../../data/sp14/mycroft/results.csv}
 \pgfplotstablevertcat{\SpringBench}{../../data/sp14/sherrloc/results.csv}
 \pgfplotstablevertcat{\SpringBench}{../../data/sp14/op+type+size/linear/results.csv}
+\pgfplotstablevertcat{\SpringBench}{../../data/sp14/op+type+size/decision-tree/results.csv}
 \pgfplotstablevertcat{\SpringBench}{../../data/sp14/op+type+size/hidden-10/results.csv}
-\pgfplotstablevertcat{\SpringBench}{../../data/sp14/op+type+size/hidden-500/results.csv}
+\pgfplotstablevertcat{\SpringBench}{../../data/sp14/op+type+size/hidden-250/results.csv}
 
 \pgfplotstableread{../../data/fa15/baseline.csv}{\FallBench}
 \pgfplotstablevertcat{\FallBench}{../../data/fa15/ocaml/results.csv}
 \pgfplotstablevertcat{\FallBench}{../../data/fa15/mycroft/results.csv}
 \pgfplotstablevertcat{\FallBench}{../../data/fa15/sherrloc/results.csv}
 \pgfplotstablevertcat{\FallBench}{../../data/fa15/op+type+size/linear/results.csv}
+\pgfplotstablevertcat{\FallBench}{../../data/fa15/op+type+size/decision-tree/results.csv}
 \pgfplotstablevertcat{\FallBench}{../../data/fa15/op+type+size/hidden-10/results.csv}
-\pgfplotstablevertcat{\FallBench}{../../data/fa15/op+type+size/hidden-500/results.csv}
+\pgfplotstablevertcat{\FallBench}{../../data/fa15/op+type+size/hidden-250/results.csv}
 
 \definecolor{blue1}{HTML}{DEEBF7}
 \definecolor{blue2}{HTML}{9ECAE1}
@@ -153,7 +155,10 @@
 \addplot [forget plot,draw=none] coordinates{
   (baseline,0) (spacer1,0)
   (ocaml,0) (mycroft,0) (sherrloc,0) (spacer2,0)
-  (op+type+size/linear,0) (op+type+size/hidden-10,0) (op+type+size/hidden-500,0)
+  (op+type+size/linear,0)
+  (op+type+size/decision-tree,0)
+  (op+type+size/hidden-10,0)
+  (op+type+size/hidden-250,0)
 };
 }
 \makeatother
@@ -174,13 +179,15 @@
   ytick style={draw=none},
   ymajorgrids = true,
   symbolic x coords={baseline, spacer1, ocaml, mycroft, sherrloc, spacer2,
-                     op+type+size/linear, op+type+size/hidden-10,
-                     op+type+size/hidden-500},
+                     op+type+size/linear,
+                     op+type+size/decision-tree,
+                     op+type+size/hidden-10,
+                     op+type+size/hidden-250},
   % enlarge x limits=0.5,
   xtick=data,
   xtick style={draw=none},
   xticklabels={\baseline, \ocaml, \mycroft, \sherrloc,
-               \linear, \hiddenT, \hiddenFH},
+               \linear, \dectree, \hiddenT, \hiddenTHF},
   x tick label style={rotate=45},
   reverse legend,
   transpose legend,
@@ -217,7 +224,7 @@
 
 
 
-
+\input{gallery}
 
 %%% Local Variables:
 %%% mode: latex

@@ -1,0 +1,56 @@
+\subsection{Qualitative Evaluation}
+\label{sec:qualitative}
+
+\ES{\hiddenT locations are underlined, \sherrloc locations are bold}
+\paragraph{Padding a list}
+
+\begin{ecode}
+  let rec clone x n =
+    if n <= 0 then
+      []
+    else
+      x :: clone x (n - 1)
+
+  let padZero l1 l2 =
+    let l = List.length l1 - List.length l2 in
+    if l < 0 then
+      (clone 0 ((-1) * l) @ l2, l2)
+    else
+      (l1, _=clone 0 l=___ :: l2__)
+\end{ecode}
+
+\begin{ecode}
+  let rec sepConcat sep sl =
+    match sl with
+    | [] -> ""
+    | h::t ->
+        let f a x = a ^ (sep ^ x) in
+        let base = h in
+        let l = t in
+        List.fold_left f base l
+
+  let stringOfList f l = sepConcat "; " __[ "["; ___=List.map f l=___; "]" ]__
+\end{ecode}
+
+\begin{ecode}
+  let rec wwhile (f,b) =
+    match f b with
+    | (x,false ) -> x
+    | (x,true ) -> wwhile (f, x)
+
+  let fixpoint (f,b) =
+    wwhile (let g = __let bb = f b in ___=(bb, (bb = b))=_ in (g, b))
+\end{ecode}
+
+\begin{ecode}
+  let rec digitsOfInt n =
+    if n <= 0 then
+      []
+    else
+      [n mod 10] @ __[ ___=digitsOfInt (n / 10)=___ ]__
+\end{ecode}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

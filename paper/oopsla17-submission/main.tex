@@ -29,6 +29,26 @@
   language=Caml,
   basicstyle=\ttfamily
 }
+\lstnewenvironment{code}{
+\lstset{
+  language=Caml,
+  basicstyle=\ttfamily
+}}
+{}
+
+\lstnewenvironment{ecode}{
+\lstset{
+  language=Caml,
+  basicstyle=\ttfamily,
+  numbers=left,
+  frame=leftline,
+  xleftmargin=7.5mm,
+  moredelim=[is][\bfseries]{==}{==},
+  moredelim=[is][\underbar]{__}{__},
+  moredelim=[is][\bfseries\underbar]{_=}{=_},
+}}
+{}
+
 \usepackage{commands}
 \def\sectionautorefname{\S}
 \def\subsectionautorefname{\S}
