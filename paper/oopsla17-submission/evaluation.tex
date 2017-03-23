@@ -8,18 +8,19 @@ purely functional subset of \ocaml with polymorphic types and functions.
 We seek to answer three questions in our evaluation:
 %
 \begin{description}
-\item[1. Feature Utility (\autoref{sec:feature-utility})]
-  %
-  How much do the features described in \autoref{sec:features}
-  contribute to our predictions?
-\item[2. Blame Accuracy (\autoref{sec:quantitative-evaluation})]
+\item[1. Blame Accuracy (\autoref{sec:quantitative})]
   %
   How often are our predictions \emph{correct}?
   % For how many ill-typed programs can we accurately predict the source
   % of the error?
+\item[2. Feature Utility (\autoref{sec:feature-utility})]
+  %
+  Which feature sets are most important in general?
+  % How much do the features described in \autoref{sec:features}
+  % contribute to our predictions?
 \item[3. Explaining Predictions (\autoref{sec:qualitative})]
   %
-  Can we explain individual predictions (correct or not)?
+  Can we explain \emph{individual} predictions (correct or not)?
 \end{description}
 \ES{may want to swap (1) and (2)..}
 
@@ -47,18 +48,18 @@ range of functional programming idioms, \eg higher-order functions and
 (polymorphic) algebraic data types.
 
 We identified the fixes for each ill-typed program with an
-expression-level diff~\citep{XXXX}.
+expression-level diff~\citep{Lempsink2009-xf}.
 %
 We consider two sources of changes:
 %
 \begin{enumerate}
 \item If an expression has been removed wholesale, \eg if $\eapp{f}{x}$
-  is rewritten to $\eapp{g}{x}$, we will consider the expression $f$
+  is rewritten to $\eapp{g}{x}$, we will mark the expression $f$ as
   changed, as it has been replaced by $g$.
 \item If a new expression has been inserted \emph{around} an existing
   expression, \eg if $\eapp{f}{x}$ is rewritten to
-  $\eplus{\eapp{f}{x}}{1}$, we will consider the application expression
-  $\eapp{f}{x}$ (but not $f$ or $x$) changed, as the $+$ operator now
+  $\eplus{\eapp{f}{x}}{1}$, we will mark the application expression
+  $\eapp{f}{x}$ (but not $f$ or $x$) as changed, as the $+$ operator now
   occupies the original location of the application.
 \end{enumerate}
 %
@@ -69,371 +70,8 @@ of the sub-expressions have changed.
 We picked 40\% as an estimate of the inflection point where we could
 still retain the large majority of program pairs.
 
-\subsection{Feature Utility}
-\label{sec:feature-utility}
-
-
-
-\subsubsection{Type Error Slice}
-\label{sec:type-error-slice}
-The \InSlice feature should be highly predictive --- a fix must change
-at least one expression in the type-error slice.
-%
-Thus, our first experiment seeks to quantify the impact of \InSlice by
-comparing the accuracy of a linear model on three sets of features.
-%
-\begin{enumerate}
-\item A baseline with only local syntactic features.
-\item extends (1) with \InSlice.
-\item discards samples from (1) where \InSlice is \emph{disabled}.
-\end{enumerate}
-%
-The key difference between (2) and (3) is that a model for (2) must
-\emph{learn} that \InSlice is a strong predictor.
-%
-In contrast, a model for (3) must only learn about the syntactic
-features, the decision to discard samples where \InSlice is disabled has
-already been made by a human.
-%
-This has a few additional advantages: it reduces the search space by a
-factor of 7 on average, and it guarantees that any prediction made by
-the classifier can fix the type error.
-%
-We expect that (2) will perform better than (1) as it has more
-information, and that (3) will perform better than (2) as it does not
-have to learn the importance of \InSlice.
-
-We tested our hypothesis with a linear model cross-validated ($k=10$)
-over the combined SP14/FA15 dataset. We used a learning rate
-$\alpha=0.001$, L2 regularization rate $\lambda=0.001$, and mini-batch
-size of 200. We trained for a single epoch on feature sets (1) and
-(2), and for 8 epochs on (3), so that the total number of training samples
-would be roughly equal for each feature set.
-
-\begin{table}[ht]
-  \begin{minipage}{0.49\linewidth}
-  \centering
-  \linear
-  \begin{tabular}{lrrrr}
-    \toprule
-    Feature Set  & Top-1  & Top-2  & Top-3  & Recall \\
-    \midrule
-    Local Syntax & 23.6\% & 42.6\% & 56.3\% & 19.6\% \\
-    With Slice   & 46.4\% & 65.0\% & 75.4\% & 30.4\% \\
-    Only Slice   & 54.9\% & 71.4\% & 82.5\% & 57.6\% \\
-    \bottomrule
-  \end{tabular}
-  \end{minipage}
-  \begin{minipage}{0.49\linewidth}
-  \centering
-  \hiddenF
-  \begin{tabular}{lrrrr}
-    \toprule
-    Feature Set  & Top-1  & Top-2  & Top-3  & Recall \\
-    \midrule
-    Local Syntax & 30.9\% & 47.9\% & 58.6\% & 20.6\% \\
-    With Slice   & 54.5\% & 70.5\% & 81.5\% & 34.7\% \\
-    Only Slice   & 56.7\% & 72.3\% & 82.9\% & 58.0\% \\
-    \bottomrule
-  \end{tabular}
-  \end{minipage}
-  \caption{
-    Impact of type-error slice on accuracy.
-    \ES{TODO: expand caption}
-    \ES{TODO: load these numbers from CSV}
-  }\label{tab:type-error-slice}
-\end{table}
-
-\autoref{tab:type-error-slice} shows the results of our experiment.
-%
-As expected the baseline performs the worst, with a mere 23.6\% Top-1
-accuracy.
-%
-Adding \InSlice improves the results substantially with a 46.4\% Top-1
-accuracy, demonstrating the importance of a minimal error slice.
-%
-However, filtering out expressions that are not part of the slice
-\emph{further} improves the results to 54.9\% Top-1 accuracy.
-%
-Clearly, some decisions are too important to be left to a machine.
-
-Note also the jump in Recall when we filter out expressions that are not
-part of the error slice.
-%
-Reducing the search space not only improves our chances of making a
-single correct prediction, it also allows us to make \emph{multiple}
-correct predictions per program.
-
-Given the decisive benefits of filtering out expressions that do not
-belong to the type-error slice, we will assume going forward that
-\emph{all} data sets have been filtered.
-
-\subsubsection{Contextual Features}
-\label{sec:contextual-features}
-
-Next, we will investigate the relative impact of the other three classes
-of features discussed in \autoref{sec:features}.
-%
-For this we consider again a baseline of only local syntactic features,
-extended by each combination of
-%
-(1) expression size,
-(2) contextual syntactic features, and
-(3) typing features.
-%
-As before we perform a 10-fold cross-validation with a learning rate and
-L2 regularization rate of 0.001 and a mini-batch size of 200, but we
-train for a full 10 epochs.
-
-\begin{table}[ht]
-  \begin{minipage}{0.49\linewidth}
-  \centering
-  \linear
-  \begin{tabular}{lrrrr}
-    \toprule
-    Feature Set                 & Top-1  & Top-2  & Top-3  & Recall \\
-    \midrule
-    Local Syntax                & 55.0\% & 71.6\% & 82.6\% & 57.7\% \\
-    \midrule
-    + Size                      & 55.8\% & 72.8\% & 82.5\% & 57.3\% \\
-    + Context                   & 59.9\% & 77.7\% & 86.4\% & 63.0\% \\
-    + Types                     & 62.2\% & 77.7\% & 85.7\% & 62.2\% \\
-    \midrule
-    + Size + Context            & 60.2\% & 77.9\% & 86.0\% & 62.5\% \\
-    + Size + Types              & 62.0\% & 78.2\% & 85.6\% & 62.3\% \\
-    + Context + Types           & 63.2\% & 80.3\% & 87.9\% & 65.4\% \\
-    \midrule
-    + All                       & 62.3\% & 80.0\% & 88.0\% & 65.4\% \\
-    \bottomrule
-  \end{tabular}
-  \end{minipage}
-  % \begin{minipage}{0.49\linewidth}
-  % \centering
-  % \hiddenF
-  % \begin{tabular}{lrrrr}
-  %   \toprule
-  %   Feature Set                 & Top-1  & Top-2  & Top-3  & Recall \\
-  %   \midrule
-  %   Local Syntax                & 56.9\% & 72.2\% & 82.8\% & 57.9\% \\
-  %   \midrule
-  %   + Size                      & 59.7\% & 74.6\% & 83.0\% & 57.4\% \\
-  %   + Context                   & 70.9\% & 83.7\% & 90.4\% & 69.2\% \\
-  %   + Types                     & 72.1\% & 84.1\% & 90.3\% & 69.3\% \\
-  %   \midrule
-  %   + Size + Context            & 69.8\% & 83.5\% & 90.2\% & 68.6\% \\
-  %   + Size + Types              & 72.3\% & 84.6\% & 90.3\% & 69.5\% \\
-  %   + Context + Types           & 75.5\% & 86.4\% & 91.5\% & 71.7\% \\
-  %   \midrule
-  %   + All                       & 75.0\% & 86.8\% & 91.9\% & 72.0\% \\
-  %   \bottomrule
-  % \end{tabular}
-  % \end{minipage}
-  % \\
-  \begin{minipage}{0.49\linewidth}
-  \centering
-  \hiddenFH
-  \begin{tabular}{lrrrr}
-    \toprule
-    Feature Set                 & Top-1  & Top-2  & Top-3  & Recall \\
-    \midrule
-    Local Syntax                & 56.3\% & 72.1\% & 82.8\% & 57.6\% \\
-    \midrule
-    + Size                      & 60.5\% & 75.0\% & 83.8\% & 57.9\% \\
-    + Context                   & 71.4\% & 84.1\% & 90.8\% & 69.5\% \\
-    + Types                     & 73.2\% & 84.8\% & 90.2\% & 69.2\% \\
-    \midrule
-    + Size + Context            & 71.7\% & 83.5\% & 90.7\% & 69.3\% \\
-    + Size + Types              & 73.5\% & 85.8\% & 91.4\% & 70.5\% \\
-    + Context + Types           & 77.3\% & 87.5\% & 92.4\% & 72.9\% \\
-    \midrule
-    + All                       & 77.2\% & 87.9\% & 92.7\% & 72.9\% \\
-    \bottomrule
-  \end{tabular}
-  \end{minipage}
-  \caption{
-    Impact of contextual features on accuracy.
-    \ES{TODO: expand caption}
-    \ES{TODO: load these numbers from CSV}
-  }\label{tab:type-error-slice}
-\end{table}
-
-
-\definecolor{blue1}{HTML}{DEEBF7}
-\definecolor{blue2}{HTML}{9ECAE1}
-\definecolor{blue3}{HTML}{3182BD}
-
-% \begin{figure}[ht]
-% \centering
-% \begin{tikzpicture}
-% \begin{axis}[
-%   % ybar stacked,
-%   width=12cm,
-%   height=8cm,
-%   title={Impact of Feature Set on Accuracy},
-%   ylabel={Accuracy},
-%   %ymin=0.2,
-%   ymax=1,
-%   yticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\,\%},
-%   ytick style={draw=none},
-%   ymajorgrids = true,
-%   symbolic x coords={op+type+size, op+context+type+size, op+context-has+type+size, op+context-count+type+size},
-%   % enlarge x limits=0.25,
-%   xtick=data,
-%   xtick style={draw=none},
-%   xticklabels={Type, Context-Is, Context-Has, Context-Count},
-%   x tick label style={rotate=45},
-%   reverse legend,
-%   transpose legend,
-%   legend style={legend pos = outer north east, legend columns=4},
-% ]
-% % \addplot[draw=black, fill=blue1] table[x=tool, y=top-1] {\HiddenBench};
-% % \addplot[draw=black, fill=blue2] table[x=tool, y expr=\thisrow{top-2} - \thisrow{top-1}] {\HiddenBench};
-% % \addplot[draw=black, fill=blue3] table[x=tool, y expr=\thisrow{top-3} - \thisrow{top-2}] {\HiddenBench};
-
-% \addplot[mark options={fill=blue1, scale=1.5}, mark=square*]
-%   table[x=features, y=top-1] {\FeatureHiddenFHBench};
-% \addplot[mark options={fill=blue2, scale=1.5}, mark=square*]
-%   table[x=features, y=top-2] {\FeatureHiddenFHBench};
-% \addplot[mark options={fill=blue3, scale=1.5}, mark=square*]
-%   table[x=features, y=top-3] {\FeatureHiddenFHBench};
-% \addlegendentry{Top 1}
-% \addlegendentry{Top 2}
-% \addlegendentry{Top 3}
-% \addlegendimage{empty legend}
-% \addlegendentry{\hiddenFH}
-
-% \addplot[mark options={fill=blue1, scale=1.5}, mark=*]
-%   table[x=features, y=top-1] {\FeatureLinearBench};
-% \addplot[mark options={fill=blue2, scale=1.5}, mark=*]
-%   table[x=features, y=top-2] {\FeatureLinearBench};
-% \addplot[mark options={fill=blue3, scale=1.5}, mark=*]
-%   table[x=features, y=top-3] {\FeatureLinearBench};
-% \addlegendentry{Top 1}
-% \addlegendentry{Top 2}
-% \addlegendentry{Top 3}
-% \addlegendimage{empty legend}
-% \addlegendentry{\linear}
-
-% \end{axis}
-% \end{tikzpicture}
-% \caption{reuslts!}
-% \label{fig:results}
-% \end{figure}
-
-% \begin{figure}[ht]
-% \centering
-% \begin{tikzpicture}
-% \begin{axis}[
-%   ybar stacked,
-%   width=12cm,
-%   height=8cm,
-%   title={Impact of Hidden Layer Size on Accuracy},
-%   ylabel={Accuracy},
-%   bar width=20pt,
-%   %ymin=0.2,
-%   ymax=1,
-%   yticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\,\%},
-%   ytick style={draw=none},
-%   ymajorgrids = true,
-%   symbolic x coords={op+type+size/hidden-10, op+type+size/hidden-25, op+type+size/hidden-50,
-%                      op+type+size/hidden-100, op+type+size/hidden-250, op+type+size/hidden-500},
-%   % enlarge x limits=0.25,
-%   xtick=data,
-%   xtick style={draw=none},
-%   xticklabels={\hiddenT, \hiddenTF, \hiddenF, \hiddenH, \hiddenTHF, \hiddenFH},
-%   x tick label style={rotate=45},
-%   reverse legend,
-%   legend style={legend pos = north west},
-% ]
-% \addplot[draw=black, fill=blue1] table[x=tool, y=top-1] {\HiddenBench};
-% \addplot[draw=black, fill=blue2] table[x=tool, y expr=\thisrow{top-2} - \thisrow{top-1}] {\HiddenBench};
-% \addplot[draw=black, fill=blue3] table[x=tool, y expr=\thisrow{top-3} - \thisrow{top-2}] {\HiddenBench};
-% % \addplot[draw=black, fill=blue1] table[x=tool, y=top-1] {\HiddenBench};
-% % \addplot[draw=black, fill=blue2] table[x=tool, y=top-2] {\HiddenBench};
-% % \addplot[draw=black, fill=blue3] table[x=tool, y=top-3] {\HiddenBench};
-% \legend{Top 1, Top 2, Top 3}
-% \end{axis}
-% \end{tikzpicture}
-% \caption{reuslts!}
-% \label{fig:results}
-% \end{figure}
-
-\makeatletter
-\newcommand\resetstackedplots{
-\makeatletter
-\pgfplots@stacked@isfirstplottrue
-\makeatother
-\addplot [forget plot,draw=none] coordinates{
-  (baseline,0) (spacer1,0)
-  (ocaml,0) (mycroft,0) (sherrloc,0) (spacer2,0)
-  (op+type+size/linear,0)
-  (op+type+size/decision-tree,0)
-  (op+type+size/hidden-10,0)
-  (op+type+size/hidden-250,0)
-};
-}
-\makeatother
-
-\begin{figure}[ht]
-\centering
-\begin{tikzpicture}
-\begin{axis}[
-  ybar stacked,
-  width=14cm,
-  height=8cm,
-  title={Comparison of Type-Error Localization Techniques},
-  ylabel={Accuracy},
-  bar width=0.5cm,
-  ymin=0.2,
-  ymax=1,
-  yticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\,\%},
-  ytick style={draw=none},
-  ymajorgrids = true,
-  symbolic x coords={baseline, spacer1, ocaml, mycroft, sherrloc, spacer2,
-                     op+type+size/linear,
-                     op+type+size/decision-tree,
-                     op+type+size/hidden-10,
-                     op+type+size/hidden-250},
-  % enlarge x limits=0.5,
-  xtick=data,
-  xtick style={draw=none},
-  xticklabels={\baseline, \ocaml, \mycroft, \sherrloc,
-               \linear, \dectree, \hiddenT, \hiddenTHF},
-  x tick label style={rotate=45},
-  reverse legend,
-  transpose legend,
-  legend style={legend pos = north west, legend columns=4},
-]
-\addplot[draw=black, fill=blue1, bar shift=-.25cm] table[x=tool, y=top-1] {\SpringBench};
-\addplot[draw=black, fill=blue2, bar shift=-.25cm] table[x=tool, y expr=\thisrow{top-2} - \thisrow{top-1}] {\SpringBench};
-\addplot[draw=black, fill=blue3, bar shift=-.25cm] table[x=tool, y expr=\thisrow{top-3} - \thisrow{top-2}] {\SpringBench};
-\addlegendentry{Top 1}
-\addlegendentry{Top 2}
-\addlegendentry{Top 3}
-\addlegendimage{empty legend}
-\addlegendentry{FA15}
-
-\resetstackedplots
-
-\addplot[draw=black, fill=blue1, bar shift=.25cm] table[x=tool, y=top-1] {\FallBench};
-\addplot[draw=black, fill=blue2, bar shift=.25cm] table[x=tool, y expr=\thisrow{top-2} - \thisrow{top-1}] {\FallBench};
-\addplot[draw=black, fill=blue3, bar shift=.25cm] table[x=tool, y expr=\thisrow{top-3} - \thisrow{top-2}] {\FallBench};
-\addlegendentry{Top 1}
-\addlegendentry{Top 2}
-\addlegendentry{Top 3}
-\addlegendentry{SP14}
-\addlegendimage{empty legend}
-%\legend{Top 1, Top 2, Top 3}
-\end{axis}
-\end{tikzpicture}
-\caption{reuslts!}
-\label{fig:results}
-\end{figure}
-
-
-
-
-
+\input{evaluation-accuracy}
+\input{evaluation-utility}
 
 \input{gallery}
 

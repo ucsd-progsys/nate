@@ -1,0 +1,59 @@
+\subsection{Blame Accuracy}
+\label{sec:quantitative}
+
+In this experiment we compare the accuracy of our predictions to the
+state of the art in type-error localization.
+
+\paragraph{Baseline}
+We provide two baselines for the comparison: a random choice of location
+from a minimized type-error slice, and the \ocaml compiler that
+programmers typically interact with.
+
+\paragraph{State of the Art}
+\mycroft~\citep{Loncaric2016-uk} localizes type errors by searching for
+a minimal subset of typing constraints that can be removed, such that
+the resulting system is satisfiable.
+%
+When multiple such subsets exist it can enumerate them, though it has no
+notion of which subsets are \emph{more likely} to be correct, and thus
+the order is arbitrary.
+%
+\sherrloc~\citep{Zhang2014-lv} localizes errors by searching the typing
+constraint graph for constraints that participate in many unsatisfiable
+paths and few satisfiable paths.
+%
+It can also enumerate multiple predictions, in descending order of
+likelihood.
+
+\paragraph{Classifiers}
+We compare five classifiers, each trained on a full set of 276 features:
+44 local syntactic features, 176 contextual syntactic features, 55
+typing features, and a single expression size feature.
+%
+\ES{should explain the make-up of these groups}
+%
+We preemptively discard expressions that are not part of the minimal
+type error slice, we will explain the rationale for this in
+\autoref{sec:feature-utility}.
+%
+Our classifiers are:
+%
+\begin{enumerate}
+\item A logistic regression trained with a learning rate
+  $\alpha = 0.001$, an L2 regularization rate $\lambda = 0.001$, and a
+  mini-batch size of 200.
+\item A decision tree \ES{HUMA: hyperparams?}.
+\item A random forest with 30 estimators \ES{HUMA: hyperparams?}.
+\item Two multi-layer perceptrons, both trained with $\alpha = 0.001$,
+  $\lambda = 0.001$, and a mini-batch size of 200. The first MLP
+  contains a single hidden layer of 10 neurons, and the second contains
+  a hidden layer of 500 neurons. This allows us to investigate how well
+  the MLP can \emph{compress} its model.
+\end{enumerate}
+%
+All classifiers were trained for 20 iterations one dataset before being
+evaluated on the other.
+
+\input{evaluation-accuracy-graph}
+
+\autoref{fig:accuracy-results} shows the results of our experiment.
