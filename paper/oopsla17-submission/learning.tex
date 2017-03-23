@@ -20,40 +20,40 @@ will evaluate.
 
 \begin{figure}[ht]
 \begin{minipage}{0.6\linewidth}
-\begin{lstlisting}
+\begin{code}
   let rec sumList xs =
     match xs with
     | []     -> []
     | hd::tl -> hd + sumList tl
-\end{lstlisting}
+\end{code}
 \end{minipage}
 \begin{minipage}{0.3\linewidth}
-\begin{lstlisting}[numbers=left]
+\begin{code}[numbers=left]
 []
 hd + sumList tl
 sumList tl
 tl
-\end{lstlisting}
+\end{code}
 \end{minipage}
 \caption{An ill-typed program (left) and a selection of its
   sub-expressions (right).}
 \label{fig:sumList}
 \end{figure}
 \begin{table}[ht]
-\begin{tabular}{lrrrrrrr}
+\begin{tabular}{lrrrrrr}
 \toprule
 Expression
-  & \IsNil & \IsCaseListP & \CountVarP & \ExprSize
+  & \IsNil & \IsCaseListP & \ExprSize
   & \HasTypeIntCOne & \HasTypeList & \InSlice \\
 \midrule
 \lstinline![]!
-  & 1 & 1 & 3 & 1 & 0 & 1 & 1 \\
+  & 1 & 1 & 1 & 0 & 1 & 1 \\
 \lstinline!hd + sumList tl!
-  & 0 & 1 & 3 & 5 & 1 & 0 & 1 \\
+  & 0 & 1 & 5 & 1 & 0 & 1 \\
 \lstinline!sumList tl!
-  & 0 & 0 & 3 & 3 & 0 & 1 & 1 \\
+  & 0 & 0 & 3 & 0 & 1 & 1 \\
 \lstinline!tl!
-  & 0 & 0 & 2 & 1 & 0 & 1 & 0 \\
+  & 0 & 0 & 1 & 0 & 1 & 0 \\
 \bottomrule
 \end{tabular}
 \caption{A selection of the features we would extract from the
@@ -111,8 +111,7 @@ are already effectively localized to the match expression itself.
 This is not a \emph{fundamental} limitation though, one could easily add
 features that specify whether a match \emph{contains} a particular
 pattern, and thus have a match expression that enables multiple
-features. \ES{This is actually sort of what we do, we just ignore
-  programs that have patterns of different types..}
+features.
 
 \paragraph{Contextual syntactic features}
 These are like local syntactic features, but lifted to describe the
@@ -129,21 +128,21 @@ This gives us a notion of the \emph{context} in which an expression
 occurs, similar to the \emph{n-grams} commonly found in linguistic
 models.
 
-Instead of just describing the immediate context, we could describe
-whether a particular syntax element occurs in the neighboring
-expressions (or even a count of how many times it occurs).
-%
-For example, the \CountVarP feature in \autoref{tab:sumList} describes
-how many variables are contained in the expression \emph{rooted} at the
-current expression's parent.
-%
-Such fuzzier notions of context may enable increased precision in the
-model, but they also introduce opportunities for \emph{overfitting} ---
-where the model memorizes particular inputs rather than learning general
-patterns.
-%
-We will investigate (\ES{maybe..}) the impact of these alternatives
-in \autoref{sec:evaluation}.
+% Instead of just describing the immediate context, we could describe
+% whether a particular syntax element occurs in the neighboring
+% expressions (or even a count of how many times it occurs).
+% %
+% For example, the \CountVarP feature in \autoref{tab:sumList} describes
+% how many variables are contained in the expression \emph{rooted} at the
+% current expression's parent.
+% %
+% Such fuzzier notions of context may enable increased precision in the
+% model, but they also introduce opportunities for \emph{overfitting} ---
+% where the model memorizes particular inputs rather than learning general
+% patterns.
+% %
+% We will investigate (\ES{maybe..}) the impact of these alternatives
+% in \autoref{sec:evaluation}.
 
 \paragraph{Expression size}
 We also add a feature representing the \emph{size} of each expression,
