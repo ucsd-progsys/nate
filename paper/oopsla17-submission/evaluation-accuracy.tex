@@ -55,8 +55,8 @@ Our classifiers are:
 \item A logistic regression trained with a learning rate
   $\alpha = 0.001$, an L2 regularization rate $\lambda = 0.001$, and a
   mini-batch size of 200.
-\item A decision tree \ES{HUMA: hyperparams?}.
-\item A random forest with 30 estimators \ES{HUMA: hyperparams?}.
+\item A decision tree trained with the \ES{HUMA?} algorithm and \ES{HUMA: hyperparams?}.
+\item A random forest trained with the \ES{HUMA?} algorithm and 30 estimators \ES{HUMA: hyperparams?}.
 \item Two multi-layer perceptrons, both trained with $\alpha = 0.001$,
   $\lambda = 0.001$, and a mini-batch size of 200. The first MLP
   contains a single hidden layer of 10 neurons, and the second contains
@@ -90,13 +90,17 @@ Finally, we find that \emph{all} of our classifiers outperform \sherrloc,
 ranging from 60--62\% Top-1 accuracy (85--88\% Top-3) for the \linear
 classifier to 71--73\% Top-1 accuracy (91\% Top-3) for the \hiddenFH.
 
-Interestingly there is little variation in accuracy between classifiers
+Surprisingly, there is little variation in accuracy between classifiers
 with the exception of the \linear model, they all achieve around 70\%
 Top-1 accuracy and around 90\% Top-3 accuracy.
 %
-In particular, the \hiddenT only loses around 2\% accuracy compared to
-the \hiddenFH, which suggests that it can substantially compress the
-model.
+This would appear to suggest that the model they learn is relatively
+simple.
+%
+In particular, notice that although the \hiddenT has $50\times$ \emph{fewer}
+hidden features than the \hiddenFH, it only loses around 2\% accuracy.
+% In particular, notice that the \hiddenT only loses around 2\% accuracy
+% compared to the \hiddenFH,
 %
 We also note that our classifiers consistently perform better when
 trained on the \FALL programs and tested on the \SPRING programs than
