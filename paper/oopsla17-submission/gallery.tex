@@ -1,47 +1,32 @@
 \subsection{Qualitative Evaluation}
 \label{sec:qualitative}
 
-\ES{\hiddenT locations are underlined, \sherrloc locations are bold}
-\paragraph{Padding a list}
+Next, we present a \emph{qualitative} evaluation that compares the
+predictions made by our classifiers with those of \sherrloc.
+%
+In particular, we demonstrate, with a series of example programs from
+our student dataset, how our classifiers are able to use past student
+mistakes to make more accurate predictions of future fixes.
+%
+For each example, we provide
+%
+(1) the code,
+%
+(2) \sherrloc's prediction (in \textbf{bold}), and
+%
+(3) the prediction of our Decision Tree (\underline{underlined}).
+%
+We choose the Decision Tree classifier for this section as its model
+is more easily interpreted than the MLP.
+%
+We will also attempt, for each program, to explain \emph{why} the
+Decision Tree made its prediction, by analyzing the paths induced
+by the programs.
 
-\begin{ecode}
-  let rec clone x n =
-    if n <= 0 then
-      []
-    else
-      x :: clone x (n - 1)
-
-  let padZero l1 l2 =
-    let l = List.length l1 - List.length l2 in
-    if l < 0 then
-      (clone 0 ((-1) * l) @ l2, l2)
-    else
-      (l1, _=clone 0 l=___ :: l2__)
-\end{ecode}
-
-\begin{ecode}
-  let rec sepConcat sep sl =
-    match sl with
-    | [] -> ""
-    | h::t ->
-        let f a x = a ^ (sep ^ x) in
-        let base = h in
-        let l = t in
-        List.fold_left f base l
-
-  let stringOfList f l = sepConcat "; " __[ "["; ___=List.map f l=___; "]" ]__
-\end{ecode}
-
-\begin{ecode}
-  let rec wwhile (f,b) =
-    match f b with
-    | (x,false ) -> x
-    | (x,true ) -> wwhile (f, x)
-
-  let fixpoint (f,b) =
-    wwhile (let g = __let bb = f b in ___=(bb, (bb = b))=_ in (g, b))
-\end{ecode}
-
+\paragraph{Extracting the Digits of an Integer}
+Our first program is a simple recursive function |digitsOfInt| that
+extracts the digits of an |int|.
+%
 \begin{ecode}
   let rec digitsOfInt n =
     if n <= 0 then
@@ -49,6 +34,117 @@
     else
       [n mod 10] @ __[ ___=digitsOfInt (n / 10)=___ ]__
 \end{ecode}
+%
+Unfortunately, the student has decided to wrap the recursive call to
+|digitsOfInt| with a list literal, even though |digitsOfInt| already
+returns an |int list|.
+%
+Thus, the list literal is inferred to have type |int list list|, which
+is incompatible with the |int list| on the left of the |@| (list append)
+operator.
+%
+Both \sherrloc and the \ocaml compiler blame the recursive call for
+returning a |int list| rather than |int|, but the recursive call is
+actually correct!
+%
+As our Decision Tree correctly points out, the fault lies with the list
+literal \emph{surrounding} the recursive call, remove it and the type
+error disappears.
+%
+\ES{TODO: WHY?}
+
+\paragraph{Padding a list}
+Our next program, |padZero|, is given two |int list|s as input, and must
+left-pad the shorter one with enough zeros that the two output lists
+have equal length.
+
+The student first defines a helper function |clone|, which takes an
+input element |x| and an |int| |n|, and returns a list containing |n|
+|x|s.
+%
+\begin{ecode}
+  let rec clone x n =
+    if n <= 0 then
+      []
+    else
+      x :: clone x (n - 1)
+\end{ecode}
+%
+Then she defines |padZero| with a simple branch that determines which
+list is shorter, followed by a |clone| with the appropriate number of
+zeros.
+%
+\lstset{firstnumber=last}
+\begin{ecode}
+  let padZero l1 l2 =
+    let n = List.length l1 - List.length l2 in
+    if n < 0 then
+      (clone 0 ((-1) * n) @ l2, l2)
+    else
+      (l1, _=clone 0 n=___ :: l2__)
+\end{ecode}
+\lstset{firstnumber=1}
+%
+Alas, our student has accidentally used the |::| operator rather than
+the |@| operator in the |else| branch.
+%
+\sherrloc and \ocaml correctly determine that she cannot cons the
+|int list| returned by |clone| onto |l2|, which is another |int list|,
+but they decide to \emph{blame} the call to |clone|, while our Decision
+Tree correctly blames the |::| operator.
+%
+\ES{TODO: WHY? (might be too similar to previous?)}
+
+
+% ES: decision tree gets this one wrong, may want to find something else
+% \begin{ecode}
+%   let rec sepConcat sep sl =
+%     match sl with
+%     | [] -> ""
+%     | h::t ->
+%         let f a x = a ^ (sep ^ x) in
+%         List.fold_left f h t
+
+%   let stringOfList f l = sepConcat "; " __[ "["; ___=List.map f l=___; "]" ]__
+% \end{ecode}
+
+\paragraph{Computing the Fixed Point of a Function}
+Finally, our students must write a |fixpoint| function that computes the
+fixed point of a given function |f|, starting from a base case |b|.
+%
+As a hint we first have them write a |wwhile| function that performs the
+functional equivalent of a while-loop, repeatedly passing a function's
+output back in until it receives a (boolean) signal to stop.
+%
+\begin{ecode}
+  let rec wwhile (f, b) =
+    match f b with
+    | (x, false) -> x
+    | (x, true)  -> wwhile (f, x)
+\end{ecode}
+\lstset{firstnumber=last}
+%
+The |fixpoint| function can then be written as a clever instantiation of
+the arguments to |wwhile|.
+%
+\begin{ecode}
+  let fixpoint (f, b) =
+    let g = __let bb = f b in ___=(bb, (bb = b))=_ in
+    wwhile (g, b)
+\end{ecode}
+\lstset{firstnumber=1}
+%
+Sadly, our student has forgotten that |g| should itself be a function.
+%
+As a result, she passes a pair of a \emph{pair} and a starting value to
+|wwhile|, rather than a pair of a \emph{function} and a starting value.
+%
+\sherrloc deduces that the call to |wwhile| is likely correct (\ocaml
+actually blames the use of |g|), but identifies the construction of the
+pair inside |g| as the most likely culprit, while our Decision Tree
+correctly identifies the \emph{definition} of |g| as the source of the
+error.
+\ES{TODO: WHY?}
 
 %%% Local Variables:
 %%% mode: latex
