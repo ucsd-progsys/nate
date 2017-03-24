@@ -64,8 +64,9 @@ Our classifiers are:
   the MLP can \emph{compress} its model.
 \end{enumerate}
 %
-All classifiers were trained for 20 iterations on one dataset before
-being evaluated on the other.
+All classifiers were trained for 20 epochs on one dataset
+--- \ie they were shown each program 20 times ---
+before being evaluated on the other.
 
 \input{evaluation-accuracy-graph}
 
@@ -75,23 +76,23 @@ being evaluated on the other.
 Localizing the type errors in our benchmarks amounted on average to
 selecting one of 2--3 correct locations out of a slice of 10--11.
 %
-Our baseline of selecting at random is able to achieve 30\% Top 1
-accuracy (58\% Top 3), while \ocaml achieves a Top 1 accuracy of 45\%.
+Our baseline of selecting at random is able to achieve 30\% Top-1
+accuracy (58\% Top-3), while \ocaml achieves a Top-1 accuracy of 45\%.
 %
 Interestingly, one only needs two \emph{random} guesses to outperform
 \ocaml, with 47\% accuracy.
 %
-\sherrloc outperforms both baselines with 56\% Top 1 accuracy (84\% Top
-3), while \mycroft actually underperforms \ocaml with 38--41\% Top 1
+\sherrloc outperforms both baselines with 56\% Top-1 accuracy (84\% Top
+3), while \mycroft actually underperforms \ocaml with 38--41\% Top-1
 accuracy.
 %
 Finally, we find that \emph{all} of our classifiers outperform \sherrloc,
-ranging from 60--62\% Top 1 accuracy (85--88\% Top 3) for the \linear
-classifier to 71--73\% Top 1 accuracy (91\% Top 3) for the \hiddenFH.
+ranging from 60--62\% Top-1 accuracy (85--88\% Top-3) for the \linear
+classifier to 71--73\% Top-1 accuracy (91\% Top-3) for the \hiddenFH.
 
 Interestingly there is little variation in accuracy between classifiers
 with the exception of the \linear model, they all achieve around 70\%
-Top 1 accuracy and around 90\% Top 3 accuracy.
+Top-1 accuracy and around 90\% Top-3 accuracy.
 %
 In particular, the \hiddenT only loses around 2\% accuracy compared to
 the \hiddenFH, which suggests that it can substantially compress the

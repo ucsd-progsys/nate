@@ -6,17 +6,25 @@
 Thus, we identify the following novel contributions of our work.
 %
 \begin{enumerate}
-\item An experimental evaluation of state-of-the-art type-error
-  localization techniques based not on expert \emph{opinion}, but
-  on the eventual \emph{fix} implemented by a novice user.
+\item An large-scale evaluation of state-of-the-art type error
+  localization techniques on over 4,500 student programs.
   %
-  \ES{need to explain \emph{why} this is superior..}
+  We collected a time-series of \ocaml programs from our students, and
+  use their subsequent \emph{fixes} to ill-typed programs as
+  \emph{oracles} for the location of the error.
+  %
+  This is the most extensive evaluation of the accuracy of type error
+  localization techniques that we are aware of.
+  % based not on expert \emph{opinion}, but
+  % on the eventual \emph{fix} implemented by a novice user.
+  %
+  % \ES{need to explain \emph{why} this is superior..}
 \item A machine learning approach to \emph{modeling} (novice) type
-  errors that can outperform the state-of-the-art by 10--30\% in
+  errors that can outperform the state-of-the-art by 15--30\% in
   localizing errors.
   %
-  Our model can be trained on a relatively small amount of data --- we
-  used a single class of around 50 students --- and appears to
+  Our classifiers can be trained on a relatively small amount of data --- we
+  used a single class of around 50 students --- and appear to
   generalize to other instances of the same class.
   %
   \ES{and hopefully completely separate classes!}

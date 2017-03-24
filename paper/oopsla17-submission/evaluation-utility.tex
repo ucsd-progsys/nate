@@ -17,7 +17,7 @@ comparing the accuracy of a linear model on three sets of features:
 %
 \begin{enumerate}
 \item A baseline with only local syntactic features.
-\item The local syntactic features of (1) extended with \InSlice.
+\item The features of (1) extended with \InSlice.
 \item The same features as (1), but we preemptively discard samples
   where \InSlice is \emph{disabled}.
 \end{enumerate}
@@ -43,18 +43,19 @@ $\alpha=0.001$, L2 regularization rate $\lambda=0.001$, and mini-batch
 size of 200. We trained for a single epoch on feature sets (1) and
 (2), and for 8 epochs on (3), so that the total number of training samples
 would be roughly equal for each feature set.
-
+\ES{introduce the MLP too}
+\ES{use MLP-500 instead?}
 \begin{table}[ht]
   \centering
   \begin{tabular}{lrcrrrrcrrrr}
     \toprule
-                 &             & & \multicolumn{4}{c} \linear        & & \multicolumn{4}{c} \hiddenF       \\
-                                   \cmidrule{4-7}                        \cmidrule{9-12}
-    Feature Set  & \# Features & & Top-1  & Top-2  & Top-3  & Recall & & Top-1  & Top-2  & Top-3  & Recall \\
+                       &             & & \multicolumn{4}{c} \linear        & & \multicolumn{4}{c} \hiddenF       \\
+                                         \cmidrule{4-7}                        \cmidrule{9-12}
+    Feature Set        & \# Features & & Top-1  & Top-2  & Top-3  & Recall & & Top-1  & Top-2  & Top-3  & Recall \\
     \midrule
-    Local Syntax & 47          & & 23.6\% & 42.6\% & 56.3\% & 19.6\% & & 30.9\% & 47.9\% & 58.6\% & 20.6\% \\
-    + Slice      & 48          & & 46.4\% & 65.0\% & 75.4\% & 30.4\% & & 54.5\% & 70.5\% & 81.5\% & 34.7\% \\
-    Only Slice   & 47          & & 54.9\% & 71.4\% & 82.5\% & 57.6\% & & 56.7\% & 72.3\% & 82.9\% & 58.0\% \\
+    Local Syntax       & 47          & & 23.6\% & 42.6\% & 56.3\% & 19.6\% & & 30.9\% & 47.9\% & 58.6\% & 20.6\% \\
+    + \InSlice         & 48          & & 46.4\% & 65.0\% & 75.4\% & 30.4\% & & 54.5\% & 70.5\% & 81.5\% & 34.7\% \\
+    Filter by \InSlice & 47          & & 54.9\% & 71.4\% & 82.5\% & 57.6\% & & 56.7\% & 72.3\% & 82.9\% & 58.0\% \\
     \bottomrule
   \end{tabular}
   \caption{
@@ -85,8 +86,8 @@ single correct prediction, it also allows us to make \emph{multiple}
 correct predictions per program.
 
 Given the decisive benefits of filtering out expressions that do not
-belong to the type-error slice, we will assume going forward that
-\emph{all} data sets have been filtered.
+belong to the type-error slice, we choose to filter all programs by
+\InSlice.
 
 \subsubsection{Contextual Features}
 \label{sec:contextual-features}
@@ -101,9 +102,9 @@ extended by each combination of
 (2) contextual syntactic features, and
 (3) typing features.
 %
-As before we perform a 10-fold cross-validation with a learning rate and
-L2 regularization rate of 0.001 and a mini-batch size of 200, but we
-train for a full 10 epochs.
+As before we perform a 10-fold cross-validation with $\alpha = 0.001$,
+$\lambda = 0.001$, and a mini-batch size of 200, but we
+train for a full 20 epochs.
 
 \begin{table}[ht]
   \centering
@@ -147,31 +148,17 @@ train for a full 10 epochs.
   %   \bottomrule
   % \end{tabular}
   % \end{minipage}
-  % \\
-  % \begin{minipage}{0.49\linewidth}
-  % \centering
-  % \hiddenFH
-  % \begin{tabular}{lrrrr}
-  %   \toprule
-  %   Feature Set                 \\
-  %   \midrule
-  %   Local Syntax                \\
-  %   \midrule
-  %   + Size                      \\
-  %   + Context                   \\
-  %   + Types                     \\
-  %   \midrule
-  %   + Size + Context            \\
-  %   + Size + Types              \\
-  %   + Context + Types           \\
-  %   \midrule
-  %   + All                       \\
-  %   \bottomrule
-  % \end{tabular}
-  % \end{minipage}
   \caption{
     Impact of contextual features on accuracy.
     \ES{TODO: expand caption}
     \ES{TODO: load these numbers from CSV}
-  }\label{tab:type-error-slice}
+  }\label{tab:contextual-features}
 \end{table}
+
+\autoref{tab:contextual-features} summarizes the results of our experiment.
+%
+As we can see, the \linear classifier and the \hiddenFH start off
+competitive when given only local syntactic features, but the \hiddenFH
+quickly begins to outperform as more features are added.
+%
+\ES{HEREHEREHERHE}
