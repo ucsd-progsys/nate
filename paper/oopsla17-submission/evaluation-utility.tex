@@ -155,10 +155,34 @@ train for a full 20 epochs.
   }\label{tab:contextual-features}
 \end{table}
 
+\paragraph{Results}
 \autoref{tab:contextual-features} summarizes the results of our experiment.
 %
 As we can see, the \linear classifier and the \hiddenFH start off
 competitive when given only local syntactic features, but the \hiddenFH
 quickly begins to outperform as more features are added.
+
+\ExprSize appears to be the weakest feature, improving \linear Top-1
+accuracy by only 1\% and \hiddenFH by only 4\%.
 %
-\ES{HEREHEREHERHE}
+In contrast, the contextual syntactic features improve \linear Top-1
+accuracy by 5\% (\resp 15\%), and the typing features improve
+Top-1 accuracy by 7\% (\resp 17\%).
+%
+Furthermore, while \ExprSize does provide some benefit when it is the
+only additional feature, it does not appear to provide any real increase
+in accuracy when added alongside the contextual or typing features.
+
+As one might expect, the typing features are more beneficial than the
+contextual syntactic features.
+%
+They improve Top-1 accuracy by an additional 2\%, and are much more
+compact --- we only have 55 typing features compared to 176 contextual
+syntactic features.
+%
+This aligns with our intuition that types should be a good summary of
+the context of an expression.
+%
+However, typing features do not \emph{subsume} contextual syntactic
+features, we can gain an additional 1\% Top-1 accuracy (\resp 4\%) by
+adding \emph{both}.
