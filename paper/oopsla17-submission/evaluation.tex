@@ -24,8 +24,8 @@ We seek to answer three questions in our evaluation:
 \end{description}
 \ES{may want to swap (1) and (2)..}
 
-\subsection{Experimental Setup}
-\label{sec:experimental-setup}
+\subsection{Methodology}
+\label{sec:methodology}
 
 We answer our questions on two sets of data gathered from the
 undergraduate Programming Languages course at
@@ -69,6 +69,24 @@ of the sub-expressions have changed.
 %
 We picked 40\% as an estimate of the inflection point where we could
 still retain the large majority of program pairs.
+
+
+\paragraph{Accuracy Metric}
+All of the tools we compare (with the exception of \ocaml) can produce a
+list of potential error locations, which might in the limit include the
+entire type error slice.
+%
+However, in a study of fault localization techniques,
+\citet{Kochhar2016-oc} show that most developers will not consider more
+than around five potential error locations before falling back to manual
+debugging.
+%
+Type errors are relatively simple in comparison to general fault
+localization, thus we limit our evaluation to the top three predictions
+of each tool.
+%
+We evaluate each tool on whether a changed expression occurred in its
+top 1, top 2, or top 3 predictions.
 
 \input{evaluation-accuracy}
 \input{evaluation-utility}
