@@ -2171,8 +2171,10 @@ Computing Machinery]
 \if@ACM@anonymous
   \excludecomment{anonsuppress}
   \excludecomment{acks}
+  \includecomment{noanonsuppress}
 \else
   \includecomment{anonsuppress}
+  \excludecomment{noanonsuppress}
 \fi
 \newcommand\showeprint[2][arxiv]{%
   \def\@tempa{#1}%

@@ -16,7 +16,7 @@ Thus, our first experiment seeks to quantify the impact of \InSlice by
 comparing the accuracy of a linear model on three sets of features:
 %
 \begin{enumerate}
-\item A baseline with only local syntactic features.
+\item A baseline with \emph{only} local syntactic features.
 \item The features of (1) extended with \InSlice.
 \item The same features as (1), but we preemptively discard samples
   where \InSlice is \emph{disabled}.
@@ -50,23 +50,29 @@ epoch on feature sets (1) and (2), and for 8 epochs on (3), so that the
 total number of training samples would be roughly equal for each feature
 set.
 %
+\lstDeleteShortInline{|} % sigh...
 In addition to the accuracy metric from before, we report each
 classifier's \emph{recall} --- \ie ``How many true changes can we
 remember?'' --- defined as
-\lstDeleteShortInline{|} % sigh...
 $$
 \frac{|\mathsf{predicted} \cap \mathsf{oracle}|}
      {|\mathsf{oracle}|}
 $$
-\lstMakeShortInline{|}
 where $\mathsf{predicted}$ is limited to the top 3 predictions of the
 classier, and $\mathsf{oracle}$ is limited to the expressions that
 changed \emph{and} were part of the type error slice. We make the
 latter distinction as (1) changes that are not part of the type error
 slice are noise in the data set, and (2) it makes the comparison between
 feature sets easier to interpret since $\mathsf{oracle}$ never changes.
+% NOTE: keep this at the end of the para or it screws up spacing...
+\lstMakeShortInline{|}
 %
 \begin{table}[ht]
+  \caption{
+    Impact of type-error slice on accuracy.
+    \ES{TODO: expand caption}
+    \ES{TODO: load these numbers from CSV}
+  }\label{tab:type-error-slice}
   \centering
   \begin{tabular}{lrcrrrrcrrrr}
     \toprule
@@ -79,11 +85,6 @@ feature sets easier to interpret since $\mathsf{oracle}$ never changes.
     Filter by \InSlice & 47          & & 54.9\% & 71.4\% & 82.5\% & 57.6\% & & 56.6\% & 71.9\% & 82.5\% & 57.3\% \\
     \bottomrule
   \end{tabular}
-  \caption{
-    Impact of type-error slice on accuracy.
-    \ES{TODO: expand caption}
-    \ES{TODO: load these numbers from CSV}
-  }\label{tab:type-error-slice}
 \end{table}
 
 \autoref{tab:type-error-slice} shows the results of our experiment.
@@ -99,12 +100,12 @@ However, filtering out expressions that are not part of the slice
 %
 Clearly, some decisions are too important to be left to a machine.
 
-Note also the jump in Recall when we filter out expressions that are not
-part of the error slice.
-%
-Reducing the search space not only improves our chances of making a
-single correct prediction, it also allows us to make \emph{multiple}
-correct predictions per program.
+% Note also the jump in Recall when we filter out expressions that are not
+% part of the error slice.
+% %
+% Reducing the search space not only improves our chances of making a
+% single correct prediction, it also allows us to make \emph{multiple}
+% correct predictions per program.
 
 Given the decisive benefits of filtering out expressions that do not
 belong to the type-error slice, we choose to filter all programs by
@@ -129,6 +130,11 @@ $\lambda = 0.001$, and a mini-batch size of 200, but we
 train for a full 20 epochs.
 
 \begin{table}[ht]
+  \caption{
+    Impact of contextual features on accuracy.
+    \ES{TODO: expand caption}
+    \ES{TODO: load these numbers from CSV}
+  }\label{tab:contextual-features}
   \centering
   \begin{tabular}{lrcrrrrcrrrr}
     \toprule
@@ -170,11 +176,6 @@ train for a full 20 epochs.
   %   \bottomrule
   % \end{tabular}
   % \end{minipage}
-  \caption{
-    Impact of contextual features on accuracy.
-    \ES{TODO: expand caption}
-    \ES{TODO: load these numbers from CSV}
-  }\label{tab:contextual-features}
 \end{table}
 
 \paragraph{Results}

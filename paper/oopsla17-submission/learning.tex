@@ -46,13 +46,13 @@ Expression
   & \IsNil & \IsCaseListP & \ExprSize
   & \HasTypeIntCOne & \HasTypeList & \InSlice \\
 \midrule
-\lstinline![]!
+|[]|
   & 1 & 1 & 1 & 0 & 1 & 1 \\
-\lstinline!hd + sumList tl!
+|hd + sumList tl|
   & 0 & 1 & 5 & 1 & 0 & 1 \\
-\lstinline!sumList tl!
+|sumList tl|
   & 0 & 0 & 3 & 0 & 1 & 1 \\
-\lstinline!tl!
+|tl|
   & 0 & 0 & 1 & 0 & 1 & 0 \\
 \bottomrule
 \end{tabular}
@@ -82,14 +82,14 @@ Thus, our first task is to convert programs to feature vectors.
 We choose to model a program as a \emph{set} of feature vectors, where
 each element corresponds an expression in the program.
 %
-Thus, given the \lstinline!sumList! program in \autoref{fig:sumList} we
+Thus, given the |sumList| program in \autoref{fig:sumList} we
 would first split it into its constituent sub-expressions and then
 transform each sub-expression into a single feature vector.
 %
 We group the features into five categories, using \autoref{tab:sumList}
 as a running example of the feature extraction process.
 
-\paragraph{Local syntactic features}
+\subsubsection{Local syntactic features}
 These features describe the syntactic category of each expression $e$.
 %
 In other words, for each production of $e$ in \autoref{fig:syntax} we
@@ -113,7 +113,7 @@ features that specify whether a match \emph{contains} a particular
 pattern, and thus have a match expression that enables multiple
 features.
 
-\paragraph{Contextual syntactic features}
+\subsubsection{Contextual syntactic features}
 These are like local syntactic features, but lifted to describe the
 parent and children of the current expression.
 %
@@ -144,18 +144,18 @@ models.
 % We will investigate (\ES{maybe..}) the impact of these alternatives
 % in \autoref{sec:evaluation}.
 
-\paragraph{Expression size}
+\subsubsection{Expression size}
 We also add a feature representing the \emph{size} of each expression,
 \ie how many sub-expressions does it contain?
 %
 For example, the \ExprSize feature in \autoref{tab:sumList} is set to 3
-for the expression \lstinline!sumList tl! as it contains 3 expressions:
+for the expression |sumList tl| as it contains 3 expressions:
 the two variables and the application itself.
 %
 This allows the model to learn that, \eg, expressions closer to the
 leaves are more likely to be blamed than expressions closer to the root.
 
-\paragraph{Typing features}
+\subsubsection{Typing features}
 A natural way of summarizing the context in which an expression occurs
 is with \emph{types}.
 %
@@ -181,7 +181,7 @@ We add these features for parent and child expressions to summarize the
 context, but also for the current expression, as the type of an
 expression is not always clear \emph{syntactically}.
 %
-For example, the expressions \lstinline!tl! and \lstinline!sumList tl!
+For example, the expressions |tl| and |sumList tl|
 in \autoref{tab:sumList} both enable the feature \HasTypeList, as they
 are both inferred to have a type that mentions the $\tlist{\cdot}$
 constructor.
@@ -189,12 +189,12 @@ constructor.
 Note that our use of typing features in an \emph{ill-typed} program
 subjects us to the infamous traversal
 bias~\cite{McAdam1998-ub,Yang2000-yr} --- in particular with the
-\lstinline!sumList tl! expression, which might alternatively be assigned
+|sumList tl| expression, which might alternatively be assigned
 the type $\tint$.
 %
 We rely on the model to counteract this bias.
 
-\paragraph{Type error slice}
+\subsubsection{Type error slice}
 Finally, we would like the model to be able to distinguish between
 changes that could fix the error, and changes that
 \emph{cannot possibly} fix the error.
@@ -205,7 +205,7 @@ feature that is enabled \emph{iff} an expression is part of the slice.
 %
 The \InSlice feature in \autoref{tab:sumList} indicates whether an
 expression is part of such a minimal slice, and is enabled for all of
-the sampled expressions except for \lstinline!tl!, which does not affect
+the sampled expressions except for |tl|, which does not affect
 the type error.
 %
 If the program contains multiple type errors, we will compute
