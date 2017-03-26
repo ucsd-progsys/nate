@@ -24,6 +24,7 @@ Decision Tree made its prediction, by analyzing the paths induced
 by the programs.
 
 \paragraph{Extracting the Digits of an Integer}
+% data/sp14/1655.ml
 Our first program is a simple recursive function |digitsOfInt| that
 extracts the digits of an |int|.
 %
@@ -54,6 +55,7 @@ error disappears.
 \ES{TODO: WHY?}
 
 \paragraph{Padding a list}
+% data/sp14/0306.ml
 Our next program, |padZero|, is given two |int list|s as input, and must
 left-pad the shorter one with enough zeros that the two output lists
 have equal length.
@@ -109,6 +111,7 @@ Tree correctly blames the |::| operator.
 % \end{ecode}
 
 \paragraph{Computing the Fixed Point of a Function}
+% data/sp14/0941.ml
 Finally, our students must write a |fixpoint| function that computes the
 fixed point of a given function |f|, starting from an initial value |b|.
 %
@@ -145,6 +148,47 @@ pair inside |g| as the most likely culprit, while our Decision Tree
 correctly identifies the \emph{definition} of |g| as the source of the
 error.
 \ES{TODO: WHY?}
+
+
+\subsubsection{Failed Predictions}
+\label{sec:failed-predictions}
+Of course, our classifiers are sometimes wrong, we focus next on the
+10\% of programs where \emph{none} of our Top-3 predictions are correct.
+
+% data/sp14/0148.ml
+\begin{ecode}
+  let rec clone x n =
+    let loop acc n =
+      if n <= 0 then
+        acc
+      else
+        clone ==([==_=x=_==] @ acc)== (n - 1) in
+    loop [] n
+\end{ecode}
+\ES{TODO: our 2nd prediction matches \sherrloc and \ocaml (occurs check), correct fix is to replace recursive call to clone with loop}
+
+% data/sp14/0234.ml
+\begin{ecode}
+  let pipe fs =
+    let f a x z = _=z=___ a__ in
+    let base y = y in
+    List.fold_left f base fs
+\end{ecode}
+\ES{TODO: fix is to swap a and z, \sherrloc is correct, \ocaml blames use of f in fold-left..}
+
+% data/sp14/0255.ml
+\begin{ecode}
+  let rec wwhile (f, b) =
+    let check = f b in
+    let (x, y) = (f, b) in
+    if __y__ = false then
+      x
+    else
+      wwhile (f, ==x==)
+\end{ecode}
+\ES{marking ``y'' seems totally bogus, why is it even part of the error
+  slice? (other locations are ``f b'' and ``false'' though, whihc is not
+  any better)}
 
 %%% Local Variables:
 %%% mode: latex
