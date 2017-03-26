@@ -47,6 +47,34 @@ The extracted programs are relatively small, but they demonstrate a
 range of functional programming idioms, \eg higher-order functions and
 (polymorphic) algebraic data types.
 
+\subsubsection{Feature Selection}
+We extract a set of 277 features from each sub-expression in a student
+program, including:
+%
+\begin{enumerate}
+\item 44 local syntactic features. In addition to the syntax of \lang,
+  we support the full range of arithmetic operators (integer and
+  floating point), equality and comparison operators, character and
+  string literals, and a user-defined |expr| type of simple arithmetic
+  expressions. We will discuss the challenge of supporting other
+  user-defined types in \autoref{sec:discussion}.
+\item 176 contextual syntactic features. For each sub-expression we
+  additionally extract the local syntactic features of its parent and
+  first, second, and third (left-to-right) children. If an expression
+  does not have a parent or children, these features will simply be
+  disabled. If an expression has more than three children, the
+  classifiers will be unable to learn anything about the additional
+  children.
+\item 55 typing features. In addition to the types of \lang, we support
+  |int|s, |float|s, |char|s, |string|s, and the user-defined |expr|
+  mentioned above. These features are extracted for each sub-expression
+  and for the contextual sub-expressions.
+\item 1 feature denoting the size of each sub-expression.
+\item 1 feature denoting whether each sub-expression is part of the
+  minimal type error slice.
+\end{enumerate}
+
+\subsubsection{Blame Oracle}
 We identified the fixes for each ill-typed program with an
 expression-level diff~\citep{Lempsink2009-xf}.
 %
@@ -71,7 +99,7 @@ We picked 40\% as an estimate of the inflection point where we could
 still retain the large majority of program pairs.
 
 
-\paragraph{Accuracy Metric}
+\subsubsection{Accuracy Metric}
 All of the tools we compare (with the exception of \ocaml) can produce a
 list of potential error locations, which might in the limit include the
 entire type error slice.

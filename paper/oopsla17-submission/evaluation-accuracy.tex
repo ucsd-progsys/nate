@@ -39,15 +39,16 @@ another 5\% for \mycroft and 12--13\% for \sherrloc.
 
 
 \paragraph{Our Classifiers}
-We evaluate five classifiers, each trained on the full set of 276
-features: 44 local syntactic features, 176 contextual syntactic
-features, 55 typing features, and a single expression size feature.
-%
-\ES{should explain the make-up of these groups}
+We evaluate five classifiers, each trained on the full set of features.
+% features: 44 local syntactic features, 176 contextual syntactic
+% features, 55 typing features, and a single expression size feature.
+% %
+% \ES{should explain the make-up of these groups}
 %
 We preemptively discard expressions that are not part of the minimal
-type error slice, we will explain the rationale for this in
-\autoref{sec:feature-utility}.
+type error slice --- we will explain the rationale for this in
+\autoref{sec:feature-utility} --- and thus the final feature count is
+276.
 %
 Our classifiers are:
 %
@@ -98,7 +99,7 @@ This would appear to suggest that the model they learn is relatively
 simple.
 %
 In particular, notice that although the \hiddenT has $50\times$ \emph{fewer}
-hidden features than the \hiddenFH, it only loses around 2\% accuracy.
+hidden neurons than the \hiddenFH, it only loses around 2\% accuracy.
 % In particular, notice that the \hiddenT only loses around 2\% accuracy
 % compared to the \hiddenFH,
 %
