@@ -116,7 +116,7 @@ Finally, our students must write a |fixpoint| function that computes the
 fixed point of a given function |f|, starting from an initial value |b|.
 %
 As a hint we first have them write a |wwhile| function that performs the
-functional equivalent of a while-loop, repeatedly passing a function's
+functional equivalent of a \texttt{while}-loop, repeatedly passing a function's
 output back in until it receives a (boolean) signal to stop.
 %
 \begin{ecode}
@@ -153,9 +153,13 @@ error.
 \subsubsection{Failed Predictions}
 \label{sec:failed-predictions}
 Of course, our classifiers are sometimes wrong, we focus next on the
-10\% of programs where \emph{none} of our Top-3 predictions are correct.
+$\sim$10\% of programs where \emph{none} of our Top-3 predictions are correct.
 
+\paragraph{Cloning an Element}
 % data/sp14/0148.ml
+Consider the following implementation of the |clone| function from
+before.
+%
 \begin{ecode}
   let rec clone x n =
     let loop acc n =
@@ -165,18 +169,58 @@ Of course, our classifiers are sometimes wrong, we focus next on the
         clone ==([==_=x=_==] @ acc)== (n - 1) in
     loop [] n
 \end{ecode}
-\ES{TODO: our 2nd prediction matches \sherrloc and \ocaml (occurs check), correct fix is to replace recursive call to clone with loop}
+% \ES{TODO: our 2nd prediction matches \sherrloc and \ocaml (occurs check), correct fix is to replace recursive call to clone with loop}
+%
+The student has defined a helper function |loop| with an accumulator
+|acc|, likely meant to call itself tail-recursively.
+%
+Unfortunately, she has called the top-level function |clone| rather than
+|loop| in the |else| branch, this induces a cyclic constraint |'a = 'a list|
+for the |x| argument to |clone|.
 
+Our classifier incorrectly predicts that the use of |x| in the recursive
+call is the most likely source of the error.
+\ES{TOOD: WHY??}
+%
+Our second prediction coincides with \sherrloc (and \ocaml), blaming the
+the first argument to |clone|.
+%
+This is also incorrect, but may be more helpful than our first
+prediction --- if our student decides that she has certainly provided
+the correct \emph{argument}, an alternative explanation is that
+perhaps she has called the wrong \emph{function}.
+%
+Our final prediction is the entire body of |clone|, which is hardly
+helpful.
+
+\paragraph{Composing Functions}
 % data/sp14/0234.ml
+Next, let us consider the |pipe| function that composes a list of
+functions, \ie given a list of functions |[f;g;h]|, |pipe| produces the
+function |fun x -> f (g (h x))|.
+%
 \begin{ecode}
   let pipe fs =
     let f a x z = _=z=___ a__ in
     let base y = y in
     List.fold_left f base fs
 \end{ecode}
-\ES{TODO: fix is to swap a and z, \sherrloc is correct, \ocaml blames use of f in fold-left..}
+%
+Leaving aside issues of \emph{functional} correctness, the error in the
+student's code is that she has swapped function and argument in the
+application |z a|.
+%
+\sherrloc correctly blames the use of |z|, while our classifier
+(incorrectly) blames the entire application (\ocaml blames the use of
+|f| on line 4).
+\ES{TODO: WHY??}
+%
 
+\paragraph{A Functional \texttt{while}-loop}
 % data/sp14/0255.ml
+Finally, consider the following attempt at the functional
+\texttt{while}-loop from before.
+%
 \begin{ecode}
   let rec wwhile (f, b) =
     let check = f b in
@@ -186,8 +230,11 @@ Of course, our classifiers are sometimes wrong, we focus next on the
     else
       wwhile (f, ==x==)
 \end{ecode}
+% ES: the let (x, y) = (f, b) is actually a match, but this seems easier to present..
+Our student
+
 \ES{marking ``y'' seems totally bogus, why is it even part of the error
-  slice? (other locations are ``f b'' and ``false'' though, whihc is not
+  slice? (other locations are ``f b'' and ``false'' though, which is not
   any better)}
 
 %%% Local Variables:
