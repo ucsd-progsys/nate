@@ -10,7 +10,7 @@ classifiers trained on various subsets of the features.
 \subsubsection{Type Error Slice}
 \label{sec:type-error-slice}
 The \InSlice feature should be highly predictive --- a fix must change
-at least one expression in the type-error slice.
+at least one expression in the type error slice.
 %
 Thus, our first experiment seeks to quantify the impact of \InSlice by
 comparing the accuracy of a linear model on three sets of features:
@@ -39,7 +39,7 @@ does not have to learn the importance of \InSlice.
 
 We tested our hypothesis with the \linear and
 %
-\hiddenFH\footnote{A layer of 500 neurons is excessive when have so few
+\hiddenFH\footnote{A layer of 500 neurons is excessive when we have so few
   input features --- we use \hiddenFH for continuity with the
   surrounding sections.}
 %
@@ -69,8 +69,7 @@ feature sets easier to interpret since $\mathsf{oracle}$ never changes.
 %
 \begin{table}[ht]
   \caption{
-    Impact of type-error slice on accuracy.
-    \ES{TODO: expand caption}
+    Impact of Type Error Slice on Accuracy.
     \ES{TODO: load these numbers from CSV}
   }\label{tab:type-error-slice}
   \centering
@@ -89,27 +88,26 @@ feature sets easier to interpret since $\mathsf{oracle}$ never changes.
 
 \autoref{tab:type-error-slice} shows the results of our experiment.
 %
-As expected the baseline performs the worst, with a mere 23.6\% Top-1
-accuracy.
+As expected the baseline performs the worst, with a mere 23.6\% \linear
+Top-1 accuracy.
 %
-Adding \InSlice improves the results substantially with a 46.4\% Top-1
+Adding \InSlice improves the results substantially with a 46.4\% \linear Top-1
 accuracy, demonstrating the importance of a minimal error slice.
 %
 However, filtering out expressions that are not part of the slice
-\emph{further} improves the results to 54.9\% Top-1 accuracy.
+\emph{further} improves the results to 54.9\% \linear Top-1 accuracy.
 %
-Clearly, some decisions are too important to be left to a machine.
+Interestingly, while the \hiddenFH performs similarly poor with no error
+slice features, it recovers nearly all of its accuracy after being given
+the error slice features.
+%
+Top-1 accuracy jumps from 28.9\% to 54.4\% when we add \InSlice, and only
+improves by 2\% when we filter out expressions that are not part of the
+error slice.
 
-% Note also the jump in Recall when we filter out expressions that are not
-% part of the error slice.
-% %
-% Reducing the search space not only improves our chances of making a
-% single correct prediction, it also allows us to make \emph{multiple}
-% correct predictions per program.
-
-Given the decisive benefits of filtering out expressions that do not
-belong to the type-error slice, we choose to filter all programs by
-\InSlice.
+Still, the 2\% boost comes at zero cost, and given the other benefits
+of filtering out expressions that do not belong to the type error slice,
+we choose to filter all programs by \InSlice.
 
 \subsubsection{Contextual Features}
 \label{sec:contextual-features}
@@ -131,8 +129,7 @@ train for a full 20 epochs.
 
 \begin{table}[ht]
   \caption{
-    Impact of contextual features on accuracy.
-    \ES{TODO: expand caption}
+    Impact of Contextual Features on Accuracy.
     \ES{TODO: load these numbers from CSV}
   }\label{tab:contextual-features}
   \centering

@@ -152,8 +152,8 @@ error.
 
 \subsubsection{Failed Predictions}
 \label{sec:failed-predictions}
-Of course, our classifiers are sometimes wrong, we focus next on the
-$\sim$10\% of programs where \emph{none} of our Top-3 predictions are correct.
+Of course, our classifiers are sometimes wrong, we focus next on programs
+where our classifier makes an incorrect prediction.
 
 \paragraph{Cloning an Element}
 % data/sp14/0148.ml
@@ -193,49 +193,55 @@ perhaps she has called the wrong \emph{function}.
 Our final prediction is the entire body of |clone|, which is hardly
 helpful.
 
+\paragraph{Currying Considered Harmful?}
+% data/sp14/0887.ml
+Our next example is another ill-fated attempt at |clone|.
+%
+\begin{ecode}
+  let rec clone x n =
+    let rec loop x n acc =
+      if n < 0 then
+        acc
+      else
+        ==loop== __(x, (n - 1), (x :: acc))__ in
+    loop (x, n, [])
+\end{ecode}
+The issue here is that \ocaml functions are \emph{curried} by default
+--- \ie they take their arguments one at a time --- but our student has
+called the inner |loop| with all three arguments in a tuple.
+%
+Many experienced functional programmers would choose to keep |loop|
+curried and rewrite the calls, however our student decides instead to
+\emph{uncurry} |loop|, making it take a tuple of arguments.
+%
+\sherrloc blames the recursive call to |loop| while our classifier
+blames the tuple of arguments --- a reasonable suggestion, but alas not
+the answer the student was looking for.
+\ES{WHY??}
+%
+
 \paragraph{Composing Functions}
-% data/sp14/0234.ml
+% data/sp14/2269.ml
 Next, let us consider the |pipe| function that composes a list of
 functions, \ie given a list of functions |[f;g;h]|, |pipe| produces the
-function |fun x -> f (g (h x))|.
+function |fun x -> h (g (f x))|.
 %
 \begin{ecode}
   let pipe fs =
-    let f a x z = _=z=___ a__ in
-    let base y = y in
+    let f a x y = ==y== __(a y)__ in
+    let base x = x in
     List.fold_left f base fs
 \end{ecode}
 %
-Leaving aside issues of \emph{functional} correctness, the error in the
-student's code is that she has swapped function and argument in the
-application |z a|.
+The error in our student's code is that she has applied |y| rather than
+|x| to the result of |a y|.
 %
-\sherrloc correctly blames the use of |z|, while our classifier
-(incorrectly) blames the entire application (\ocaml blames the use of
-|f| on line 4).
-\ES{TODO: WHY??}
+\sherrloc correctly blames the first occurrence of |y|, while our
+classifier (incorrectly) blames the application |a y| (\ocaml blames
+the occurrence of |base| on line 4).
 %
+\ES{TODO: WHY?}
 
-\paragraph{A Functional \texttt{while}-loop}
-% data/sp14/0255.ml
-Finally, consider the following attempt at the functional
-\texttt{while}-loop from before.
-%
-\begin{ecode}
-  let rec wwhile (f, b) =
-    let check = f b in
-    let (x, y) = (f, b) in
-    if __y__ = false then
-      x
-    else
-      wwhile (f, ==x==)
-\end{ecode}
-% ES: the let (x, y) = (f, b) is actually a match, but this seems easier to present..
-Our student
-
-\ES{marking ``y'' seems totally bogus, why is it even part of the error
-  slice? (other locations are ``f b'' and ``false'' though, which is not
-  any better)}
 
 %%% Local Variables:
 %%% mode: latex
