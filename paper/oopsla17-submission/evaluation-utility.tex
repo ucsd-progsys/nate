@@ -13,7 +13,7 @@ The \InSlice feature should be highly predictive --- a fix must change
 at least one expression in the type error slice.
 %
 Thus, our first experiment seeks to quantify the impact of \InSlice by
-comparing the accuracy of a linear model on three sets of features:
+comparing the accuracy of our classifiers on three sets of features:
 %
 \begin{enumerate}
 \item A baseline with \emph{only} local syntactic features.
@@ -79,9 +79,9 @@ feature sets easier to interpret since $\mathsf{oracle}$ never changes.
                                          \cmidrule{4-7}                        \cmidrule{9-12}
     Feature Set        & \# Features & & Top-1  & Top-2  & Top-3  & Recall & & Top-1  & Top-2  & Top-3  & Recall \\
     \midrule
-    Local Syntax       & 47          & & 23.5\% & 42.5\% & 55.9\% & 36.5\% & & 28.9\% & 47.7\% & 58.6\% & 38.4\% \\
-    + \InSlice         & 48          & & 46.1\% & 64.9\% & 75.4\% & 48.8\% & & 54.4\% & 70.8\% & 81.3\% & 56.2\% \\
-    Filter by \InSlice & 47          & & 54.9\% & 71.4\% & 82.5\% & 57.6\% & & 56.6\% & 71.9\% & 82.5\% & 57.3\% \\
+    Local Syntax       & 44          & & 23.5\% & 42.5\% & 55.9\% & 36.5\% & & 28.9\% & 47.7\% & 58.6\% & 38.4\% \\
+    + \InSlice         & 45          & & 46.1\% & 64.9\% & 75.4\% & 48.8\% & & 54.4\% & 70.8\% & 81.3\% & 56.2\% \\
+    Filter by \InSlice & 44          & & 54.9\% & 71.4\% & 82.5\% & 57.6\% & & 56.6\% & 71.9\% & 82.5\% & 57.3\% \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -106,7 +106,8 @@ improves by 2\% when we filter out expressions that are not part of the
 error slice.
 
 Still, the 2\% boost comes at zero cost, and given the other benefits
-of filtering out expressions that do not belong to the type error slice,
+of filtering out expressions that do not belong to the type error slice
+--- shrinking the search space and guaranteeing our predictions are actionable ---
 we choose to filter all programs by \InSlice.
 
 \subsubsection{Contextual Features}
@@ -125,8 +126,8 @@ features, extended by each combination of
 %
 As before we perform a 10-fold cross-validation with $\alpha = 0.001$,
 $\lambda = 0.001$, and a mini-batch size of 200, but we
-train for a full 20 epochs.
-
+train for a full 20 epochs to make the differences more apparent.
+%
 \begin{table}[ht]
   \caption{
     Impact of Contextual Features on Accuracy.
@@ -174,7 +175,7 @@ train for a full 20 epochs.
   % \end{tabular}
   % \end{minipage}
 \end{table}
-
+%
 \paragraph{Results}
 \autoref{tab:contextual-features} summarizes the results of our experiment.
 %
