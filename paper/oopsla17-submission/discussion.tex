@@ -1,0 +1,32 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\paragraph{Additional Features}
+\begin{itemize}
+\item def-use chains
+\item connect function and arguments in application (right now each only know about the application itself)
+\item ??
+\end{itemize}
+
+\paragraph{User-Defined Types}
+\begin{itemize}
+\item Hard to support in general, as each data and type constructor gets
+  its own set of syntactic features.
+\item Attempt to mitigate by adding generic ``is-datacon'' and
+  ``is-match'' feature, unclear how much it will help
+\end{itemize}
+
+\paragraph{Independent vs Joint Predictions}
+We treat each sub-expression as if it exists in a vacuum, in reality
+making a positive prediction for one expression may make another
+prediction much less likely \citep{Raychev2015-jg}. We compensate
+somewhat by ranking predictions by ``confidence'', but would be
+interesting to see how structured learning would perform.
+
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:
