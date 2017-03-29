@@ -1,13 +1,13 @@
 \section{Related Work}
 \label{sec:related-work}
 
-In this section we describe three relevant aspects of related work:
+In this section we describe two relevant aspects of related work:
 %
-programming languages approaches to diagnosing type errors,
+programming languages approaches to diagnosing type errors, and
 %
-software engineering approaches to fault localization, and
+software engineering approaches to fault localization.
 %
-applying machine learning techniques to problems in programming languages.
+% applying machine learning techniques to problems in programming languages.
 
 \subsection{Type Error Diagnosis}
 \label{sec:type-error-diagnosis}
@@ -177,31 +177,49 @@ syntactic class of each expression in the \emph{fixed} program --- we
 believe this is an exciting direction for future work.
 
 \subsection{Fault Localization}
-Given a defect, fault localization is the task of identifying
-``suspicious'' program elements (e.g., lines, statements) that are likely
-implicated in the defect (i.e., that should be changed to fix the defect).
-Perhaps the best-known is Tarantula, which uses a simple mathematical
-formula based on measured information from dynamic normal and buggy
-runs~\citep{Jones2002-us}. Other similar approaches, including those of
-\citet{Chen2002-qz} and \citet{Abreu2006-fn,Abreu2007-mu} consider alternate features
-of information or refined formulae and generally obtain more precise
-results; see \citet{Wong2009-pd} for a survey. While some researchers have
-approached such fault localization with an eye toward optimality (e.g.,
-\citet{Yoo2013-rw} determine optimal coefficients), in general
-such fault localization approaches are limited by their reliance on either
-running tests or including relevant features. For example, Tarantula-based
-techniques require a normal and a buggy run of the program. By contrast,
-we consider incomplete programs with type errors that may not be executed
-in any standard sense. Similarly, the features available influence the
-classes of defects that can be localized. A fault localization scheme based
-purely on control flow features lines will have difficulty with cross-site
-scripting or SQL code injection attacks, which follow the same control flow
-path on normal and buggy runs (differing only in the user-supplied data).
-By contrast, we \ES{TODO}.
+Given a defect, \emph{fault localization} is the task of identifying
+``suspicious'' program elements (\eg lines, statements) that are likely
+implicated in the defect (\ie that should be changed to fix the defect)
+%
+--- thus, type error localization can be viewed as an instance of fault
+localization.
+%
+The best-known fault localization technique is likely Tarantula, which
+uses a simple mathematical formula based on measured information from
+dynamic normal and buggy runs~\citep{Jones2002-us}.
+%
+Other similar approaches, including those of \citet{Chen2002-qz} and
+\citet{Abreu2006-fn,Abreu2007-mu} consider alternate features of
+information or refined formulae and generally obtain more precise
+results; see \citet{Wong2009-pd} for a survey.
+%
+While some researchers have approached such fault localization with an
+eye toward optimality (\eg \citet{Yoo2013-rw} determine optimal
+coefficients), in general such fault localization approaches are limited
+by their reliance on either running tests or including relevant
+features.
+%
+For example, Tarantula-based techniques require a normal and a buggy run
+of the program.
+%
+By contrast, we consider incomplete programs with type errors that may
+not be executed in any standard sense.
+%
+Similarly, the features available influence the classes of defects that
+can be localized.
+%
+A fault localization scheme based purely on control flow features
+will have difficulty with cross-site scripting or SQL code injection
+attacks, which follow the same control flow path on normal and buggy
+runs (differing only in the user-supplied data).
+%
+Our feature set is comprised entirely of syntactic and typing features,
+a natural choice for modeling type errors, but it would likely not
+generalize to other types of defects.
 
 
-\subsection{Machine Learning for Programming Languages}
-\label{sec:ml-pl}
+% \subsection{Machine Learning for Programming Languages}
+% \label{sec:ml-pl}
 
 
 
