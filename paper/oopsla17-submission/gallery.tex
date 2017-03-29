@@ -1,4 +1,4 @@
-\subsection{Qualitative Evaluation}
+\subsection{Explaining Predictions}
 \label{sec:qualitative}
 
 Next, we present a \emph{qualitative} evaluation that compares the
@@ -12,16 +12,20 @@ For each example, we provide
 %
 (1) the code,
 %
-(2) \sherrloc's prediction (in \textbf{bold}), and
+(2) \sherrloc's prediction (in \textbf{bold}),
 %
-(3) the prediction of our Decision Tree (\underline{underlined}).
+(3) the prediction of our Decision Tree (\underline{underlined}), and
+%
+(4) an \emph{explanation} of why our classifier made its prediction.
 %
 We choose the Decision Tree classifier for this section as its model
-is more easily interpreted than the MLP.
+is more easily interpreted than the MLP, we will attempt to explain
+its predictions by analyzing the paths induced in the tree by the
+programs.
 %
-We will also attempt, for each program, to explain \emph{why} the
-Decision Tree made its prediction, by analyzing the paths induced
-by the programs.
+% We will also attempt, for each program, to explain \emph{why} the
+% Decision Tree made its prediction, by analyzing the paths induced
+% by the programs.
 
 \paragraph{Extracting the Digits of an Integer}
 % data/sp14/1655.ml
