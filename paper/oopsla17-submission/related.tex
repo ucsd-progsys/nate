@@ -36,27 +36,27 @@ It is well-known that the original Damas-Milner algorithm $\mathcal{W}$
 produces poor error locations~\citep{Wand1986-nw}, often reported far
 from their source.
 %
-The reason is that the type checker collects typing constraints as it
-traverses the program, and it crucially assumes that if a constraint can
-be safely added to the set of assumptions (\ie no type error has been
-found yet), then the constraint can be \emph{assumed} to be correct.
+The type checker collects typing constraints as it traverses the
+program, and it crucially assumes that if a constraint can be safely
+added to the set of assumptions (\ie no type error has been found yet),
+then the constraint can be \emph{assumed} to be correct.
 %
 The type checker reports an error the moment it finds a constraint that
 contradicts one of the assumptions, blaming the new inconsistent
 constraint, and thus it is extremely sensitive to the order in which it
-traverses the source program, the infamous ``left-to-right''
-bias~\citep{McAdam1998-ub}.
+traverses the source program (the infamous ``left-to-right''
+bias~\citep{McAdam1998-ub}).
 %
-Several alternative traversal strategies have been proposed, \eg
+Several alternative traversal have been proposed, \eg
 top-down rather than bottom-up~\citep{Lee1998-ys}, or a \emph{symmetric}
 traversal that checks sub-expressions independently and only reports an
 error when two inconsistent sets of constraints are
 merged~\citep{McAdam1998-ub,Yang1999-yr}.
 
 Type error \emph{slicing}~\citep{Haack2003-vc,Tip2001-qp,Rahli2010-ps}
-extracts a complete and minimal subset of program expressions that
-contribute to the type error, \ie all of the expressions that are
-required for the error to manifest and no more.
+overcomes the traversal bias by extracting a complete and minimal subset
+of program expressions that contribute to the type error, \ie all of the
+expressions that are required for the error to manifest and no more.
 %
 Slicing techniques typically require rewriting the type checker with a
 specialized constraint language and solver, though
