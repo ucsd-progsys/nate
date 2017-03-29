@@ -1,27 +1,111 @@
 \section{Discussion}
 \label{sec:discussion}
 
-\paragraph{Additional Features}
-\begin{itemize}
-\item def-use chains
-\item connect function and arguments in application (right now each only know about the application itself)
-\item ??
-\end{itemize}
+We have shown that we can outperform the state of the art in type error
+localization by learning a model of the errors that programmers make,
+using a set of features that closely resemble the information the type
+checker sees.
+%
+However, there is certainly room for improvement.
+%
+In this section we highlight some limitations of our approach and
+potential avenues for future work.
 
 \paragraph{User-Defined Types}
-\begin{itemize}
-\item Hard to support in general, as each data and type constructor gets
-  its own set of syntactic features.
-\item Attempt to mitigate by adding generic ``is-datacon'' and
-  ``is-match'' feature, unclear how much it will help
-\end{itemize}
+Probably the single biggest limitation of our technique is that we have
+features for specific data and type constructors.
+%
+Anything our models learn about errors made with the |::| constructor or
+the |list| type cannot easily be translated to new, user-defined
+datatypes the model has never encountered.
+%
+We can attempt to mitigate this to some extent by adding generic
+syntactic features for data constructors and match expressions, but it
+remains to be seen how much these help \ES{TODO: UW data!}.
+%
+Furthermore, there is no obvious analog for transferring knowledge to
+new type constructors, which we have seen are both more compact and
+helpful.
+
+As an alternative to encoding information about \emph{specific}
+constructors, we might investigate a more abstract representation.
+%
+For example, instead of modeling |x :: 2| as a |::| constructor with a
+right child of type |int|, we might model it as some (unknown) constructor
+whose right child has an incompatible type.
+%
+We might symmetrically model the |2| as an integer literal whose type is
+incompatible with its parent.
+%
+Anything we learn about |::| and |2| can now be transferred directly to
+yet unseen types, but we run the risk generalizing \emph{too much} ---
+\ie perhaps programmers make different mistakes with |list|s than they
+do with other types, and are thus likely to choose different fixes.
+%
+Balancing the trade-off between specificity and generalizability appears
+to be a challenging task.
+
+% \begin{itemize}
+% \item Hard to support in general, as each data and type constructor gets
+%   its own set of syntactic features.
+% \item Attempt to mitigate by adding generic ``is-datacon'' and
+%   ``is-match'' feature, unclear how much it will help
+% \end{itemize}
+
+\paragraph{Additional Features}
+There are a number of other features that could improve the model's
+ability to localize errors, that would be easier to add than
+user-defined types.
+%
+For example, each occurrence of a variable knows only its type and the
+immediate context in which it occurs, but it may be helpful to know
+about \emph{other} occurrences of the same variable.
+%
+If a variable is generally used in the context of a |float| but has a
+single occurrence in the context of an |int|, it seems likely that the
+latter occurrence (or context) is to blame.
+%
+Similarly, arguments to a function application are not aware of the
+typing constraints imposed on them by the function (and vice versa),
+they only know that they are occurring in the context of an application
+and the type of the application itself.
+%
+Finally, \emph{n-grams} on the token stream have proven effective for
+probabilistic modeling of programming languages, we may find that they
+aid in our task as well.
+%
+For example, if the observed tokens in an expression diverge from the
+n-gram model's predictions, that indicates that there is something
+unusual about the program at that point, and it may signal an error.
+
+% \begin{itemize}
+% \item def-use chains
+% \item connect function and arguments in application (right now each only know about the application itself)
+% \item ??
+% \end{itemize}
 
 \paragraph{Independent vs Joint Predictions}
-We treat each sub-expression as if it exists in a vacuum, in reality
-making a positive prediction for one expression may make another
-prediction much less likely \citep{Raychev2015-jg}. We compensate
-somewhat by ranking predictions by ``confidence'', but would be
-interesting to see how structured learning would perform.
+We treat each sub-expression as if it exists in a vacuum, but in reality
+the program has a rich \emph{graphical} structure, particularly if one adds
+edges connecting different occurrences of the same variable.
+%
+\citet{Raychev2015-jg} have used these richer models to great effect to
+make \emph{interdependent} predictions about programs, \eg
+de-obfuscating variable names or even inferring types.
+%
+One could even view our task of locating the source of an error as simply
+another property to be predicted over a graphical model of the program.
+%
+One of the key advantages of a graphical model is that the predictions
+made for one node can influence the predictions made for another node,
+this is known as \emph{structured learning}.
+%
+For example, if, given the expression |1 + true|, we predict |true| to
+be erroneous, we may be much less likely to predict |+| as erroneous.
+%
+We compensate somewhat for our lack of structure by ranking our
+predictions by ``confidence'', but it would be interesting to see how
+structured learning over graphical models would perform.
 
 
 
