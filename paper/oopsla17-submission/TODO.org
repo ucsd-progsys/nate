@@ -32,9 +32,16 @@
    - Largest evaluation we know of.
 
 * Overview [4p]
+
   - START WITH
-    - 1, 2 examples.
+    - 1, 2 simple examples of programs
     - What people "know", take them into what's new
+    - where does OCAML complain
+    - where is the REAL error
+    - where is the STUDENT fix
+    - Set up the problem: can we use student fix to
+      choose between "logically equivalent" error
+      locations?
 
   - *Supervised Classification Problem*:
     Goal is to predict a *label* ("good" or "bad")
