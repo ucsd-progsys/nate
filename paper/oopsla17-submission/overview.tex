@@ -1,6 +1,44 @@
 \section{Overview}
 \label{sec:overview}
 
+We start with an overview of our approach to localizing type errors by
+learning a model of the mistakes programmers actually make.
+%
+We formulate the problem of type error localization as a
+\emph{supervised classification} problem.
+%
+A \emph{classification} problem entails learning a function that maps
+inputs to a discrete set of output \emph{labels}, in contrast to
+\emph{regression} where the output is typically a real number.
+%
+In a \emph{supervised} learning problem one is given a \emph{training}
+set where the inputs and labels are known, and the task is to learn a
+function that accurately maps the inputs to outputs and
+\emph{generalizes} to new, yet-unseen inputs.
+
+The key technical challenges we address are:
+%
+(1) formulating type error localization as a classification problem,
+%
+(2) generating correct labels for supervised learning, and
+%
+(3) presenting the predictions of the classifier in an intuitive manner.
+
+\paragraph{\textbf{Challenge (1):} How to represent programs?}
+
+
+\paragraph{\textbf{Solution:} Use a \textbf{set} of feature vectors}
+
+\paragraph{\textbf{Challenge (2):} What is the ``correct'' fix?}
+
+\paragraph{\textbf{Solution:} Use the students fixes}
+
+\paragraph{\textbf{Challenge (3):} What should be presented to the user?}
+
+\paragraph{\textbf{Solution:} Rank predictions and present most likely}
+
+
+
 
 %%% Local Variables:
 %%% mode: latex
