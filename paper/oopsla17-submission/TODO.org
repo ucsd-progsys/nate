@@ -1,6 +1,44 @@
 20 pages total (weird!!)
 * Intro [2p]
+** Motivation
+   - Type errors are common stumbling block
+   - Errors often *reported* far from *source*
+   - Existing localization techniques based on hand-written heuristics
+     - Occam's Razor
+     - Don't account for errors novices *actually make*
+** Contributions
+   1. *Data-Driven Diagnosis*:
+      Type error localization based on learning a model of novice mistakes
+   2. *Large-Scale Evaluation*:
+      Evaluate competing techniques on >4500 student programs
+      Judge correctness by student's eventual fix
+      Largest evaluation we know of
 * Overview [4p]
+  - *Supervised Classification Problem*:
+    Goal is to predict a *label* ("good" or "bad")
+    Given training set with known-correct labels
+  - *Challenge*:
+    How to represent programs to classifier?
+    Program has rich (variable-size) tree structure, classifier expects
+    (fixed-size) "feature vector"
+    *Solution*:
+    Program ==> *SET* of feature vectors (one per sub-expression)
+    Features ==> Predicates on AST
+    Features provide all contextual information
+    (e.g. "I am a function call and my left child has a function type")
+  - *Challenge*:
+    How to identify "correct" locations?
+    *Solution*:
+    Use student's fixes!
+    Collect time-series of ill-typed programs and subsequent fixes,
+    AST diff to extract changes
+  - *Challenge*:
+    What to present as user feedback?
+    (Probably don't want to show *all* "suspicious" exprs,
+    see fault localization study)
+    *Solution*:
+    Rank predictions by classifier's "confidence",
+    select top-k as final predictions
 * Learning To Blame [4p]
 ** Features
 *** Local syntactic
@@ -15,6 +53,7 @@
 ** Models
 *** Linear
 *** Decision Tree
+*** Random Forest
 *** Multilayer Perceptron
 * Evaluation [7p]
 ** Performance (quantitative)
@@ -24,8 +63,8 @@
 *** Drop samples outside of slice
 **** Too important to leave up to the model
 **** Also drastically reduces search space
-*** Drop contextual typing features (~100 features)
-**** Possible source of overfitting
+*** Drop contextual syntax features (~100 features)
+**** Possible source of overfitting?
 **** Remaining features resemble info available to typechecker (+ size)
 *** Generalize to FA15
 *** Compress perceptron model?
