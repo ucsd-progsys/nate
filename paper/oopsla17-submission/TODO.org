@@ -1,22 +1,45 @@
 20 pages total (weird!!)
+
 * Intro [2p]
+
 ** Motivation
    - Type errors are common stumbling block
    - Errors often *reported* far from *source*
    - Existing localization techniques based on hand-written heuristics
      - Occam's Razor
      - Don't account for errors novices *actually make*
-** Contributions
-   1. *Data-Driven Diagnosis*:
-      Type error localization based on learning a model of novice mistakes
-   2. *Large-Scale Evaluation*:
-      Evaluate competing techniques on >4500 student programs
-      Judge correctness by student's eventual fix
-      Largest evaluation we know of
+
+** Data-Driven Diagnosis
+   - Type error localization based on learning a model of novice mistakes
+   - Train classifier to identify error locations
+
+   1. *Data Set*
+      Gather a giant data set of error-fixes by ...
+
+   2. *Programs To Tree-Node-Vectors*
+      - Model programs and fixes as feature vectors (RJ: CRUCIAL: need cool name for model)
+      - Context captured by widening
+
+   3. *Train Classifiers*
+      - Train a variety of classifiers on tree-node-vectors
+      - When is an AST node likely to be a "FIX"
+
+** Large-Scale Evaluation
+
+   - Evaluate competing techniques on >4500 student programs
+   - Judge correctness by student's eventual fix
+   - Compare Ocaml, SherrLoc, Mycroft to D3
+   - Largest evaluation we know of.
+
 * Overview [4p]
+  - START WITH
+    - 1, 2 examples.
+    - What people "know", take them into what's new
+
   - *Supervised Classification Problem*:
     Goal is to predict a *label* ("good" or "bad")
     Given training set with known-correct labels
+
   - *Challenge*:
     How to represent programs to classifier?
     Program has rich (variable-size) tree structure, classifier expects
@@ -26,12 +49,14 @@
     Features ==> Predicates on AST
     Features provide all contextual information
     (e.g. "I am a function call and my left child has a function type")
+
   - *Challenge*:
     How to identify "correct" locations?
     *Solution*:
     Use student's fixes!
     Collect time-series of ill-typed programs and subsequent fixes,
     AST diff to extract changes
+
   - *Challenge*:
     What to present as user feedback?
     (Probably don't want to show *all* "suspicious" exprs,
@@ -39,6 +64,7 @@
     *Solution*:
     Rank predictions by classifier's "confidence",
     select top-k as final predictions
+
 * Learning To Blame [4p]
 ** Features
 *** Local syntactic
