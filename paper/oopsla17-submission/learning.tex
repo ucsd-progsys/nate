@@ -18,27 +18,27 @@ will evaluate.
 \subsection{Features}
 \label{sec:features}
 
-\begin{figure}[ht]
-\begin{minipage}{0.6\linewidth}
-\begin{code}
-  let rec sumList xs =
-    match xs with
-    | []     -> []
-    | hd::tl -> hd + sumList tl
-\end{code}
-\end{minipage}
-\begin{minipage}{0.3\linewidth}
-\begin{code}[numbers=left]
-[]
-hd + sumList tl
-sumList tl
-tl
-\end{code}
-\end{minipage}
-\caption{An ill-typed program (left) and a selection of its
-  sub-expressions (right).}
-\label{fig:sumList}
-\end{figure}
+% \begin{figure}[ht]
+% \begin{minipage}{0.6\linewidth}
+% \begin{code}
+%   let rec sumList xs =
+%     match xs with
+%     | []     -> []
+%     | hd::tl -> hd + sumList tl
+% \end{code}
+% \end{minipage}
+% \begin{minipage}{0.3\linewidth}
+% \begin{code}[numbers=left]
+% []
+% hd + sumList tl
+% sumList tl
+% tl
+% \end{code}
+% \end{minipage}
+% \caption{An ill-typed program (left) and a selection of its
+%   sub-expressions (right).}
+% \label{fig:sumList}
+% \end{figure}
 \begin{table}[ht]
 \begin{tabular}{lrrrrrr}
 \toprule

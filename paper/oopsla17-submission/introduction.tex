@@ -1,42 +1,184 @@
 \section{Introduction}
 \label{sec:introduction}
 
-\subsection{Contributions}
-\label{sec:contributions}
-Thus, we identify the following novel contributions of our work.
+Type systems are one of the most widely used techniques for program
+verification, a type checker only accepts a program if it can
+\emph{prove} the absence of an entire class of bugs.
 %
-\begin{enumerate}
-\item An large-scale evaluation of state-of-the-art type error
-  localization techniques on over 4,500 student programs.
-  %
-  We collected a time-series of \ocaml programs from our students, and
-  use their subsequent \emph{fixes} to ill-typed programs as
-  \emph{oracles} for the location of the error.
-  %
-  This is the most extensive evaluation of the accuracy of type error
-  localization techniques that we are aware of.
-  % based not on expert \emph{opinion}, but
-  % on the eventual \emph{fix} implemented by a novice user.
-  %
-  % \ES{need to explain \emph{why} this is superior..}
-\item A machine learning approach to \emph{modeling} (novice) type
-  errors that can outperform the state-of-the-art by 15--30\% in
-  localizing errors.
-  %
-  Our classifiers can be trained on a relatively small amount of data --- we
-  used a single class of around 50 students --- and appear to
-  generalize to other instances of the same class.
-  %
-  \ES{and hopefully completely separate classes!}
-  %
-  In contrast to many approaches to \emph{fault localization} from the
-  software engineering community, our model does not use any linguistic
-  modeling techniques, \eg \emph{n-grams} over the token stream; rather,
-  it relies entirely on features of the abstract syntax tree and a
-  partial typing derivation.
-  %
-  \ES{if there's time, investigate adding Wes' n-gram model}
-\end{enumerate}
+Typed functional languages like \ocaml and \haskell are equipped with
+particularly powerful type checkers that can operate without a single
+annotation, alleviating a prime concern with verification techniques.
+%
+Yet this power comes with a cost, type annotations signify the
+programmer's \emph{intent}, without them the type checker must
+make assumptions about what the programmer intended to do.
+%
+This results in the common phenomenon of type errors being reported far
+from their source, an annoyance to veterans of the type system, but a
+major hurdle for novices.
+
+\begin{figure}[ht]
+\begin{minipage}{0.45\linewidth}
+\begin{ecode}
+  let rec sumList xs =
+    match xs with
+    | []   -> __[]__
+    | h::t -> h __+__ ==sumList t==
+\end{ecode}
+\end{minipage}
+\begin{minipage}{0.49\linewidth}
+\begin{verbatim}
+File "sumList.ml", line 4, characters 16-25:
+  This expression has type 'a list
+  but an expression was expected of type int
+\end{verbatim}
+\end{minipage}
+\caption{(left) An ill-typed \ocaml program that should sum the elements of a
+  list. The \underline{underlined} expressions are equally valid
+  locations to blame. The expression blamed by the \ocaml compiler
+  is in \textbf{bold}.
+  (right) The error reported by \ocaml.}
+\label{fig:sumList}
+\end{figure}
+%
+Consider the |sumList| program in \autoref{fig:sumList}, written by a
+student in an undergraduate Programming Languages course.
+%
+The program is meant to sum the integers in a list, but our student has
+accidentally given the empty list as the base case, rather than 0.
+%
+The \ocaml compiler collects typing constraints as it traverses the
+program, and reports an error the moment it finds an inconsistent
+constraint.
+%
+In this case it blames the recursive call to |sumList|, complaining that
+|sumList| returns a |list| where an |int| was expected by the |+|
+operator.
+
+Recent work on type error \emph{localization}
+%
+\citep[\eg][]{Zhang2014-lv,Loncaric2016-uk,Pavlinovic2014-mr}
+%
+frames localization as an optimization problem, seeking a set of
+expressions to blame that minimize some cost function, \eg the number of
+constraints in the blame set, or the ratio of ``good'' paths through the
+constraint graph to ``bad'' paths.
+%
+However, even these techniques fail to distinguish between the two
+underlined expressions in \autoref{fig:sumList}, it would be equally
+valid to blame \emph{either} of them alone.
+%
+The |[]| on line 3 could be changed to |0|, or the |+| on line 4 could
+be changed to either |@| (list append) or |::|, all of which would give
+type-correct programs.
+%
+Thus, these state-of-the-art techniques are forced to either blame
+\emph{both} locations, or choose one \emph{arbitrarily}.
+
+It may appear obvious to the reader that |[]| is the correct expression
+to blame, but how is the type checker to know that?
+%
+Our solution is to \emph{learn} how to localize type errors by observing
+a large set of (novice) errors and their \emph{subsequent fixes}.
+%
+We accomplish this via three concrete contributions.
+
+\paragraph{\textbf{(1) A Dataset of Novice \ocaml Programs}}
+Our first contribution is a large dataset of novice \ocaml programs,
+in particular, but not limited to, \emph{ill-typed} programs.
+%
+We used an instrumented version of the \ocaml compiler to collect
+student interactions over two instances of an undergraduate Programming
+Languages course at
+%
+\begin{anonsuppress}
+UC San Diego (IRB \#140608).
+\end{anonsuppress}
+\begin{noanonsuppress}
+AUTHOR's INSTITUTION.
+\end{noanonsuppress}
+%
+The data forms a time-series of programs submitted to the \ocaml
+compiler, from which we extracted a set of \emph{ill-typed} programs
+and their \emph{subsequent fixes}.
+%
+Our dataset comprises over 4,500 such pairs of programs, and many more
+programs that are either well-typed or lack a corresponding fix.
+%
+The entire dataset (both the raw time-series and our extracted pairs of
+ill-typed programs and fixes) is available at
+%
+\begin{anonsuppress}
+\ES{TODO: finally post the data somehwere..}.
+\end{anonsuppress}
+\begin{noanonsuppress}
+HIDDEN FOR DOUBLE-BLIND REVIEW.
+\end{noanonsuppress}
+%
+
+\paragraph{\textbf{(2) Data-Driven Diagnosis of Type Errors}}
+Our second contribution is a \emph{data-driven} technique for localizing
+type errors (\autoref{sec:learning}).
+%
+We use machine learning techniques to train a set of classifiers that can
+predict, given an ill-typed program, which expressions such be changed
+in order for the program to type check.
+%
+Our classifiers can be trained on a relatively small set of programs
+(\ie a single course's worth) and outperform the state of the art by
+15--30\% in blame accuracy.
+%
+The key technical challenge that we tackle is defining a suitable
+interface between the type checker and the classifier, specifically
+\emph{embedding} programs as feature vectors and presenting the
+classifier's predictions to the user.
+
+\paragraph{\textbf{(3) A Large-Scale Evaluation of Type Error Localization}}
+Our third contribution is an evaluation of our classifiers and the
+state-of-the-art techniques on our suite of over 4,500 student programs
+(\autoref{sec:evaluation}), the largest evaluation of type error
+localization techniques we are aware of.
+%
+We judge the correctness of a localization by comparing it to the
+student's eventual fix and find that our classifiers are 15--30\% more
+accurate.
+%
+We also examine which types of features contribute the most to our
+classifiers' predictions, and endeavor to \emph{explain} specific
+predictions that our classifiers get right (and wrong).
+
+% \begin{enumerate}
+% \item An large-scale evaluation of state-of-the-art type error
+%   localization techniques on over 4,500 student programs.
+%   %
+%   We collected a time-series of \ocaml programs from our students, and
+%   use their subsequent \emph{fixes} to ill-typed programs as
+%   \emph{oracles} for the location of the error.
+%   %
+%   This is the most extensive evaluation of the accuracy of type error
+%   localization techniques that we are aware of.
+%   % based not on expert \emph{opinion}, but
+%   % on the eventual \emph{fix} implemented by a novice user.
+%   %
+%   % \ES{need to explain \emph{why} this is superior..}
+% \item A machine learning approach to \emph{modeling} (novice) type
+%   errors that can outperform the state-of-the-art by 15--30\% in
+%   localizing errors.
+%   %
+%   Our classifiers can be trained on a relatively small amount of data --- we
+%   used a single class of around 50 students --- and appear to
+%   generalize to other instances of the same class.
+%   %
+%   \ES{and hopefully completely separate classes!}
+%   %
+%   In contrast to many approaches to \emph{fault localization} from the
+%   software engineering community, our model does not use any linguistic
+%   modeling techniques, \eg \emph{n-grams} over the token stream; rather,
+%   it relies entirely on features of the abstract syntax tree and a
+%   partial typing derivation.
+%   %
+%   \ES{if there's time, investigate adding Wes' n-gram model}
+% \end{enumerate}
 
 %%% Local Variables:
 %%% mode: latex
