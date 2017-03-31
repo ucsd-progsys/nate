@@ -57,8 +57,9 @@ operator.
 
 Recent work on type error \emph{localization}
 %
-\citep[\eg][]{Zhang2014-lv,Loncaric2016-uk,Pavlinovic2014-mr}
+\citep[\eg][]{Zhang2014-lv,Loncaric2016-uk,Pavlinovic2014-mr},
 %
+determining which expression(s) to blame for the error,
 frames localization as an optimization problem, seeking a set of
 expressions to blame that minimize some cost function, \eg the number of
 constraints in the blame set, or the ratio of ``good'' paths through the
@@ -146,6 +147,14 @@ accurate.
 We also examine which types of features contribute the most to our
 classifiers' predictions, and endeavor to \emph{explain} specific
 predictions that our classifiers get right (and wrong).
+
+Overall, our results show that data-driven diagnosis is a practical
+technique for localizing type errors by learning from past mistakes.
+%
+% We believe, furthermore, that with the right set of features our
+% approach could be applied to other domains where there are multiple,
+% equally valid explanations for an error.
+% \ES{this sounds really dumb... need better phrasing}
 
 % \begin{enumerate}
 % \item An large-scale evaluation of state-of-the-art type error

@@ -24,19 +24,71 @@ The key technical challenges we address are:
 %
 (3) presenting the predictions of the classifier in an intuitive manner.
 
-\paragraph{\textbf{Challenge (1):} How to represent programs?}
+\paragraph{\textbf{Challenge (1): How to represent programs?}}
 
 
-\paragraph{\textbf{Solution:} Use a \textbf{set} of feature vectors}
+\paragraph{\textbf{Solution: Use a set of feature vectors}}
 
-\paragraph{\textbf{Challenge (2):} What is the ``correct'' fix?}
 
-\paragraph{\textbf{Solution:} Use the students fixes}
+\paragraph{\textbf{Challenge (2): What is the ``correct'' expression to blame?}}
+As we saw in \autoref{fig:sumList}, type errors admit many different
+fixes to different expressions, each resulting in a different program.
+%
+How is the type checker to judge which expressions are more likely to be
+incorrect than others?
+%
+Prior work has enlisted expert users to manually judge ill-typed
+programs and determine the ``correct'' fix, but this approach does not
+scale well to a dataset large enough to perform machine learning.
+%
+Furthermore, while the expert user has intimate knowledge of the type
+system, she cannot know what the student \emph{intended} to do.
 
-\paragraph{\textbf{Challenge (3):} What should be presented to the user?}
+\paragraph{\textbf{Solution: Use the students' subsequent fixes}}
+%
+Rather than relying on expert users, we allow our students to do the
+work of assigning blame themselves.
+%
+Software development is an iterative process and our students will
+eventually fix their own programs, perhaps after multiple ill-fated
+attempts.
+%
+For each ill-typed program in our dataset, we find the first
+\emph{subsequent} program that type checks and declare that to be the
+fix.
+%
+From this pair of an ill-typed program and its fix, we can extract a
+\emph{diff} of the abstract syntax trees.
+%
+For example, suppose our student fixed the |sumList| program in
+\autoref{fig:sumList} by replacing |[]| with |0|, the diff would include
+only the |[]| expression.
+%
+Thus we would determine that the |[]| expression (and \emph{not} the
+|+|) is to blame for the error.
 
-\paragraph{\textbf{Solution:} Rank predictions and present most likely}
 
+\paragraph{\textbf{Challenge (3): What should be presented to the user?}}
+We now have the tools to train a classifier to predict, for each
+expression in an ill-typed program, whether it should be changed.
+%
+But this is not yet particularly suitable as \emph{user feedback}.
+%
+A recent survey of developers by \citet{Kochhar2016-oc} found that
+developers are unlikely to examine more than around five potentially
+erroneous locations before falling back to manual debugging.
+%
+Thus, we should limit our predictions to a select few to be presented to
+the user.
+
+\paragraph{\textbf{Solution: Rank expressions by ``confidence''}}
+Luckily, many machine learning classifiers produce not only a predicted
+label, but also a metric that can be interpreted as the classifier's
+\emph{confidence} in its prediction.
+%
+Thus, we \emph{rank} each expression by the classifier's confidence that
+it should be changed, and present only the top-$k$ predictions to the
+user (in practice $k=3$).
 
 
 
