@@ -25,10 +25,68 @@ The key technical challenges we address are:
 (3) presenting the predictions of the classifier in an intuitive manner.
 
 \paragraph{\textbf{Challenge (1): How to represent programs?}}
+The first and prime challenge we address is how to translate programs
+into a format that machine learning techniques can understand.
+%
+Programs can be represented in many ways, from the raw text, to richly
+structured abstract syntax trees and control-flow graphs, but none
+of these representations are immediately amenable to machine learning.
+%
+Machine learning techniques typically take as input \emph{feature
+vectors}, fixed-length vectors of real numbers where each element
+represents some property of the input.
+%
+Thus, in order to apply machine learning to our problem we must
+determine:
+%
+(1) what are interesting features of a program, and
+%
+(2) how can we represent a variable-size program as a fixed-length vector?
 
+\paragraph{\textbf{Solution: Vectorized Abstract Syntax Trees}}
+We start by assuming that we will extract features from the program's
+abstract syntax tree (AST), a natural choice since the type checker
+operates on ASTs.
+%
+An obvious set of interesting features is then the syntactic class of
+each expression, \ie the classifier should be able to distinguish
+between the |[]| and |+| expressions in \autoref{fig:sumList} because
+they are formed by different constructors in the AST.
+%
+A programming language has a fixed set of AST elements, which suggests a
+natural way to obtain fixed-size feature vectors: rather than translating
+a program in a single feature vector, we translate it into a \emph{set} of
+feature vectors, one for each expression in the program.
+%
+Thus, the |[]| and |+| expressions will each be given their own feature
+vector, and we will ask the classifier to predict for each
+\emph{independently} whether it should be blamed.
 
-\paragraph{\textbf{Solution: Use a set of feature vectors}}
-
+Of course, each expression occurs in some \emph{context}, and we would
+like the classifier to be able make decisions based on the context as
+well.
+%
+For example, we might expect that the recursive call |sumList t| is
+unlikely to be at fault because |sumList| has a function type --- the
+user may have called the wrong function or supplied the wrong argument,
+but the application itself is probably correct.
+%
+Conversely, if the student wrote |h sumList t| (\ie forgot the |+|), we
+might wish to blame the application rather than |h| because |h|
+\emph{does not} have a function type.
+%
+Thus we \emph{extend} each expression's feature vector with
+\emph{contextual features} of its parent and children.
+%
+These contextual features include the syntactic class of the neighboring
+expressions, their inferred types, and, crucially, whether the
+expression occurs in a minimal type error \emph{slice}.
+%
+A minimal type error slice of a program includes all expressions that
+are necessary for the error to manifest and no more, this allows us to
+tell the classifier which expressions could potentially be blamed ---
+a change to an expression outside of the minimal slice cannot possibly
+fix the type error.
 
 \paragraph{\textbf{Challenge (2): What is the ``correct'' expression to blame?}}
 As we saw in \autoref{fig:sumList}, type errors admit many different
