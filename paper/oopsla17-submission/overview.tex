@@ -5,11 +5,13 @@ We start with an overview of our approach to localizing type errors by
 learning a model of the mistakes programmers actually make.
 %
 We formulate the problem of type error localization as a
-\emph{supervised classification} problem.
+\emph{supervised classification} problem~\cite{FIXME}. 
+% Give a generic citation for supervised classification, such as an ML
+% textbook or seminal ML paper or survey, above.
 %
 A \emph{classification} problem entails learning a function that maps
 inputs to a discrete set of output \emph{labels}, in contrast to
-\emph{regression} where the output is typically a real number.
+\emph{regression}, where the output is typically a real number.
 %
 In a \emph{supervised} learning problem one is given a \emph{training}
 set where the inputs and labels are known, and the task is to learn a
@@ -18,49 +20,48 @@ function that accurately maps the inputs to outputs and
 
 The key technical challenges we address are:
 %
-(1) formulating type error localization as a classification problem,
+(1) formulating type error localization as a classification problem;
 %
-(2) generating correct labels for supervised learning, and
+(2) generating correct labels for supervised learning; and
 %
 (3) presenting the predictions of the classifier in an intuitive manner.
 
 \paragraph{\textbf{Challenge (1): How to represent programs?}}
 The first and prime challenge we address is how to translate programs
-into a format that machine learning techniques can understand.
+into a format favorable to machine learning. 
 %
-Programs can be represented in many ways, from the raw text, to richly
-structured abstract syntax trees and control-flow graphs, but none
-of these representations are immediately amenable to machine learning.
+Programs can be represented in many ways, from the raw text to 
+richly-structured abstract syntax trees and control-flow graphs, but 
+representations are not directly amenable to machine learning.
 %
 Machine learning techniques typically take as input \emph{feature
 vectors}, fixed-length vectors of real numbers where each element
 represents some property of the input.
 %
-Thus, in order to apply machine learning to our problem we must
+Thus, to apply machine learning to our problem we must
 determine:
 %
-(1) what are interesting features of a program, and
+(1) what are interesting features of a program; and
 %
 (2) how can we represent a variable-size program as a fixed-length vector?
 
 \paragraph{\textbf{Solution: Vectorized Abstract Syntax Trees}}
 \ES{name up for grabs...}
-We start by assuming that we will extract features from the program's
+We propose to extract features from the program's
 abstract syntax tree (AST), a natural choice since the type checker
 operates on ASTs.
 %
-Features would then be \emph{queries} over the AST, an obvious set of
-interesting features to start with is the syntactic class of each
-expression.
+Our features are \emph{queries} over the AST. Our initial set of
+interesting features includes the syntactic class of each expression.
 %
 That is, the classifier should be able to distinguish between the |[]|
 and |+| expressions in \autoref{fig:sumList} because they represent
-different types of expressions.
+different syntactic expression forms.
 %
-A programming language has a fixed set of AST elements\footnote{We will
+A programming language has a fixed set of AST elements,\footnote{We will
   discuss handling arbitrary, user-defined types in
-  \autoref{sec:discussion}.}, which suggests a natural way to obtain
-fixed-size feature vectors: rather than translating a program in a
+  \autoref{sec:discussion}.} which suggests a natural way to obtain
+fixed-size feature vectors. Rather than translating a program into a
 single feature vector, we translate it into a \emph{set} of feature
 vectors, one for each expression in the program.
 %
@@ -81,18 +82,20 @@ Conversely, if the student wrote |h sumList t| (\ie forgot the |+|), we
 might wish to blame the application rather than |h| because |h|
 \emph{does not} have a function type.
 %
-Thus we \emph{extend} each expression's feature vector with
+Thus we extend each expression's feature vector with
 \emph{contextual features} of its parent and children.
 %
 These contextual features include the syntactic class of the neighboring
-expressions, their inferred types, and, crucially, whether the
-expression occurs in a minimal type error \emph{slice}.
+expressions, their inferred types (when available), and, crucially, whether
+the expression occurs in a minimal type error \emph{slice}.
 %
 A minimal type error slice of a program includes all expressions that
-are necessary for the error to manifest and no more, this allows us to
-tell the classifier which expressions could potentially be blamed ---
-a change to an expression outside of the minimal slice cannot possibly
-fix the type error.
+are necessary for the error to manifest and no more. We propose to
+use type error slices to communicate to the classifier which expressions
+could potentially be blamed --- a change to an expression outside of the
+minimal slice cannot possibly fix the type error. This is conceptually
+related to the use of fault localization in other program analysis
+and transformation techniques (see Section~\ref{sec:related-work}).
 
 \paragraph{\textbf{Challenge (2): What is the ``correct'' expression to blame?}}
 As we saw in \autoref{fig:sumList}, type errors admit many different
@@ -102,18 +105,19 @@ How is the type checker to judge which expressions are more likely to be
 incorrect than others?
 %
 Prior work has often enlisted expert users to manually judge ill-typed
-programs and determine the ``correct'' fix, but this approach does not
-scale well to a dataset large enough to perform machine learning.
+programs and determine the ``correct'' fix (e.g.,~\cite{FIXME,FIXME}), but
+this approach does not scale well to a dataset large enough to support
+machine learning.
 %
-Furthermore, while the expert user has intimate knowledge of the type
-system, she cannot in general know what the student \emph{intended} to do.
+Furthermore, while expert users have intimate knowledge of the type system,
+they cannot know in general what novice users \emph{intended} to do.
 
 \paragraph{\textbf{Solution: Use the students' subsequent fixes}}
 %
 Rather than relying on expert users, we allow our students to do the
 work of assigning blame themselves.
 %
-Software development is an iterative process and our students will
+Software development is an iterative process and our students 
 eventually fix their own programs, perhaps after multiple ill-fated
 attempts.
 %
@@ -153,7 +157,11 @@ label, but also a metric that can be interpreted as the classifier's
 %
 Thus, we \emph{rank} each expression by the classifier's confidence that
 it should be blamed, and present only the top-$k$ predictions to the
-user (in practice $k=3$).
+user (in practice $k=3$). This use of ranking to report
+the results of a program analysis is popular in other problem domains
+(e.g., via statistics FIXME: cite Engler's z-ranking paper, etc.); we focus
+explicitly on the use of data-driven machine learning confidence as a
+ranking source.
 
 
 
