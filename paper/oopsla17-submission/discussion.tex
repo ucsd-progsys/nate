@@ -13,13 +13,13 @@ potential avenues for future work.
 
 \paragraph{User-Defined Types}
 Probably the single biggest limitation of our technique is that we have
-features for specific data and type constructors.
+(a finite set of) features for specific data and type constructors.
 %
 Anything our models learn about errors made with the |::| constructor or
 the |list| type cannot easily be translated to new, user-defined
 datatypes the model has never encountered.
 %
-We can attempt to mitigate this to some extent by adding generic
+We can mitigate this, to some extent, by adding generic
 syntactic features for data constructors and match expressions, but it
 remains to be seen how much these help \ES{TODO: UW data!}.
 %
@@ -71,8 +71,8 @@ they only know that they are occurring in the context of an application
 and the type of the application itself.
 %
 Finally, \emph{n-grams} on the token stream have proven effective for
-probabilistic modeling of programming languages, we may find that they
-aid in our task as well.
+probabilistic modeling of programming languages~\cite{FIXME,FIXME}, we may
+find that they aid in our task as well.
 %
 For example, if the observed tokens in an expression diverge from the
 n-gram model's predictions, that indicates that there is something
