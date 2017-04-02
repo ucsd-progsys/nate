@@ -1,6 +1,7 @@
 \section{Learning to Blame}
 \label{sec:learning}
-Next, we describe our approach to localizing type errors, in the context
+In this section, we describe our approach to localizing type errors, in the
+context
 of \lang (\autoref{fig:syntax}), a simple lambda calculus with integers,
 booleans, pairs, and lists.
 %
@@ -108,13 +109,13 @@ patterns must match on the same type.
 Ill-formed match expressions would lead to a type error; however, they
 are already effectively localized to the match expression itself.
 %
-This is not a \emph{fundamental} limitation though, one could easily add
-features that specify whether a match \emph{contains} a particular
-pattern, and thus have a match expression that enables multiple
+We note that this is not a \emph{fundamental} limitation, and one could
+easily add features that specify whether a match \emph{contains} a
+particular pattern, and thus have a match expression that enables multiple
 features.
 
 \subsubsection{Contextual syntactic features}
-These are like local syntactic features, but lifted to describe the
+These are similar to local syntactic features, but lifted to describe the
 parent and children of the current expression.
 %
 For example, the \IsCaseListP feature in \autoref{tab:sumList} describes
@@ -125,8 +126,10 @@ parent (\ie the root expression), we leave the corresponding features
 disabled.
 %
 This gives us a notion of the \emph{context} in which an expression
-occurs, similar to the \emph{n-grams} commonly found in linguistic
-models.
+occurs, similar to the \emph{n-grams} commonly used in linguistic
+models~\cite{FIXME,FIXME}.
+% FIXME: cite "on the naturalness of software" and "on the uniqueness of
+% software" at the very least for the above
 
 % Instead of just describing the immediate context, we could describe
 % whether a particular syntax element occurs in the neighboring
@@ -145,11 +148,11 @@ models.
 % in \autoref{sec:evaluation}.
 
 \subsubsection{Expression size}
-We also add a feature representing the \emph{size} of each expression,
+We also propose a feature representing the \emph{size} of each expression,
 \ie how many sub-expressions does it contain?
 %
-For example, the \ExprSize feature in \autoref{tab:sumList} is set to 3
-for the expression |sumList tl| as it contains 3 expressions:
+For example, the \ExprSize feature in \autoref{tab:sumList} is set to three
+for the expression |sumList tl| as it contains three expressions:
 the two variables and the application itself.
 %
 This allows the model to learn that, \eg, expressions closer to the
@@ -186,36 +189,37 @@ in \autoref{tab:sumList} both enable the feature \HasTypeList, as they
 are both inferred to have a type that mentions the $\tlist{\cdot}$
 constructor.
 
-Note that our use of typing features in an \emph{ill-typed} program
-subjects us to the infamous traversal
-bias~\cite{McAdam1998-ub,Yang2000-yr} --- in particular with the
-|sumList tl| expression, which might alternatively be assigned
+Note that our use of typing features in an ill-typed program
+subjects us to \emph{traversal
+bias}~\cite{McAdam1998-ub,Yang2000-yr}. For example, the 
+|sumList tl| expression might alternatively be assigned
 the type $\tint$.
 %
-We rely on the model to counteract this bias.
+We rely on the model to counteract this bias (see FIXME reference to later
+in the paper). 
 
 \subsubsection{Type error slice}
-Finally, we would like the model to be able to distinguish between
+Finally, we desire a model that distinguishes between
 changes that could fix the error, and changes that
 \emph{cannot possibly} fix the error.
 %
 Thus, we compute a minimal type error \emph{slice} for the program
 (\ie the set of expressions that contribute to the error), and add a
-feature that is enabled \emph{iff} an expression is part of the slice.
+feature that is enabled for expressions that are part of the slice.
 %
 The \InSlice feature in \autoref{tab:sumList} indicates whether an
 expression is part of such a minimal slice, and is enabled for all of
 the sampled expressions except for |tl|, which does not affect
 the type error.
 %
-If the program contains multiple type errors, we will compute
+If the program contains multiple type errors, we compute
 a minimal slice for each error.
 
 \subsection{Labels}
 \label{sec:labels}
 We define the outputs of the model to be a simple ``good'' or ``bad''
 label, where ``good'' means the expression \emph{should not} change and
-``bad'' means the expression \emph{should} change.
+``bad'' means the expression \emph{should} change. 
 %
 This allows us to predict whether any individual expression should
 change, but we would actually like to predict the \emph{most likely}
@@ -232,7 +236,7 @@ $k$ (in practice $k=3$) to present to the user.
 \label{sec:models}
 \ES{TODO: mention that this is a SUPERVISED, CLASSIFICATION problem}
 %
-There are a large number of learning algorithms to choose from, existing
+There are many learning algorithms to choose from, existing
 on a spectrum that balances expressiveness with ease of training (and of
 interpreting the learned model).
 %
@@ -256,7 +260,8 @@ effectively maps feature vectors $x$ to labels $y$.
 
 \ES{TODO: talk about logistic regression and the loss function?}
 
-Linear models like logistic regression are popular for their ease of
+Linear models, like logistic regression, are popular for their ease of
+% FIXME: Are you sure you want to call LOGISTIC regression a LINEAR model? 
 training and of interpreting the resulting model; however, they can be
 limited in their applicability.
 %
