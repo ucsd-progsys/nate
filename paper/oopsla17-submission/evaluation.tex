@@ -127,6 +127,39 @@ top one, top two, or top three predictions.
 \input{evaluation-accuracy}
 \input{evaluation-utility}
 
+\subsubsection{Threats to Validity} 
+
+Although our experiments demonstrate that our technique can pinpoint type
+errors more accurately than the state of the art and that our features are
+relevant to blame assignment, our results may not generalize. 
+
+One threat to validity associated with supervised machine learning is
+overfitting (\ie learning a model that is too complex with respect to the
+data). We mitigate this threat by having separate training and testing
+datasets (section FIXME) and via cross-validation (section
+FIXME)~\cite{FIXME}. 
+
+FIXME threat associated with benchmarks that are not indicative. We
+mitigate this threat by including the largest empirical evaluation we are
+aware of (re-quote number of program pairs) from two different semesters of
+students (re-quote number of students). FIXME note that we ack that
+students are not indicative of industrial programmers, but the goal of this
+paper is to help novices, since they find type inference errors to be the
+most cryptic~\cite{FIXME}. 
+
+FIXME threat associated with removing from the dataset program pairs
+that change everything or where our parser cannot find nodes corresponding
+to the other tools or whatever. FIXME Note that the former is
+standard or otherwise similar to previous work~\cite{FIXME}. FIXME note tha
+the latter actually helps the state of the art, and anyway our victory
+margins are so large that even if assumed they were perfect on all of those
+and we were not, we'd still win (double check that math). 
+
+FIXME threat associated with using just OCaml instead of Haskell, Reason,
+whatever. FIXME admits comparison with previous work, FIXME our functional
+subset of ocaml is basically haskell anyway, FIXME Algorithm W is the same
+for all of them.
+
 \input{gallery}
 
 %%% Local Variables:

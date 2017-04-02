@@ -4,7 +4,7 @@ We have shown that we can train a classifier to effectively localize
 type errors, but which of the 276 features that we use are contributing
 the most?
 %
-In order to answer this question we investigate the performance of
+To answer this question we investigate the performance of
 classifiers trained on various subsets of the features.
 
 \subsubsection{Type Error Slice}
@@ -36,6 +36,10 @@ prediction made by the classifier can fix the type error.
 We expect that (2) will perform better than (1) as it contains more
 information, and that (3) will perform better than (2) as the classifier
 does not have to learn the importance of \InSlice.
+
+% FIXME: Wes feels that there should be a sentence in the next paragraph
+% explaining to the reader why we didn't just use an ANOVA or the ReliefF
+% method or whatever to figure out feature importance. Feature overlap?
 
 We tested our hypothesis with the \linear and
 %
@@ -88,7 +92,7 @@ feature sets easier to interpret since $\mathsf{oracle}$ never changes.
 
 \autoref{tab:type-error-slice} shows the results of our experiment.
 %
-As expected the baseline performs the worst, with a mere 23.6\% \linear
+As expected, the baseline performs the worst, with a mere 23.6\% \linear
 Top-1 accuracy.
 %
 Adding \InSlice improves the results substantially with a 46.4\% \linear Top-1
@@ -113,18 +117,18 @@ we choose to filter all programs by \InSlice.
 \subsubsection{Contextual Features}
 \label{sec:contextual-features}
 
-Continuing on, we will investigate the relative impact of the other
+We investigate the relative impact of the other
 three classes of features discussed in \autoref{sec:features}, assuming
 we have discarded expressions not in the type error slice.
 %
 For this experiment we consider again a baseline of only local syntactic
 features, extended by each combination of
 %
-(1) expression size,
-(2) contextual syntactic features, and
+(1) expression size;
+(2) contextual syntactic features; and
 (3) typing features.
 %
-As before we perform a 10-fold cross-validation with $\alpha = 0.001$,
+As before, we perform a 10-fold cross-validation with $\alpha = 0.001$,
 $\lambda = 0.001$, and a mini-batch size of 200, but we
 train for a full 20 epochs to make the differences more apparent.
 %
@@ -177,13 +181,13 @@ train for a full 20 epochs to make the differences more apparent.
 \end{table}
 %
 \paragraph{Results}
-\autoref{tab:contextual-features} summarizes the results of our experiment.
+\autoref{tab:contextual-features} summarizes the results of this experiment.
 %
-As we can see, the \linear classifier and the \hiddenFH start off
+The \linear classifier and the \hiddenFH start off
 competitive when given only local syntactic features, but the \hiddenFH
-quickly begins to outperform as more features are added.
+quickly outperforms as more features are added.
 
-\ExprSize appears to be the weakest feature, improving \linear Top-1
+\ExprSize is the weakest feature, improving \linear Top-1
 accuracy by only 1\% and \hiddenFH by only 4\%.
 %
 In contrast, the contextual syntactic features improve \linear Top-1
@@ -193,13 +197,15 @@ Top-1 accuracy by 7\% (\resp 17\%).
 Furthermore, while \ExprSize does provide some benefit when it is the
 only additional feature, it does not appear to provide any real increase
 in accuracy when added alongside the contextual or typing features.
+FIXME: Indicate that this is expected because of feature overlap: the
+contextual ``child'' features partially encode subtree size.
 
 As one might expect, the typing features are more beneficial than the
 contextual syntactic features.
 %
 They improve Top-1 accuracy by an additional 2\%, and are much more
-compact --- we only have 55 typing features compared to 176 contextual
-syntactic features.
+compact --- requiring only have 55 typing features compared to 176
+contextual syntactic features.
 %
 This aligns with our intuition that types should be a good summary of
 the context of an expression.

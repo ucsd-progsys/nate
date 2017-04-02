@@ -19,9 +19,9 @@ For each example, we provide
 (4) an \emph{explanation} of why our classifier made its prediction.
 %
 We choose the Decision Tree classifier for this section as its model
-is more easily interpreted than the MLP, we will attempt to explain
-its predictions by analyzing the paths induced in the tree by the
-programs.
+is more easily interpreted than the MLP. We explain its predictions by
+analyzing the paths induced in the decision tree by the features of the
+input programs.
 %
 % We will also attempt, for each program, to explain \emph{why} the
 % Decision Tree made its prediction, by analyzing the paths induced
@@ -96,7 +96,7 @@ the |@| operator in the |else| branch.
 %
 \sherrloc and \ocaml correctly determine that she cannot cons the
 |int list| returned by |clone| onto |l2|, which is another |int list|,
-but they decide to \emph{blame} the call to |clone|, while our Decision
+but they decide to blame the call to |clone|, while our Decision
 Tree correctly blames the |::| operator.
 %
 \ES{TODO: WHY? (might be too similar to previous?)}
@@ -119,7 +119,7 @@ Tree correctly blames the |::| operator.
 Finally, our students must write a |fixpoint| function that computes the
 fixed point of a given function |f|, starting from an initial value |b|.
 %
-As a hint we first have them write a |wwhile| function that performs the
+As a hint, we first have them write a |wwhile| function that performs the
 functional equivalent of a \texttt{while}-loop, repeatedly passing a function's
 output back in until it receives a (boolean) signal to stop.
 %
@@ -156,8 +156,8 @@ error.
 
 \subsubsection{Failed Predictions}
 \label{sec:failed-predictions}
-Of course, our classifiers are sometimes wrong, we focus next on programs
-where our classifier makes an incorrect prediction.
+We also describe indicative programs where our classifier makes an
+incorrect prediction.
 
 \paragraph{Constructing a List of Duplicates}
 % data/sp14/0148.ml
