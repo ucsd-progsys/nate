@@ -211,19 +211,19 @@
   programmer intended to do.
   %
   We present a data-driven approach to type error localization that uses
-  machine learning techniques to assign blame based on previously
-  observed ill-typed programs and their fixes.
+  machine learning to assign blame based on previous
+  ill-typed programs and their fixes.
   %
   First, we gather a large set of over 4,500 ill-typed student programs
   and their subsequent fixes.
   %
   Second, we frame type error localization as a supervised learning
-  problem, where the task is to predict for each expression in the
+  problem: to predict, for each expression in the
   program, whether it should be blamed.
   %
   We represent each expression by its syntactic class and type and those
-  of its parent and children, and assign blame to those expressions that
-  were changed in the fixed program.
+  of its parent and children, associating blame with expressions that
+  were changed in the human-fixed program.
   %
   Finally, we train and evaluate a series of off-the-shelf classifiers
   on our suite of programs, and find that they are 15--30\% more

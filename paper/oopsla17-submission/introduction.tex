@@ -1,21 +1,21 @@
 \section{Introduction}
 \label{sec:introduction}
 
-Type systems are one of the most widely used techniques for program
-verification, a type checker only accepts a program if it can
+Type systems are one of the most widely-used techniques for program
+verification. A type checker only accepts a program if it can
 \emph{prove} the absence of an entire class of bugs.
 %
 Typed functional languages like \ocaml and \haskell are equipped with
 particularly powerful type checkers that can operate without a single
 annotation, alleviating a prime concern with verification techniques.
 %
-Yet this power comes with a cost, type annotations signify the
-programmer's \emph{intent}, without them the type checker must
+Yet this power comes with a cost: since type annotations signify the
+programmer's \emph{intent}, without them the checker must
 make assumptions about what the programmer intended to do.
 %
 This results in the common phenomenon of type errors being reported far
 from their source, an annoyance to veterans of the type system, but a
-major hurdle for novices.
+major hurdle for novices~\cite{FIXME,FIXME}.
 
 \begin{figure}[ht]
 \begin{minipage}{0.45\linewidth}
@@ -37,6 +37,11 @@ File "sumList.ml", line 4, characters 16-25:
   list. The \underline{underlined} expressions are equally valid
   locations to blame. The expression blamed by the \ocaml compiler
   is in \textbf{bold}.
+
+  FIXME: This bolding is ambiguous, because ``let rec'', ``match'' and
+  ``with'' are also bolded (by \\ecode)! You need to find another way to
+  highlight what ocaml is yelling about.
+
   (right) The error reported by \ocaml.}
 \label{fig:sumList}
 \end{figure}
@@ -44,7 +49,7 @@ File "sumList.ml", line 4, characters 16-25:
 Consider the |sumList| program in \autoref{fig:sumList}, written by a
 student in an undergraduate Programming Languages course.
 %
-The program is meant to sum the integers in a list, but our student has
+The program is meant to sum the integers in a list, but the student has
 accidentally given the empty list as the base case, rather than 0.
 %
 The \ocaml compiler collects typing constraints as it traverses the
@@ -53,7 +58,8 @@ constraint.
 %
 In this case it blames the recursive call to |sumList|, complaining that
 |sumList| returns a |list| where an |int| was expected by the |+|
-operator.
+operator. Note that this blame is inconsistent with the programmer's
+intention and thus may not be helpful debugging information to a novice.
 
 Recent work on type error \emph{localization}
 %
@@ -61,9 +67,9 @@ Recent work on type error \emph{localization}
 %
 determining which expression(s) to blame for the error,
 frames localization as an optimization problem, seeking a set of
-expressions to blame that minimize some cost function, \eg the number of
+expressions to blame that minimize some cost function (\eg the number of
 constraints in the blame set, or the ratio of ``good'' paths through the
-constraint graph to ``bad'' paths.
+constraint graph to ``bad'' paths).
 %
 However, even these techniques fail to distinguish between the two
 underlined expressions in \autoref{fig:sumList}, it would be equally
@@ -86,7 +92,7 @@ We accomplish this via three concrete contributions.
 
 \paragraph{\textbf{(1) A Dataset of Novice \ocaml Programs}}
 Our first contribution is a large dataset of novice \ocaml programs,
-in particular, but not limited to, \emph{ill-typed} programs.
+including, but not limited to, \emph{ill-typed} programs.
 %
 We used an instrumented version of the \ocaml compiler to collect
 student interactions over two instances of an undergraduate Programming
@@ -96,7 +102,7 @@ Languages course at
 UC San Diego (IRB \#140608).
 \end{anonsuppress}
 \begin{noanonsuppress}
-AUTHOR's INSTITUTION.
+AUTHOR's INSTITUTION (IRB HIDDEN).
 \end{noanonsuppress}
 %
 The data forms a time-series of programs submitted to the \ocaml
@@ -123,11 +129,16 @@ type errors (\autoref{sec:learning}).
 %
 We use machine learning techniques to train a set of classifiers that can
 predict, given an ill-typed program, which expressions should be changed
-in order for the program to type check.
+for the program to type check.
 %
 Our classifiers can be trained on a relatively small set of programs
-(\ie a single course's worth) and outperform the state of the art by
-15--30\% in blame accuracy.
+(\ie a single course's worth). 
+% WRW notes that we say this below in contribution (3), which is only three
+% sentences away, so to a first-time reader it sounds like we are
+% double-counting:
+%
+% and outperform the state of the art by
+% 15--30\% in blame accuracy.
 %
 The key technical challenge that we tackle is defining a suitable
 interface between the type checker and the classifier, specifically
@@ -142,9 +153,9 @@ localization techniques we are aware of.
 %
 We judge the correctness of a localization by comparing it to the
 student's eventual fix and find that our classifiers are 15--30\% more
-accurate.
+accurate than the state of the art.
 %
-We also examine which types of features contribute the most to our
+We also examine which features contribute the most to our
 classifiers' predictions, and endeavor to \emph{explain} specific
 predictions that our classifiers get right (and wrong).
 
