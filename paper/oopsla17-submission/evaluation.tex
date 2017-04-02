@@ -15,12 +15,12 @@ We seek to answer three questions in our evaluation:
   % of the error?
 \item[2. Feature Utility (\autoref{sec:feature-utility})]
   %
-  Which feature sets are most important \emph{in general}?
+  Which feature sets are \emph{most important} in general?
   % How much do the features described in \autoref{sec:features}
   % contribute to our predictions?
 \item[3. Explaining Predictions (\autoref{sec:qualitative})]
   %
-  Can we explain \emph{individual} predictions (correct or not)?
+  Can we \emph{explain} individual predictions (correct or not)?
 \end{description}
 \ES{may want to swap (1) and (2)..}
 
@@ -37,16 +37,21 @@ AUTHOR's INSTITUTION.
 \end{noanonsuppress}
 %
 We recorded each interaction with the \ocaml top-level system over the
-course of the first three assignments, which allowed us to capture
+course of the first three assignments, capturing
 ill-typed programs and, crucially, their subsequent fixes.
 %
 The first dataset comes from the Spring 2014 class (\SPRING), from which
 we extracted 2,333 pairs of programs, and the second comes from the Fall
-2015 class (\FALL), from which we extracted 2,273 pairs of programs.
+2015 class (\FALL), from which we extracted 2,273 pairs of programs. In
+total, programs from FIXME distinct student authors appear in the 
+dataset.
 %
 The extracted programs are relatively small, but they demonstrate a
 range of functional programming idioms, \eg higher-order functions and
 (polymorphic) algebraic data types.
+% FIXME: This is a journal article. Why not just exhaustively list the
+% functional programming idioms? (cf. the course syllabus and the
+% assignment descriptions) 
 
 \subsubsection{Feature Selection}
 We extract a set of 277 features from each sub-expression in a student
@@ -57,21 +62,21 @@ program, including:
   we support the full range of arithmetic operators (integer and
   floating point), equality and comparison operators, character and
   string literals, and a user-defined |expr| type of simple arithmetic
-  expressions. We will discuss the challenge of supporting other
+  expressions. We discuss the challenge of supporting other
   user-defined types in \autoref{sec:discussion}.
 \item 176 contextual syntactic features. For each sub-expression we
   additionally extract the local syntactic features of its parent and
   first, second, and third (left-to-right) children. If an expression
   does not have a parent or children, these features will simply be
   disabled. If an expression has more than three children, the
-  classifiers will be unable to learn anything about the additional
+  classifiers will receive no information about the additional
   children.
 \item 55 typing features. In addition to the types of \lang, we support
   |int|s, |float|s, |char|s, |string|s, and the user-defined |expr|
   mentioned above. These features are extracted for each sub-expression
   and for the contextual sub-expressions.
-\item 1 feature denoting the size of each sub-expression.
-\item 1 feature denoting whether each sub-expression is part of the
+\item one feature denoting the size of each sub-expression.
+\item one feature denoting whether each sub-expression is part of the
   minimal type error slice.
 \end{enumerate}
 
@@ -98,12 +103,14 @@ of the sub-expressions have changed.
 %
 We picked 40\% as an estimate of the inflection point where we could
 still retain the large majority of program pairs.
+% FIXME: Can you say that this dataset curation is similar to any other
+% datasets (e.g., the washington one)? Anything you could cite and discuss
+% here would take some of the pressure off. 
 
 
 \subsubsection{Accuracy Metric}
-All of the tools we compare (with the exception of \ocaml) can produce a
-list of potential error locations, which might in the limit include the
-entire type error slice.
+All of the tools we compare (with the exception of the standard \ocaml
+compiler) can produce a list of potential error locations. 
 %
 However, in a study of fault localization techniques,
 \citet{Kochhar2016-oc} show that most developers will not consider more
@@ -115,7 +122,7 @@ localization, thus we limit our evaluation to the top three predictions
 of each tool.
 %
 We evaluate each tool on whether a changed expression occurred in its
-top 1, top 2, or top 3 predictions.
+top one, top two, or top three predictions.
 
 \input{evaluation-accuracy}
 \input{evaluation-utility}

@@ -6,8 +6,7 @@ state of the art in type error localization.
 
 \paragraph{Baseline}
 We provide two baselines for the comparison: a random choice of location
-from a minimized type error slice, and the \ocaml compiler that
-programmers typically interact with.
+from a minimized type error slice, and the standard \ocaml compiler. 
 
 \paragraph{State of the Art}
 \mycroft~\citep{Loncaric2016-uk} localizes type errors by searching for
@@ -28,14 +27,16 @@ likelihood.
 Comparing source locations from multiple tools with their own parsers is
 not trivial.
 %
-In order to ensure a fair comparison when evaluating \mycroft and
-\sherrloc, we ignored program where they predicted locations that our
-oracle could not match with a program expression --- 6--8\% of programs
-for \mycroft and 3--4\% for \sherrloc.
+To ensure a fair comparison when evaluating \mycroft and
+\sherrloc, we removed from the dataset programs where they predicted
+locations that our oracle could not match with a program expression ---
+6--8\% of programs for \mycroft and 3--4\% for \sherrloc.
 %
-We also ignored programs where \mycroft or \sherrloc timed out (after
-one minute) or where they encountered an unsupported language feature ---
-another 5\% for \mycroft and 12--13\% for \sherrloc.
+We also do not consider programs where \mycroft or \sherrloc timed out
+(after one minute) or where they encountered an unsupported language
+feature --- another 5\% for \mycroft and 12--13\% for \sherrloc. This
+experimental design gives the state of the art tools the ``benefit of the
+doubt''.
 
 
 \paragraph{Our Classifiers}
@@ -45,10 +46,10 @@ We evaluate five classifiers, each trained on the full set of features.
 % %
 % \ES{should explain the make-up of these groups}
 %
-We preemptively discard expressions that are not part of the minimal
-type error slice --- we will explain the rationale for this in
-\autoref{sec:feature-utility} --- and thus the final feature count is
-276.
+% We preemptively discard expressions that are not part of the minimal
+% type error slice --- we will explain the rationale for this in
+% \autoref{sec:feature-utility} --- and thus the final feature count is
+% 276.
 %
 Our classifiers are:
 %
@@ -58,11 +59,11 @@ Our classifiers are:
   mini-batch size of 200.
 \item A decision tree trained with the \ES{HUMA?} algorithm and \ES{HUMA: hyperparams?}.
 \item A random forest trained with the \ES{HUMA?} algorithm and 30 estimators \ES{HUMA: hyperparams?}.
-\item Two multi-layer perceptrons, both trained with $\alpha = 0.001$,
+\item Two multi-layer perceptron neural networks, both trained with $\alpha = 0.001$,
   $\lambda = 0.001$, and a mini-batch size of 200. The first MLP
   contains a single hidden layer of 10 neurons, and the second contains
   a hidden layer of 500 neurons. This allows us to investigate how well
-  the MLP can \emph{compress} its model.
+  the MLP can \emph{compress} its model (cf.~\cite{FIXME}).
 \end{enumerate}
 %
 All classifiers were trained for 20 epochs on one dataset
@@ -74,10 +75,10 @@ before being evaluated on the other.
 \paragraph{Results}
 \autoref{fig:accuracy-results} shows the results of our experiment.
 %
-Localizing the type errors in our benchmarks amounted on average to
+Localizing the type errors in our benchmarks amounted, on average, to
 selecting one of 2--3 correct locations out of a slice of 10--11.
 %
-Our baseline of selecting at random is able to achieve 30\% Top-1
+Our baseline of selecting at random achieves 30\% Top-1
 accuracy (58\% Top-3), while \ocaml achieves a Top-1 accuracy of 45\%.
 %
 Interestingly, one only needs two \emph{random} guesses to outperform
@@ -91,11 +92,11 @@ Finally, we find that \emph{all} of our classifiers outperform \sherrloc,
 ranging from 60--62\% Top-1 accuracy (85--88\% Top-3) for the \linear
 classifier to 71--73\% Top-1 accuracy (91\% Top-3) for the \hiddenFH.
 
-Surprisingly, there is little variation in accuracy between classifiers
-with the exception of the \linear model, they all achieve around 70\%
+Surprisingly, there is little variation in accuracy between classifiers.
+With the exception of the \linear model, they all achieve around 70\%
 Top-1 accuracy and around 90\% Top-3 accuracy.
 %
-This would appear to suggest that the model they learn is relatively
+This suggests that the model they learn is relatively
 simple.
 %
 In particular, notice that although the \hiddenT has $50\times$ \emph{fewer}
@@ -105,4 +106,6 @@ hidden neurons than the \hiddenFH, it only loses around 2\% accuracy.
 %
 We also note that our classifiers consistently perform better when
 trained on the \FALL programs and tested on the \SPRING programs than
-vice versa, they appear to generalize better from the \FALL data.
+vice versa, they appear to generalize better from the \FALL data. 
+FIXME: Why? What is your explanation for this? Is it just sizes of those 
+datasets or something qualitative about the program pairs in them?
