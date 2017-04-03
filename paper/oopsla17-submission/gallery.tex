@@ -28,7 +28,7 @@ input programs.
 % by the programs.
 
 \paragraph{Extracting the Digits of an Integer}
-% data/sp14/1655.ml
+% data/sp14/2176.ml
 Our first program is a simple recursive function |digitsOfInt| that
 extracts the digits of an |int|.
 %
@@ -59,7 +59,7 @@ error disappears.
 \ES{TODO: WHY?}
 
 \paragraph{Padding a list}
-% data/sp14/0306.ml
+% data/sp14/0442.ml
 Our next program, |padZero|, is given two |int list|s as input, and must
 left-pad the shorter one with enough zeros that the two output lists
 have equal length.
@@ -115,7 +115,7 @@ Tree correctly blames the |::| operator.
 % \end{ecode}
 
 \paragraph{Computing the Fixed Point of a Function}
-% data/sp14/0941.ml
+% data/sp14/1266.ml
 Finally, our students must write a |fixpoint| function that computes the
 fixed point of a given function |f|, starting from an initial value |b|.
 %
@@ -160,7 +160,7 @@ We also describe indicative programs where our classifier makes an
 incorrect prediction.
 
 \paragraph{Constructing a List of Duplicates}
-% data/sp14/0148.ml
+% data/sp14/0219.ml
 Consider the following implementation of the |clone| function from
 before.
 %
@@ -198,7 +198,7 @@ Our final prediction is the entire body of |clone|, which is hardly
 helpful.
 
 \paragraph{Currying Considered Harmful?}
-% data/sp14/0887.ml
+% data/sp14/1204.ml
 Our next example is another ill-fated attempt at |clone|.
 %
 \begin{ecode}
@@ -225,7 +225,7 @@ the answer the student was looking for.
 %
 
 \paragraph{Composing Functions}
-% data/sp14/2269.ml
+% data/sp14/3041.ml
 Next, let us consider the |pipe| function that composes a list of
 functions, \ie given a list of functions |[f;g;h]|, |pipe| produces the
 function |fun x -> h (g (f x))|.
