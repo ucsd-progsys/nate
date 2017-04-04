@@ -48,7 +48,7 @@ We tested our hypothesis with the \linear and
   surrounding sections.}
 %
 classifiers, cross-validated ($k=10$) over the combined SP14/FA15
-dataset. We used a learning rate $\alpha=0.001$, L2 regularization rate
+dataset. We used a learning rate $\eta=0.001$, L2 regularization rate
 $\lambda=0.001$, and mini-batch size of 200. We trained for a single
 epoch on feature sets (1) and (2), and for 8 epochs on (3), so that the
 total number of training samples would be roughly equal for each feature
@@ -128,7 +128,7 @@ features, extended by each combination of
 (2) contextual syntactic features; and
 (3) typing features.
 %
-As before, we perform a 10-fold cross-validation with $\alpha = 0.001$,
+As before, we perform a 10-fold cross-validation with $\eta = 0.001$,
 $\lambda = 0.001$, and a mini-batch size of 200, but we
 train for a full 20 epochs to make the differences more apparent.
 %

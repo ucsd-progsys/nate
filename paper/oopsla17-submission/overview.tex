@@ -5,9 +5,8 @@ We start with an overview of our approach to localizing type errors by
 learning a model of the mistakes programmers actually make.
 %
 We formulate the problem of type error localization as a
-\emph{supervised classification} problem~\cite{FIXME}. 
-% Give a generic citation for supervised classification, such as an ML
-% textbook or seminal ML paper or survey, above.
+\emph{supervised classification} problem (see \citealt{Kotsiantis2007-pj}
+for a survey).
 %
 A \emph{classification} problem entails learning a function that maps
 inputs to a discrete set of output \emph{labels}, in contrast to
@@ -105,7 +104,7 @@ How is the type checker to judge which expressions are more likely to be
 incorrect than others?
 %
 Prior work has often enlisted expert users to manually judge ill-typed
-programs and determine the ``correct'' fix (e.g.,~\cite{FIXME,FIXME}), but
+programs and determine the ``correct'' fix \citep[e.g.][]{Loncaric2016-uk}, but
 this approach does not scale well to a dataset large enough to support
 machine learning.
 %
@@ -159,7 +158,7 @@ Thus, we \emph{rank} each expression by the classifier's confidence that
 it should be blamed, and present only the top-$k$ predictions to the
 user (in practice $k=3$). This use of ranking to report
 the results of a program analysis is popular in other problem domains
-(e.g., via statistics FIXME: cite Engler's z-ranking paper, etc.); we focus
+\citep[see, \eg][]{Kremenek2003-ck}; we focus
 explicitly on the use of data-driven machine learning confidence as a
 ranking source.
 
