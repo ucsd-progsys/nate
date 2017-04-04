@@ -338,7 +338,42 @@ to the model (\eg combinations of the existing features \ES{CITE?}), but
 the fundamental issue remains.
 
 \paragraph{Decision Trees}
-\ES{TODO: Maybe Huma?}
+Decision tree algorithms learn a tree of binary predicates over the
+features, recursively partitioning the input space until a final
+classification can be made.
+%
+Each node in the tree contains a single predicate of the form
+$x_j \leq t$ for some threshold $t$, which determines whether a given
+input should proceed down the left or right subtree.
+%
+Each leaf is labeled with a prediction and the fraction of training
+samples that would reach it, the latter quantity can be interpreted as
+the decision tree's confidence in its prediction.
+\ES{HUMA: is this correct?}
+
+Training a decision tree entails finding both a set of good partitioning
+predicates and a good ordering of the predicates.
+%
+This is usually done in a top-down greedy manner by selecting the
+predicate the best partitions the entire training set, and recursively
+partitioning the subsets.
+%
+Standard algorithms for training decision trees include C4.5 \ES{CITE} and
+CART \ES{CITE}.
+%
+Overfitting can also be a problem for decision trees; the countermeasure
+is usually either halting the learning process before the tree grows too
+deep, or pruning the resulting tree.
+
+The advantages of decision trees are that they are relatively easy to
+train and that they produce a \emph{white-box} model, making it trivial
+to analyze the entire model and explain individual predictions.
+%
+The disadvantages are that they are prone to overfitting and that the
+model can be unstable, \ie small changes to the training data may
+produce large changes in the model.
+%
+Both disadvantages are addressed by random forests.
 
 \paragraph{Random Forests}
 \ES{TODO: Maybe Huma?}
