@@ -16,6 +16,7 @@
 \usepackage{subcaption} %% For complex figures with subfigures/subcaptions
                         %% http://ctan.org/pkg/subcaption
 
+
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.9}
 \usepackage{pgfplotstable}
@@ -27,12 +28,14 @@
 \usepackage{listings}
 \lstset{
   language=Caml,
-  basicstyle=\ttfamily
+  basicstyle=\ttfamily,
+  keywordstyle=\ttfamily,
 }
 \lstnewenvironment{code}{
 \lstset{
   language=Caml,
-  basicstyle=\ttfamily
+  basicstyle=\ttfamily,
+  keywordstyle=\ttfamily,
 }}
 {}
 
@@ -40,6 +43,7 @@
 \lstset{
   language=Caml,
   basicstyle=\ttfamily,
+  keywordstyle=\ttfamily,
   numbers=left,
   frame=leftline,
   xleftmargin=7.5mm,

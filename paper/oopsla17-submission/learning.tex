@@ -41,6 +41,7 @@ will evaluate.
 % \label{fig:sumList}
 % \end{figure}
 \begin{table}[ht]
+\caption{Example Feature Vectors}\label{tab:sumList}
 \begin{tabular}{lrrrrrr}
 \toprule
 Expression
@@ -57,20 +58,18 @@ Expression
   & 0 & 0 & 1 & 0 & 1 & 0 \\
 \bottomrule
 \end{tabular}
-\caption{A selection of the features we would extract from the
-  \lstinline!sumList! program in \autoref{fig:sumList}. A feature is
-  considered \emph{enabled} if it has a non-zero value, and
-  \emph{disabled} otherwise. A ``-P'' suffix indicates that the feature
-  describes the parent of the current expression, a ``-C$n$'' suffix
-  indicates that the feature describes the $n$-th (left-to-right) child
-  of the current expression.  Note that, since we rely on a partial
-  typing derivation, we are subject to the well-known traversal bias and
-  label the expression \lstinline!sumList tl! as having type
-  $\tlist{\cdot}$. The model will have to learn to correct for this
-  bias.}
-\label{tab:sumList}
+\bigskip
+\caption*{A selection of the features we would extract from the
+\lstinline!sumList! program in \autoref{fig:sumList}. A feature is
+considered \emph{enabled} if it has a non-zero value, and
+\emph{disabled} otherwise. A ``-P'' suffix indicates that the feature
+describes the parent of the current expression, a ``-C$n$'' suffix
+indicates that the feature describes the $n$-th (left-to-right) child of
+the current expression.  Note that, since we rely on a partial typing
+derivation, we are subject to the well-known traversal bias and label
+the expression \lstinline!sumList tl! as having type
+$\tlist{\cdot}$. The model will have to learn to correct for this bias.}
 \end{table}
-
 The first issue we must tackle is formulating our learning task in
 machine learning terms.
 %
@@ -127,9 +126,7 @@ disabled.
 %
 This gives us a notion of the \emph{context} in which an expression
 occurs, similar to the \emph{n-grams} commonly used in linguistic
-models~\cite{FIXME,FIXME}.
-% FIXME: cite "on the naturalness of software" and "on the uniqueness of
-% software" at the very least for the above
+models \citep{Hindle2012-hf,Gotterbarn1998-gc}.
 
 % Instead of just describing the immediate context, we could describe
 % whether a particular syntax element occurs in the neighboring
@@ -195,8 +192,7 @@ bias}~\cite{McAdam1998-ub,Yang2000-yr}. For example, the
 |sumList tl| expression might alternatively be assigned
 the type $\tint$.
 %
-We rely on the model to counteract this bias (see FIXME reference to later
-in the paper). 
+We rely on the model to counteract this bias (see \autoref{sec:evaluation}).
 
 \subsubsection{Type error slice}
 Finally, we desire a model that distinguishes between
