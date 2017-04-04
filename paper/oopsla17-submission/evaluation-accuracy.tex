@@ -76,7 +76,7 @@ before being evaluated on the other.
 \autoref{fig:accuracy-results} shows the results of our experiment.
 %
 Localizing the type errors in our benchmarks amounted, on average, to
-selecting one of 2--3 correct locations out of a slice of 10--11.
+selecting one of 3 correct locations out of a slice of 10.
 %
 Our baseline of selecting at random achieves 30\% Top-1
 accuracy (58\% Top-3), while \ocaml achieves a Top-1 accuracy of 45\%.
@@ -89,15 +89,14 @@ Interestingly, one only needs two \emph{random} guesses to outperform
 accuracy.
 %
 Finally, we find that \emph{all} of our classifiers outperform \sherrloc,
-ranging from 60--62\% Top-1 accuracy (85--88\% Top-3) for the \linear
-classifier to 71--73\% Top-1 accuracy (91\% Top-3) for the \hiddenFH.
+ranging from 59--63\% Top-1 accuracy (86--88\% Top-3) for the \linear
+classifier to 70--74\% Top-1 accuracy (91--92\% Top-3) for the \hiddenFH.
 
 Surprisingly, there is little variation in accuracy between classifiers.
 With the exception of the \linear model, they all achieve around 70\%
 Top-1 accuracy and around 90\% Top-3 accuracy.
 %
-This suggests that the model they learn is relatively
-simple.
+This suggests that the model they learn is relatively simple.
 %
 In particular, notice that although the \hiddenT has $50\times$ \emph{fewer}
 hidden neurons than the \hiddenFH, it only loses around 2\% accuracy.
@@ -106,6 +105,7 @@ hidden neurons than the \hiddenFH, it only loses around 2\% accuracy.
 %
 We also note that our classifiers consistently perform better when
 trained on the \FALL programs and tested on the \SPRING programs than
-vice versa, they appear to generalize better from the \FALL data. 
-FIXME: Why? What is your explanation for this? Is it just sizes of those 
-datasets or something qualitative about the program pairs in them?
+vice versa.
+% , they appear to generalize better from the \FALL data.
+% FIXME: Why? What is your explanation for this? Is it just sizes of those
+% datasets or something qualitative about the program pairs in them?
