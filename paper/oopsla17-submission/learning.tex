@@ -232,11 +232,11 @@ $k$ (in practice $k=3$) to present to the user.
 \label{sec:models}
 \lstDeleteShortInline{|} % sigh...
 
-Recall that we formulate the localization problem as a supervised
+Recall that we formulate type error localization as a supervised
 classification problem.
 %
 This means that we assume the existence of a training set
-$D = \{\langle \mathbf{x}_i, y_i \rangle\}_{i=1}^{n}$
+$S = \{\langle \mathbf{x}_i, y_i \rangle\}_{i=1}^{n}$
 of sample inputs $\mathbf{x}$ and their corresponding labels $y$.
 %
 The learning task is to model the probability $Pr(y\ |\ \mathbf{x})$
@@ -252,13 +252,13 @@ will investigate:
 (1) logistic regression,
 (2) decision trees,
 (3) random forests, and
-(4) multi-layer perceptrons.
+(4) neural networks.
 %
 For each algorithm, we describe the form of the model it learns, the
 training procedure, and any hyper-parameters that must be supplied by a
 human.
 
-\paragraph{Logistic regression}
+\paragraph{Logistic Regression}
 % The simplest model we investigate is logistic regression, which learns a
 % linear function of the features.
 % %
@@ -277,18 +277,19 @@ The simplest model we investigate is logistic regression, which can be
 understood in two steps.
 %
 First, we compute the \emph{evidence} for a label $y$ as a linear
-function of the input $\mathbf{x}$, with a set of weights $w_i$ and a
-bias $b$ that will be learned from the training set.
+function of the feature vector $\mathbf{x}$, using a weight vector
+$\mathbf{w}$ and a bias $b$ that will be learned from the training set.
 $$
-\mathsf{ev} = \sum_i w_i \mathbf{x}_i + b
+\mathsf{ev} = \sum_j w_j x_j + b
 $$
-Then we use the logistic function $f(x) = \frac{1}{1 + e^{-x}}$ to
-compress the evidence term into the $[0,1]$ interval, which can then be
-interpreted as the probability that the label $y$ should be applied.
+Then we use the logistic function (also called a sigmoid function)
+$\sigma(x) = 1 / (1 + e^{-x})$ to compress the evidence term into the
+$[0,1]$ interval, which can then be interpreted as the probability that
+the label $y$ should be applied.
 %
-This gives us the final model
+This gives us the final model:
 $$
-Pr(y\ |\ \mathbf{x}) = \frac{1}{1 + \mathsf{exp}(-\sum_i w_i \mathbf{x}_i - b)}
+Pr(y\ |\ \mathbf{x}) = \frac{1}{1 + \mathsf{exp}(-\sum_j w_j x_j - b)}
 $$
 
 Training a logistic regression entails finding optimal values for the
@@ -319,36 +320,79 @@ It has been observed \ES{CITE??} that large weights often coincide with
 training samples but not on the testing samples.
 %
 Thus, it is common to add a \emph{regularization} term to the cost
-function, a popular choice is the L2 norm of the weights $\sum_i w_i^2$,
+function, a popular choice is the $L_2$ norm of the weights $\sum_j w_j^2$,
 which has the effect of penalizing the model for learning large weights.
-The contribution of the regularization term to the over cost function is
+The contribution of the regularization term to the overall cost function is
 controlled by another hyper-parameter $\lambda$, often called the
 regularization rate.
 
-Logistic regression is popular for its ease of training and of
-interpreting the resulting model; however, it can be limited in its
-applicability.
+As a generalized linear model, logistic regression is popular for its
+ease of training and of interpreting the resulting model; however, it
+can be limited in its applicability.
 %
-As a generalized linear model, it may perform poorly when asked to
-learn an inherently \emph{nonlinear} function.
+In particular, it may perform poorly when asked to learn an inherently
+\emph{nonlinear} function.
 %
 This limitation can be mitigated to some extent by adding more features
 to the model (\eg combinations of the existing features \ES{CITE?}), but
 the fundamental issue remains.
 
-\paragraph{Decision trees}
+\paragraph{Decision Trees}
 \ES{TODO: Maybe Huma?}
 
-\paragraph{Random forests}
+\paragraph{Random Forests}
 \ES{TODO: Maybe Huma?}
 
-\paragraph{Neural networks}
-The last (and most complex) model we discuss is Artificial Neural
-Networks (ANN).
+\paragraph{Neural Networks}
+The last (and most complex) model we discuss is a type of neural network
+called a \emph{multi-layer perceptron} \ES{CITE}.
+%
+Neural networks can be understood as a collection of linear models, just
+like the one used in logistic regression, arranged in a directed graph.
+%
+Each node in the graph corresponds to a single linear model, called a
+\emph{neuron}, and the edges propagate signals from the input features,
+through the neurons, to the output labels.
+%
+The linear model in each neuron is wrapped in an \emph{activation
+  function}, which controls whether (or how strongly) the signal will be
+propagated out.
+%
+These activation functions are what allow neural networks to accurately
+model nonlinear functions.
+%
+A common choice of activation function is the same sigmoid function
+used by logistic regression, alternatives include the hyperbolic $\tanh$
+function, and more recently the \emph{rectified linear unit} (ReLU)
+$f(x) = \mathsf{max}(0,x)$ \ES{CITE}.
 
-The fundamental building block of an ANN is the linear model, the
-nonlinearity arises from the \emph{activation functions} that govern
-whether an individual linear model propagates its signal to the next layer.
+The neurons are arranged in \emph{layers}; each layer contains a set of
+neurons that take in signals from the previous layer and propagate
+signals to the next layer.
+%
+The number of layers, the number of neurons per layer, and the
+connections between layers constitute the \emph{architecture} of a
+neural network, and are all important hyper-parameters.
+%
+We consider a particular class of neural networks called
+\emph{multi-layer perceptrons} (MLP), where the layers a fully connected to
+each other, \ie each neuron propagates its signal to every neuron in the
+subsequent layer.
+%
+We will only consider MLPs with a single layer of neurons, but we will
+vary the number of neurons in our experiments.
+
+Neural networks are trained similarly to logistic regression using
+stochastic gradient descent, and thus the learning rate $\eta$ and
+regularization rate $\lambda$ are also important hyper-parameters.
+
+\ES{should mention that logistic regression can be thought of as a degenerate MLP with 0 layers, and perhaps add a diagram?}
+
+\ES{need to say something about neurons corresponding to ``hidden'' features, give intuition..}
+
+% The fundamental building block of an ANN is the linear model, the
+% nonlinearity arises from the \emph{activation functions} that govern
+% whether an individual linear model propagates its signal to the next layer.
 
 
 
