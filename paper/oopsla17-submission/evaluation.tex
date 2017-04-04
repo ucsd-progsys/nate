@@ -40,21 +40,16 @@ We recorded each interaction with the \ocaml top-level system over the
 course of the first three assignments, capturing
 ill-typed programs and, crucially, their subsequent fixes.
 %
-The first dataset comes from the Spring 2014 class (\SPRING), from which
-we extracted 2,333 pairs of programs, and the second comes from the Fall
-2015 class (\FALL), from which we extracted 2,273 pairs of programs. In
-total, programs from FIXME distinct student authors appear in the 
-dataset.
+The first dataset comes from the Spring 2014 class (\SPRING), with a
+cohort of 46 students. The second comes from the Fall 2015 class
+(\FALL), with a cohort of 56 students.
 %
 The extracted programs are relatively small, but they demonstrate a
 range of functional programming idioms, \eg higher-order functions and
 (polymorphic) algebraic data types.
-% FIXME: This is a journal article. Why not just exhaustively list the
-% functional programming idioms? (cf. the course syllabus and the
-% assignment descriptions) 
 
-\subsubsection{Feature Selection}
-We extract a set of 277 features from each sub-expression in a student
+\paragraph{Feature Selection}
+We extract a set of 276 features from each sub-expression in a student
 program, including:
 %
 \begin{enumerate}
@@ -76,11 +71,11 @@ program, including:
   mentioned above. These features are extracted for each sub-expression
   and for the contextual sub-expressions.
 \item one feature denoting the size of each sub-expression.
-\item one feature denoting whether each sub-expression is part of the
-  minimal type error slice.
+% \item one feature denoting whether each sub-expression is part of the
+%   minimal type error slice.
 \end{enumerate}
 
-\subsubsection{Blame Oracle}
+\paragraph{Blame Oracle}
 We identified the fixes for each ill-typed program with an
 expression-level diff~\citep{Lempsink2009-xf}.
 %
@@ -96,19 +91,28 @@ We consider two sources of changes:
   $\eapp{f}{x}$ (but not $f$ or $x$) as changed, as the $+$ operator now
   occupies the original location of the application.
 \end{enumerate}
+
+Students may have made many, potentially unrelated, changes between
+compilations, but at some point the ``fix'' becomes a ``rewrite''.
 %
-As the students may have made many, potentially unrelated, changes
-between compilations, we discard any program pairs where more than 40\%
-of the sub-expressions have changed.
+We do not wish to consider the ``rewrites'' in our evaluation, so we
+discard outliers where the fraction of expressions that have changed is
+more than one standard deviation above the mean, or 44\%.
 %
-We picked 40\% as an estimate of the inflection point where we could
-still retain the large majority of program pairs.
-% FIXME: Can you say that this dataset curation is similar to any other
-% datasets (e.g., the washington one)? Anything you could cite and discuss
-% here would take some of the pressure off. 
+This accounts for roughly 14\% of each dataset, leaving us with
+2,425 program pairs for \SPRING and 2,325 pairs for \FALL.
+
+% we discard any program pairs where more than 40\%
+% of the sub-expressions have changed.
+% %
+% We picked 40\% as an estimate of the inflection point where we could
+% still retain the large majority of program pairs.
+% % FIXME: Can you say that this dataset curation is similar to any other
+% % datasets (e.g., the washington one)? Anything you could cite and discuss
+% % here would take some of the pressure off.
 
 
-\subsubsection{Accuracy Metric}
+\paragraph{Accuracy Metric}
 All of the tools we compare (with the exception of the standard \ocaml
 compiler) can produce a list of potential error locations. 
 %
