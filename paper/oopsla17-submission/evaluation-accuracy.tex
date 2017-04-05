@@ -55,7 +55,7 @@ Our classifiers are:
 %
 \begin{enumerate}
 \item A logistic regression trained with a learning rate
-  $\eta = 0.001$, an L2 regularization rate $\lambda = 0.001$, and a
+  $\eta = 0.001$, an $L_2$ regularization rate $\lambda = 0.001$, and a
   mini-batch size of 200.
 \item A decision tree trained with the \ES{HUMA?} algorithm and \ES{HUMA: hyperparams?}.
 \item A random forest trained with the \ES{HUMA?} algorithm and 30 estimators \ES{HUMA: hyperparams?}.
@@ -63,12 +63,18 @@ Our classifiers are:
   $\lambda = 0.001$, and a mini-batch size of 200. The first MLP
   contains a single hidden layer of 10 neurons, and the second contains
   a hidden layer of 500 neurons. This allows us to investigate how well
-  the MLP can \emph{compress} its model (cf.~\cite{FIXME}).
+  the MLP can \emph{compress} its model (cf.~\cite{FIXME}). The neurons
+  use rectified linear units (ReLU) as their activation function, a
+  common practice in modern neural networks.
 \end{enumerate}
 %
 All classifiers were trained for 20 epochs on one dataset
 --- \ie they were shown each program 20 times ---
 before being evaluated on the other.
+%
+The logistic regression and MLPs were trained with the \textsc{Adam}
+optimizer \ES{CITE}, a variant of stochastic gradient descent that has
+been found to converge faster.
 
 \input{evaluation-accuracy-graph}
 
