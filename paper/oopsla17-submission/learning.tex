@@ -254,9 +254,9 @@ will investigate:
 (3) random forests, and
 (4) neural networks.
 %
-For each algorithm, we describe the form of the model it learns, the
-training procedure, and any hyper-parameters that must be supplied by a
-human.
+For each algorithm, we describe the model it learns, the training
+procedure, any hyper-parameters that must be tuned by a human, and a
+summary of its advantages and disadvantages.
 
 \paragraph{Logistic Regression}
 % The simplest model we investigate is logistic regression, which learns a
@@ -291,6 +291,9 @@ This gives us the final model:
 $$
 Pr(y\ |\ \mathbf{x}) = \frac{1}{1 + \mathsf{exp}(-\sum_j w_j x_j - b)}
 $$
+% $$
+% Pr(y\ |\ \mathbf{x}) = \frac{1}{1 + e^{-\mathsf{ev}}}
+% $$
 
 Training a logistic regression entails finding optimal values for the
 weights and bias, such that a \emph{cost} function is minimized.
@@ -343,8 +346,8 @@ features, recursively partitioning the input space until a final
 classification can be made.
 %
 Each node in the tree contains a single predicate of the form
-$x_j \leq t$ for some threshold $t$, which determines whether a given
-input should proceed down the left or right subtree.
+$x_j \leq t$ for some feature $x_j$ and threshold $t$, which determines
+whether a given input should proceed down the left or right subtree.
 %
 Each leaf is labeled with a prediction and the fraction of training
 samples that would reach it, the latter quantity can be interpreted as
@@ -376,7 +379,30 @@ produce large changes in the model.
 Both disadvantages are addressed by random forests.
 
 \paragraph{Random Forests}
-\ES{TODO: Maybe Huma?}
+One technique for increasing the accuracy of a classifier is to train an
+\emph{ensemble} of distinct classifiers and use a majority vote
+to make the final prediction \ES{CITE?}.
+%
+Random forests \ES{CITE} are an instance of this method, with decision
+trees as the underlying classifiers.
+%
+The training process involves taking $N$ random subsets of the training
+data and training a separate decision tree on each subset --- the
+training process for the decision trees is often modified slightly to
+reduce correlation between trees, by forcing the tree to pick features
+from a random subset of all features at each node.
+%
+In order to make a prediction for an unseen sample, the random forest
+asks each decision tree to make a prediction, and then predicts the most
+common label.
+
+The diversity of the underlying models tends to make random forests less
+susceptible to the overfitting and instability of decision trees, but it
+also makes the learned model more difficult to interpret.
+%
+Furthermore, the number of trees in the forest, $N$, becomes an important
+hyper-parameter that must be set manually.
+
 
 \paragraph{Neural Networks}
 The last (and most complex) model we discuss is a type of neural network
@@ -396,10 +422,10 @@ propagated out.
 These activation functions are what allow neural networks to accurately
 model nonlinear functions.
 %
-A common choice of activation function is the same sigmoid function
-used by logistic regression, alternatives include the hyperbolic $\tanh$
-function, and more recently the \emph{rectified linear unit} (ReLU)
-$f(x) = \mathsf{max}(0,x)$ \ES{CITE}.
+A common choice of activation function is the same sigmoid function used
+by logistic regression, alternatives include the hyperbolic $\tanh$
+function, and more recently the \emph{rectified linear unit} (ReLU),
+defined as $f(x) = \mathsf{max}(0,x)$ \ES{CITE}.
 
 The neurons are arranged in \emph{layers}; each layer contains a set of
 neurons that take in signals from the previous layer and propagate
@@ -420,6 +446,30 @@ vary the number of neurons in our experiments.
 Neural networks are trained similarly to logistic regression using
 stochastic gradient descent, and thus the learning rate $\eta$ and
 regularization rate $\lambda$ are also important hyper-parameters.
+%
+They are, however, much more difficult to train as they require larger
+training sets.
+
+Neural networks are popular for their ability to uncover ``hidden''
+features in the data.
+%
+Each neuron learns a different linear combination of the signals from
+the previous layer; combined with the activation function this can be
+thought of as the neuron learning to respond to a new, \emph{compound}
+feature of its inputs.
+%
+This ability to discover interesting combinations of features makes
+neural networks easier to use in some respect; they can reduce the
+importance of manual \emph{feature engineering} (selecting interesting
+features to provide as inputs).
+%
+However, the sheer size and complexity of neural networks makes the
+model particularly difficult to interpret --- they are generally regarded
+as ``black boxes.''
+%
+Neural networks are also very susceptible to overfitting, so
+regularization methods like the $L_2$ norm used for logistic regression
+are important.
 
 \ES{should mention that logistic regression can be thought of as a degenerate MLP with 0 layers, and perhaps add a diagram?}
 
