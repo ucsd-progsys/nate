@@ -116,3 +116,23 @@
 ** Machine Learning for PL
 *** Predicting Program Properties from BigCode
 *** ??
+
+
+* NOTES
+** sp14/0219.ml
+(3,42)-(3,47): =clone= in =clone ([x] @ acc) (n - 1)=
+- incorrectly predict NOCHANGE
+- only enabled features on path are =F-Is-Type-Fun= and =F-Is-App-P=
+- note that leaf is not clearly in favor of NOCHANGE (only 2 to 1)
+  - possibly need more features to identify?
+
+(3,62)-(3,63): =x= in =clone ([x] @ acc) (n - 1)=
+- incorrectly predict CHANGE
+- only enabled features on path are =F-Is-Type-Var= and =F-Is-List-P=
+- VERY confident in prediction, weird!
+
+(3,48)-(3,69): =([x] @ acc)= in =clone ([x] @ acc) (n - 1)=
+- incorrectly predict CHANGE
+- only enabled features on path are =F-Is-App-P= and =F-Is-Type-List-C3=
+- VERY confident, all training samples were true positive, but only ~20 in total
+- perhaps need more training data? prediction seems totally bogus...
