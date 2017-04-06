@@ -341,9 +341,15 @@ can be limited in its applicability.
 In particular, it may perform poorly when asked to learn an inherently
 \emph{nonlinear} function.
 %
-This limitation can be mitigated to some extent by adding more features
-to the model (\eg combinations of the existing features \ES{CITE?}), but
-the fundamental issue remains.
+This limitation can be mitigated by adding transformed or compound
+features to the model --- \eg if one knows that the label has a
+quadratic relationship with a feature $x$, the transformed feature $x^2$
+can be added --- but this typically requires knowledge of the underlying
+model.
+
+% This limitation can be mitigated to some extent by adding more features
+% to the model (\eg combinations of the existing features \ES{CITE?}), but
+% the fundamental issue remains.
 
 \paragraph{Decision Trees}
 Decision tree algorithms learn a tree of binary predicates over the
