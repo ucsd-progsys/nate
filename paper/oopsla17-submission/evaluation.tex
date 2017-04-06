@@ -49,7 +49,7 @@ range of functional programming idioms, \eg higher-order functions and
 (polymorphic) algebraic data types.
 
 \paragraph{Feature Selection}
-We extract a set of 276 features from each sub-expression in a student
+We extract a set of 277 features from each sub-expression in a student
 program, including:
 %
 \begin{enumerate}
@@ -71,8 +71,11 @@ program, including:
   mentioned above. These features are extracted for each sub-expression
   and for the contextual sub-expressions.
 \item one feature denoting the size of each sub-expression.
-% \item one feature denoting whether each sub-expression is part of the
-%   minimal type error slice.
+\item one feature denoting whether each sub-expression is part of the
+  minimal type error slice. We use this feature as a ``hard''
+  constraint, sub-expressions that are not part of the minimal slice
+  will be preemptively discarded, we justify this decision in
+  \autoref{sec:feature-utility}.
 \end{enumerate}
 
 \paragraph{Blame Oracle}

@@ -186,18 +186,17 @@ in \autoref{tab:sumList} both enable the feature \HasTypeList, as they
 are both inferred to have a type that mentions the $\tlist{\cdot}$
 constructor.
 
-Note that our use of typing features in an ill-typed program
-subjects us to \emph{traversal
-bias}~\cite{McAdam1998-ub,Yang2000-yr}. For example, the 
-|sumList tl| expression might alternatively be assigned
-the type $\tint$.
+Note that our use of typing features in an ill-typed program subjects us
+to \emph{traversal bias} \citep{McAdam1998-ub}. For example, the
+|sumList tl| expression might alternatively be assigned the type
+$\tint$.
 %
-We rely on the model to counteract this bias (see \autoref{sec:evaluation}).
+Our models will have to learn good localizations in spite this bias (see
+\autoref{sec:evaluation}).
 
 \subsubsection{Type error slice}
-Finally, we desire a model that distinguishes between
-changes that could fix the error, and changes that
-\emph{cannot possibly} fix the error.
+Finally, we wish to distinguish between changes that could fix the
+error, and changes that \emph{cannot possibly} fix the error.
 %
 Thus, we compute a minimal type error \emph{slice} for the program
 (\ie the set of expressions that contribute to the error), and add a
@@ -210,6 +209,16 @@ the type error.
 %
 If the program contains multiple type errors, we compute
 a minimal slice for each error.
+
+In practice, we have found that \InSlice is a particularly important
+feature, and thus include a pre-processing step that discards all
+expressions where it is disabled.
+%
+As a result, the |tl| expression would never actually be shown to the
+classifier.
+%
+ We will demonstrate the importance of \InSlice empirically in
+\autoref{sec:feature-utility}.
 
 \subsection{Labels}
 \label{sec:labels}
