@@ -53,20 +53,20 @@ We evaluate five classifiers, each trained on the full set of features.
 %
 Our classifiers are:
 %
-\begin{enumerate}
-\item A logistic regression trained with a learning rate
+\begin{description}
+\item[\linear] A logistic regression trained with a learning rate
   $\eta = 0.001$, an $L_2$ regularization rate $\lambda = 0.001$, and a
   mini-batch size of 200.
-\item A decision tree trained with the \ES{HUMA?} algorithm and \ES{HUMA: hyperparams?}.
-\item A random forest trained with the \ES{HUMA?} algorithm and 30 estimators \ES{HUMA: hyperparams?}.
-\item Two multi-layer perceptron neural networks, both trained with $\eta = 0.001$,
+\item[\dectree] A decision tree trained with the \ES{HUMA?} algorithm and \ES{HUMA: hyperparams?}.
+\item[\forest] A random forest trained with the \ES{HUMA?} algorithm and 30 estimators \ES{HUMA: hyperparams?}.
+\item[\hiddenT and \hiddenFH] Two multi-layer perceptron neural networks, both trained with $\eta = 0.001$,
   $\lambda = 0.001$, and a mini-batch size of 200. The first MLP
   contains a single hidden layer of 10 neurons, and the second contains
   a hidden layer of 500 neurons. This allows us to investigate how well
   the MLP can \emph{compress} its model (cf.~\cite{FIXME}). The neurons
   use rectified linear units (ReLU) as their activation function, a
   common practice in modern neural networks.
-\end{enumerate}
+\end{description}
 %
 All classifiers were trained for 20 epochs on one dataset
 --- \ie they were shown each program 20 times ---
