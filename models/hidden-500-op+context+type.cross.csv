@@ -1,0 +1,2 @@
+model,features,top-1,top-2,top-3,recall
+hidden-500,op+context+type,0.772,0.883,0.925,0.726

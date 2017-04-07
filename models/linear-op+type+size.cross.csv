@@ -1,0 +1,2 @@
+model,features,top-1,top-2,top-3,recall
+linear,op+type+size,0.619,0.787,0.856,0.620
