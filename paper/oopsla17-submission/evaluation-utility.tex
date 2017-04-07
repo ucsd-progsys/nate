@@ -9,17 +9,23 @@ classifiers trained on various subsets of the features.
 
 \subsubsection{Type Error Slice}
 \label{sec:type-error-slice}
-The \InSlice feature should be highly predictive --- a fix must change
-at least one expression in the type error slice.
+First we must justify our decision to automatically exclude expressions
+outside the minimal type error slice from consideration.
 %
-Thus, our first experiment seeks to quantify the impact of \InSlice by
-comparing the accuracy of our classifiers on three sets of features:
+% The \InSlice feature should be highly predictive --- a fix must change
+% at least one expression in the type error slice.
+% %
+% Thus, our first experiment seeks to quantify the impact of \InSlice by
+% comparing the accuracy of our classifiers on three sets of features:
+%
+Thus, we compare the accuracy of our classifiers on three sets of features:
 %
 \begin{enumerate}
-\item A baseline with \emph{only} local syntactic features.
+\item A baseline with only local syntactic features and no
+  preemptive filtering by \InSlice.
 \item The features of (1) extended with \InSlice.
 \item The same features as (1), but we preemptively discard samples
-  where \InSlice is \emph{disabled}.
+  where \InSlice is disabled.
 \end{enumerate}
 %
 The key difference between (2) and (3) is that a classifier for (2) must
@@ -48,7 +54,7 @@ We tested our hypothesis with the \linear and
   surrounding sections.}
 %
 classifiers, cross-validated ($k=10$) over the combined SP14/FA15
-dataset. We used a learning rate $\eta=0.001$, L2 regularization rate
+dataset. We used a learning rate $\eta=0.001$, $L_2$ regularization rate
 $\lambda=0.001$, and mini-batch size of 200. We trained for a single
 epoch on feature sets (1) and (2), and for 8 epochs on (3), so that the
 total number of training samples would be roughly equal for each feature
@@ -83,9 +89,9 @@ feature sets easier to interpret since $\mathsf{oracle}$ never changes.
                                          \cmidrule{4-7}                        \cmidrule{9-12}
     Feature Set        & \# Features & & Top-1  & Top-2  & Top-3  & Recall & & Top-1  & Top-2  & Top-3  & Recall \\
     \midrule
-    Local Syntax       & 44          & & 23.5\% & 42.5\% & 55.9\% & 36.5\% & & 28.9\% & 47.7\% & 58.6\% & 38.4\% \\
-    + \InSlice         & 45          & & 46.1\% & 64.9\% & 75.4\% & 48.8\% & & 54.4\% & 70.8\% & 81.3\% & 56.2\% \\
-    Filter by \InSlice & 44          & & 54.9\% & 71.4\% & 82.5\% & 57.6\% & & 56.6\% & 71.9\% & 82.5\% & 57.3\% \\
+    Local Syntax       & 44          & & 23.5\% & 42.5\% & 55.9\% & 36.5\% & & 32.4\% & 49.3\% & 60.4\% & 39.6\% \\
+    + \InSlice         & 45          & & 46.1\% & 64.9\% & 75.4\% & 48.8\% & & 56.1\% & 71.6\% & 82.7\% & 57.4\% \\
+    Filter by \InSlice & 44          & & 54.9\% & 71.4\% & 82.5\% & 57.6\% & & 57.8\% & 72.8\% & 83.3\% & 57.8\% \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -105,11 +111,11 @@ Interestingly, while the \hiddenFH performs similarly poor with no error
 slice features, it recovers nearly all of its accuracy after being given
 the error slice features.
 %
-Top-1 accuracy jumps from 28.9\% to 54.4\% when we add \InSlice, and only
-improves by 2\% when we filter out expressions that are not part of the
+Top-1 accuracy jumps from 32.4\% to 56.1\% when we add \InSlice, and only
+improves by 1.7\% when we filter out expressions that are not part of the
 error slice.
 
-Still, the 2\% boost comes at zero cost, and given the other benefits
+Still, the accuracy gain comes at zero cost, and given the other benefits
 of filtering out expressions that do not belong to the type error slice
 --- shrinking the search space and guaranteeing our predictions are actionable ---
 we choose to filter all programs by \InSlice.
@@ -144,17 +150,17 @@ train for a full 20 epochs to make the differences more apparent.
                                                \cmidrule{4-7}                        \cmidrule{9-12}
     Feature Set              & \# Features & & Top-1  & Top-2  & Top-3  & Recall & & Top-1  & Top-2  & Top-3  & Recall \\
     \midrule
-    Local Syntax             &  44         & & 55.0\% & 71.6\% & 82.6\% & 57.7\% & & 56.3\% & 72.1\% & 82.8\% & 57.6\% \\
+    Local Syntax             &  44         & & 55.0\% & 71.6\% & 82.6\% & 57.7\% & & 57.7\% & 72.4\% & 83.0\% & 57.7\% \\
     \midrule
-    + Size                   &  45         & & 55.8\% & 72.8\% & 82.5\% & 57.3\% & & 60.5\% & 75.0\% & 83.8\% & 57.9\% \\
-    + Context                & 220         & & 59.9\% & 77.7\% & 86.4\% & 63.0\% & & 71.4\% & 84.1\% & 90.8\% & 69.5\% \\
-    + Types                  & 102         & & 62.2\% & 77.7\% & 85.7\% & 62.2\% & & 73.2\% & 84.8\% & 90.2\% & 69.2\% \\
+    + Size                   &  45         & & 55.8\% & 72.8\% & 82.5\% & 57.3\% & & 60.6\% & 75.0\% & 83.5\% & 57.2\% \\
+    + Context                & 220         & & 59.9\% & 77.7\% & 86.4\% & 63.0\% & & 71.5\% & 84.4\% & 90.5\% & 68.8\% \\
+    + Types                  & 102         & & 62.2\% & 77.7\% & 85.7\% & 62.2\% & & 74.0\% & 85.5\% & 90.8\% & 69.1\% \\
     \midrule
-    + Context + Size         & 221         & & 60.2\% & 77.9\% & 86.0\% & 62.5\% & & 71.7\% & 83.5\% & 90.7\% & 69.3\% \\
-    + Types + Size           & 103         & & 62.0\% & 78.2\% & 85.6\% & 62.3\% & & 73.5\% & 85.8\% & 91.4\% & 70.5\% \\
-    + Context + Types        & 275         & & 63.2\% & 80.3\% & 87.9\% & 65.4\% & & 77.3\% & 87.5\% & 92.4\% & 72.9\% \\
+    + Context + Size         & 221         & & 60.2\% & 77.9\% & 86.0\% & 62.5\% & & 71.4\% & 84.1\% & 90.8\% & 69.0\% \\
+    + Types + Size           & 103         & & 62.0\% & 78.2\% & 85.6\% & 62.3\% & & 73.7\% & 86.3\% & 90.9\% & 69.5\% \\
+    + Context + Types        & 275         & & 63.2\% & 80.3\% & 87.9\% & 65.4\% & & 77.6\% & 88.1\% & 92.9\% & 72.9\% \\
     \midrule
-    + Context + Types + Size & 276         & & 62.3\% & 80.0\% & 88.0\% & 65.4\% & & 77.2\% & 87.9\% & 92.7\% & 72.9\% \\
+    + Context + Types + Size & 276         & & 62.3\% & 80.0\% & 88.0\% & 65.4\% & & 76.8\% & 87.9\% & 92.7\% & 72.5\% \\
     \bottomrule
   \end{tabular}
   % \begin{minipage}{0.49\linewidth}

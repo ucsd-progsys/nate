@@ -14,23 +14,160 @@ For each example, we provide
 %
 (2) \sherrloc's prediction (in \textbf{bold}),
 %
-(3) the prediction of our Decision Tree (\underline{underlined}), and
+(3) the prediction of our \dectree classifier (\underline{underlined}), and
 %
 (4) an \emph{explanation} of why our classifier made its prediction.
 %
-We choose the Decision Tree classifier for this section as its model
-is more easily interpreted than the MLP. We explain its predictions by
-analyzing the paths induced in the decision tree by the features of the
-input programs.
+We choose the \dectree classifier for this section as its model is more
+easily interpreted than the MLP.\@
+%
+We also exclude the \ExprSize feature from the model used in this
+section, as it makes the predictions harder to motivate, and as we saw
+in \autoref{sec:feature-utility} it does not appear to contribute
+significantly to the model's accuracy.
+%
+We explain the predictions by analyzing the paths induced in
+the decision tree by the features of the input programs.
 %
 % We will also attempt, for each program, to explain \emph{why} the
 % Decision Tree made its prediction, by analyzing the paths induced
 % by the programs.
 
+\subsubsection{Failed Predictions}
+\label{sec:failed-predictions}
+We begin with a few programs where our classifier fails to
+make the correct prediction.
+%
+For these programs we will additionally \colorbox{red!50}{highlight} the
+correct blame location.
+
+\paragraph{Constructing a List of Duplicates}
+% data/sp14/0219.ml
+Our first program is a simple recursive function |clone| that takes an
+item |x| and a count |n|, and produces a list containing |n| copies of
+|x|.
+%
+\begin{ecode}
+  let rec clone x n =
+    let loop acc n =
+      if n <= 0 then
+        acc
+      else
+        (*@\colorbox{red!50}{clone}@*) ==([==_=x=_==] @ acc)== (n - 1) in
+    loop [] n
+\end{ecode}
+% \ES{TODO: our 2nd prediction matches \sherrloc and \ocaml (occurs check), correct fix is to replace recursive call to clone with loop}
+%
+The student has defined a helper function |loop| with an accumulator
+|acc|, likely meant to call itself tail-recursively.
+%
+Unfortunately, she has called the top-level function |clone| rather than
+|loop| in the |else| branch, this induces a cyclic constraint |'a = 'a list|
+for the |x| argument to |clone|.
+
+Our classifier incorrectly predicts that the use of |x| in the recursive
+call is the most likely source of the error.
+%
+Our second prediction coincides with \sherrloc (and \ocaml), blaming the
+the first argument to |clone|.
+%
+This is also incorrect, but may be more helpful than our first
+prediction --- if our student decides that she has certainly provided
+the correct \emph{argument}, an alternative explanation is that
+perhaps she has called the wrong \emph{function}.
+
+We confess that both of these predictions are difficult to explain by
+examining the induced paths.
+%
+In particular, neither prediction references a property of the current
+expression, only its context, which is surprising.
+%
+Much clearer is why we fail to blame the occurrence of |clone|, the two
+enabled features on the path are:
+%
+(1) the parent is an application; and
+%
+(2) |clone| has a function type.
+%
+The model appears to have learned that programmers typically call the
+correct function.
+
+\paragraph{Currying Considered Harmful?}
+% data/sp14/1204.ml
+Our next example is another ill-fated attempt at |clone|.
+%
+\begin{ecode}
+  let rec clone x n =
+    let rec loop (*@\colorbox{red!50}{x n acc}@*) =
+      if n < 0 then
+        acc
+      else
+        ==loop== __(x, (n - 1), (x :: acc))__ in
+    loop (x, n, [])
+\end{ecode}
+The issue here is that \ocaml functions are \emph{curried} by default
+--- \ie they take their arguments one at a time --- but our student has
+called the inner |loop| with all three arguments in a tuple.
+%
+Many experienced functional programmers would choose to keep |loop|
+curried and rewrite the calls, however our student decides instead to
+\emph{uncurry} |loop|, making it take a tuple of arguments.
+%
+\sherrloc blames the recursive call to |loop| while our classifier
+blames the tuple of arguments --- a reasonable suggestion, but alas not
+the answer the student was looking for.
+
+We fail to blame the definition of |loop| because it is defining a
+function.
+%
+First, note that we represent |let f x y = e|\ \ as\ \ |let f = fun x -> fun y -> e|,
+thus a change to the pattern |x| would be treated as a change to the outer
+|fun| expression.
+%
+With this in mind, we can explain our failure to blame the definition of
+|loop| (the outer |fun|) as follows:
+%
+(1) it has a function type;
+%
+(2) its child is a |fun|; and
+%
+(3) its parent is a |let|.
+%
+Thus it appears to the model that the outer |fun| is simply part of a
+function definition, a common and innocuous phenomenon.
+
+% \paragraph{Composing Functions}
+% % data/sp14/3041.ml
+% Next, let us consider the |pipe| function that composes a list of
+% functions, \ie given a list of functions |[f;g;h]|, |pipe| produces the
+% function |fun x -> h (g (f x))|.
+% %
+% \begin{ecode}
+%   let pipe fs =
+%     let f a x y = ==y== __(a y)__ in
+%     let base x = x in
+%     List.fold_left f base fs
+% \end{ecode}
+% %
+% The error in our student's code is that she has applied |y| rather than
+% |x| to the result of |a y|.
+% %
+% \sherrloc correctly blames the first occurrence of |y|, while our
+% classifier (incorrectly) blames the application |a y| (\ocaml blames
+% the occurrence of |base| on line 4).
+% %
+% \ES{this has the same explanation as the 1st clone above}
+
+\subsubsection{Correct Predictions}
+\label{sec:correct-predictions}
+Next, we present a few indicative programs where our first prediction is
+correct, and all of the other tools' top three predictions are
+incorrect.
+
 \paragraph{Extracting the Digits of an Integer}
 % data/sp14/2176.ml
-Our first program is a simple recursive function |digitsOfInt| that
-extracts the digits of an |int|.
+Consider first a simple recursive function |digitsOfInt| that extracts
+the digits of an |int|.
 %
 \begin{ecode}
   let rec digitsOfInt n =
@@ -51,12 +188,23 @@ operator.
 Both \sherrloc and the \ocaml compiler blame the recursive call for
 returning a |int list| rather than |int|, but the recursive call is
 actually correct!
+
+As our \dectree correctly points out (with high confidence), the fault
+lies with the list literal \emph{surrounding} the recursive call, remove
+it and the type error disappears.
 %
-As our Decision Tree correctly points out, the fault lies with the list
-literal \emph{surrounding} the recursive call, remove it and the type
-error disappears.
+An examination of the path induced by the list literal reveals that our
+\dectree is basing its decision on the fact that
 %
-\ES{TODO: WHY?}
+(1) the expression is a list literal;
+%
+(2) the child expression is an application, whose return type mentions |int|; and
+%
+(3) the parent expression's type mentions |list|.
+%
+Interestingly, \dectree incorrectly predicts that the child application
+should change as well, but it is less confident of this prediction and
+ranks it below the correct blame assignment.
 
 \paragraph{Padding a list}
 % data/sp14/0442.ml
@@ -64,9 +212,7 @@ Our next program, |padZero|, is given two |int list|s as input, and must
 left-pad the shorter one with enough zeros that the two output lists
 have equal length.
 
-The student first defines a helper function |clone|, which takes an
-input element |x| and an |int| |n|, and returns a list containing |n|
-|x|s.
+The student first defines a helper function |clone|, as seen above.
 %
 \begin{ecode}
   let rec clone x n =
@@ -77,7 +223,7 @@ input element |x| and an |int| |n|, and returns a list containing |n|
 \end{ecode}
 %
 Then she defines |padZero| with a simple branch that determines which
-list is shorter, followed by a |clone| with the appropriate number of
+list is shorter, followed by a |clone| for the appropriate number of
 zeros.
 %
 \lstset{firstnumber=last}
@@ -96,10 +242,41 @@ the |@| operator in the |else| branch.
 %
 \sherrloc and \ocaml correctly determine that she cannot cons the
 |int list| returned by |clone| onto |l2|, which is another |int list|,
-but they decide to blame the call to |clone|, while our Decision
-Tree correctly blames the |::| operator.
+but they decide to blame the call to |clone|, while our
+\dectree correctly blames the |::| constructor.
+
+Examining the path induced by the |::| constructor, we can see that our
+\dectree is influenced by the fact that:
 %
-\ES{TODO: WHY? (might be too similar to previous?)}
+(1) the expression is a data constructor (not specifically |::|);
+%
+(2) the parent expression is a tuple; and
+%
+(3) the leftmost child is an application.
+%
+We note that first fact appears to be particularly significant; an
+examination of the training samples that reach that decision node
+reveals that before observing the \textsc{Is-Constructor} feature, the
+classifier is slightly in favor of predicting ``blame'', but afterwards
+it is heavily in favor of predicting ``blame''.
+%
+Many of the following decisions change the balance back towards ``no
+blame'' if the ``true'' path is taken, but the |::| constructor always
+takes the ``false'' path.
+%
+It would appear that our \dectree has learned that data constructors are
+particularly suspicious, and is looking for exceptions to this general
+rule.
+%
+% \ES{FIXME: this is probably super confusing, checking with Huma to see
+%   if we can get a nice graph to illustrate what's happening..}
+
+Our \dectree correctly predicts that the recursive call blamed by
+\sherrloc should not be blamed; a similar examination suggests that the
+crucial observation is that the parent of the recursive call is a data
+constructor application.
+%
+
 
 
 % ES: decision tree gets this one wrong, may want to find something else
@@ -114,137 +291,54 @@ Tree correctly blames the |::| operator.
 %   let stringOfList f l = sepConcat "; " __[ "["; ___=List.map f l=___; "]" ]__
 % \end{ecode}
 
-\paragraph{Computing the Fixed Point of a Function}
-% data/sp14/1266.ml
-Finally, our students must write a |fixpoint| function that computes the
-fixed point of a given function |f|, starting from an initial value |b|.
-%
-As a hint, we first have them write a |wwhile| function that performs the
-functional equivalent of a \texttt{while}-loop, repeatedly passing a function's
-output back in until it receives a (boolean) signal to stop.
-%
-\begin{ecode}
-  let rec wwhile (f, b) =
-    match f b with
-    | (x, false) -> x
-    | (x, true)  -> wwhile (f, x)
-\end{ecode}
-\lstset{firstnumber=last}
-%
-The |fixpoint| function can then be written as a clever instantiation of
-the arguments to |wwhile|.
-%
-\begin{ecode}
-  let fixpoint (f, b) =
-    let g = __let bb = f b in ___=(bb, (bb = b))=_ in
-    wwhile (g, b)
-\end{ecode}
-\lstset{firstnumber=1}
-%
-Sadly, our student has forgotten that |g| should itself be a function.
-%
-As a result, she passes a pair of a \emph{pair} and a starting value to
-|wwhile|, rather than a pair of a \emph{function} and a starting value.
-%
-\sherrloc deduces that the call to |wwhile| is likely correct (\ocaml
-actually blames the use of |g|), but identifies the construction of the
-pair inside |g| as the most likely culprit, while our Decision Tree
-correctly identifies the \emph{definition} of |g| as the source of the
-error.
-\ES{TODO: WHY?}
+% \ES{I don't much like this example anymore..}
+% \paragraph{Computing the Fixed Point of a Function}
+% % data/sp14/1266.ml
+% Finally, our students must write a |fixpoint| function that computes the
+% fixed point of a given function |f|, starting from an initial value |b|.
+% %
+% As a hint, we first have them write a |wwhile| function that performs the
+% functional equivalent of a \texttt{while}-loop, repeatedly passing a function's
+% output back in until it receives a (boolean) signal to stop.
+% %
+% \begin{ecode}
+%   let rec wwhile (f, b) =
+%     match f b with
+%     | (x, false) -> x
+%     | (x, true)  -> wwhile (f, x)
+% \end{ecode}
+% \lstset{firstnumber=last}
+% %
+% The |fixpoint| function can then be written as a clever instantiation of
+% the arguments to |wwhile|.
+% %
+% \begin{ecode}
+%   let fixpoint (f, b) =
+%     let g = __let bb = f b in ___=(bb, (bb = b))=_ in
+%     wwhile (g, b)
+% \end{ecode}
+% \lstset{firstnumber=1}
+% %
+% Sadly, our student has forgotten that |g| should itself be a function.
+% %
+% As a result, she passes a pair of a \emph{pair} and a starting value to
+% |wwhile|, rather than a pair of a \emph{function} and a starting value.
+% %
+% \sherrloc deduces that the call to |wwhile| is likely correct (\ocaml
+% actually blames the use of |g|), but identifies the construction of the
+% pair inside |g| as the most likely culprit, while our \dectree correctly
+% identifies the \emph{definition} of |g| as the source of the error.
+% %
+% Our \dectree appears to base its prediction, with complete confidence,
+% on the fact that:
+% %
+% (1) the parent expression is a |let|;
+% %
+% (2) the right child is a tuple; and finally
+% %
+% (3) the current expression is a |let|.
+% %
 
-
-\subsubsection{Failed Predictions}
-\label{sec:failed-predictions}
-We also describe indicative programs where our classifier makes an
-incorrect prediction.
-
-\paragraph{Constructing a List of Duplicates}
-% data/sp14/0219.ml
-Consider the following implementation of the |clone| function from
-before.
-%
-\begin{ecode}
-  let rec clone x n =
-    let loop acc n =
-      if n <= 0 then
-        acc
-      else
-        clone ==([==_=x=_==] @ acc)== (n - 1) in
-    loop [] n
-\end{ecode}
-% \ES{TODO: our 2nd prediction matches \sherrloc and \ocaml (occurs check), correct fix is to replace recursive call to clone with loop}
-%
-The student has defined a helper function |loop| with an accumulator
-|acc|, likely meant to call itself tail-recursively.
-%
-Unfortunately, she has called the top-level function |clone| rather than
-|loop| in the |else| branch, this induces a cyclic constraint |'a = 'a list|
-for the |x| argument to |clone|.
-
-Our classifier incorrectly predicts that the use of |x| in the recursive
-call is the most likely source of the error.
-\ES{TOOD: WHY??}
-%
-Our second prediction coincides with \sherrloc (and \ocaml), blaming the
-the first argument to |clone|.
-%
-This is also incorrect, but may be more helpful than our first
-prediction --- if our student decides that she has certainly provided
-the correct \emph{argument}, an alternative explanation is that
-perhaps she has called the wrong \emph{function}.
-%
-Our final prediction is the entire body of |clone|, which is hardly
-helpful.
-
-\paragraph{Currying Considered Harmful?}
-% data/sp14/1204.ml
-Our next example is another ill-fated attempt at |clone|.
-%
-\begin{ecode}
-  let rec clone x n =
-    let rec loop x n acc =
-      if n < 0 then
-        acc
-      else
-        ==loop== __(x, (n - 1), (x :: acc))__ in
-    loop (x, n, [])
-\end{ecode}
-The issue here is that \ocaml functions are \emph{curried} by default
---- \ie they take their arguments one at a time --- but our student has
-called the inner |loop| with all three arguments in a tuple.
-%
-Many experienced functional programmers would choose to keep |loop|
-curried and rewrite the calls, however our student decides instead to
-\emph{uncurry} |loop|, making it take a tuple of arguments.
-%
-\sherrloc blames the recursive call to |loop| while our classifier
-blames the tuple of arguments --- a reasonable suggestion, but alas not
-the answer the student was looking for.
-\ES{WHY??}
-%
-
-\paragraph{Composing Functions}
-% data/sp14/3041.ml
-Next, let us consider the |pipe| function that composes a list of
-functions, \ie given a list of functions |[f;g;h]|, |pipe| produces the
-function |fun x -> h (g (f x))|.
-%
-\begin{ecode}
-  let pipe fs =
-    let f a x y = ==y== __(a y)__ in
-    let base x = x in
-    List.fold_left f base fs
-\end{ecode}
-%
-The error in our student's code is that she has applied |y| rather than
-|x| to the result of |a y|.
-%
-\sherrloc correctly blames the first occurrence of |y|, while our
-classifier (incorrectly) blames the application |a y| (\ocaml blames
-the occurrence of |base| on line 4).
-%
-\ES{TODO: WHY?}
 
 
 %%% Local Variables:

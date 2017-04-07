@@ -186,18 +186,17 @@ in \autoref{tab:sumList} both enable the feature \HasTypeList, as they
 are both inferred to have a type that mentions the $\tlist{\cdot}$
 constructor.
 
-Note that our use of typing features in an ill-typed program
-subjects us to \emph{traversal
-bias}~\cite{McAdam1998-ub,Yang2000-yr}. For example, the 
-|sumList tl| expression might alternatively be assigned
-the type $\tint$.
+Note that our use of typing features in an ill-typed program subjects us
+to \emph{traversal bias} \citep{McAdam1998-ub}. For example, the
+|sumList tl| expression might alternatively be assigned the type
+$\tint$.
 %
-We rely on the model to counteract this bias (see \autoref{sec:evaluation}).
+Our models will have to learn good localizations in spite this bias (see
+\autoref{sec:evaluation}).
 
 \subsubsection{Type error slice}
-Finally, we desire a model that distinguishes between
-changes that could fix the error, and changes that
-\emph{cannot possibly} fix the error.
+Finally, we wish to distinguish between changes that could fix the
+error, and changes that \emph{cannot possibly} fix the error.
 %
 Thus, we compute a minimal type error \emph{slice} for the program
 (\ie the set of expressions that contribute to the error), and add a
@@ -210,6 +209,16 @@ the type error.
 %
 If the program contains multiple type errors, we compute
 a minimal slice for each error.
+
+In practice, we have found that \InSlice is a particularly important
+feature, and thus include a pre-processing step that discards all
+expressions where it is disabled.
+%
+As a result, the |tl| expression would never actually be shown to the
+classifier.
+%
+ We will demonstrate the importance of \InSlice empirically in
+\autoref{sec:feature-utility}.
 
 \subsection{Labels}
 \label{sec:labels}
@@ -254,9 +263,12 @@ will investigate:
 (3) random forests, and
 (4) neural networks.
 %
-For each algorithm, we describe the form of the model it learns, the
-training procedure, and any hyper-parameters that must be supplied by a
-human.
+A thorough introduction to these techniques can be found in introductory
+machine learning textbooks (\eg \ES{TODO: huma/kamalika?}).
+%
+We will briefly introduce each technique by describing the model it
+learns, the training procedure, any hyper-parameters that must be tuned
+by a human, and a summary of its advantages and disadvantages.
 
 \paragraph{Logistic Regression}
 % The simplest model we investigate is logistic regression, which learns a
@@ -291,6 +303,9 @@ This gives us the final model:
 $$
 Pr(y\ |\ \mathbf{x}) = \frac{1}{1 + \mathsf{exp}(-\sum_j w_j x_j - b)}
 $$
+% $$
+% Pr(y\ |\ \mathbf{x}) = \frac{1}{1 + e^{-\mathsf{ev}}}
+% $$
 
 Training a logistic regression entails finding optimal values for the
 weights and bias, such that a \emph{cost} function is minimized.
@@ -315,15 +330,17 @@ Stochastic gradient descent requires a hyper-parameter $\eta$, often
 called the \emph{learning rate}, which controls how much the weights and
 bias are updated at each iteration.
 
-It has been observed \ES{CITE??} that large weights often coincide with
+It has been observed that large weights often coincide with
 \emph{overfitting} of the model --- where the model performs well on the
 training samples but not on the testing samples.
 %
 Thus, it is common to add a \emph{regularization} term to the cost
-function, a popular choice is the $L_2$ norm of the weights $\sum_j w_j^2$,
-which has the effect of penalizing the model for learning large weights.
-The contribution of the regularization term to the overall cost function is
-controlled by another hyper-parameter $\lambda$, often called the
+function, a popular choice is the $L_2$ norm of the weights
+$\sum_j w_j^2$, which has the effect of penalizing the model for
+learning large weights \citep{Park2008-no}.
+%
+The contribution of the regularization term to the overall cost function
+is controlled by another hyper-parameter $\lambda$, often called the
 regularization rate.
 
 As a generalized linear model, logistic regression is popular for its
@@ -333,19 +350,84 @@ can be limited in its applicability.
 In particular, it may perform poorly when asked to learn an inherently
 \emph{nonlinear} function.
 %
-This limitation can be mitigated to some extent by adding more features
-to the model (\eg combinations of the existing features \ES{CITE?}), but
-the fundamental issue remains.
+This limitation can be mitigated by adding transformed or compound
+features to the model --- \eg if one knows that the label has a
+quadratic relationship with a feature $x$, the transformed feature $x^2$
+can be added --- but this typically requires knowledge of the underlying
+model.
+
+% This limitation can be mitigated to some extent by adding more features
+% to the model (\eg combinations of the existing features \ES{CITE?}), but
+% the fundamental issue remains.
 
 \paragraph{Decision Trees}
-\ES{TODO: Maybe Huma?}
+Decision tree algorithms learn a tree of binary predicates over the
+features, recursively partitioning the input space until a final
+classification can be made.
+%
+Each node in the tree contains a single predicate of the form
+$x_j \leq t$ for some feature $x_j$ and threshold $t$, which determines
+whether a given input should proceed down the left or right subtree.
+%
+Each leaf is labeled with a prediction and the fraction of training
+samples that would reach it, the latter quantity can be interpreted as
+the decision tree's confidence in its prediction.
+\ES{HUMA: is this correct?}
+
+Training a decision tree entails finding both a set of good partitioning
+predicates and a good ordering of the predicates.
+%
+This is usually done in a top-down greedy manner by selecting the
+predicate the best partitions the entire training set, and recursively
+partitioning the subsets.
+%
+Standard algorithms for training decision trees include C4.5
+\citep{Quinlan1993-de} and CART \citep{Breiman1984-qy}.
+%
+Overfitting can also be a problem for decision trees; the countermeasure
+is usually either halting the learning process before the tree grows too
+deep, or pruning the resulting tree.
+
+The advantages of decision trees are that they are relatively easy to
+train and that they produce a \emph{white-box} model, making it trivial
+to analyze the entire model and explain individual predictions.
+%
+The disadvantages are that they are prone to overfitting and that the
+model can be unstable, \ie small changes to the training data may
+produce large changes in the model.
+%
+Both disadvantages are addressed by random forests.
 
 \paragraph{Random Forests}
-\ES{TODO: Maybe Huma?}
+One technique for increasing the accuracy of a classifier is to train an
+\emph{ensemble} of distinct classifiers and use a majority vote
+to make the final prediction.
+%
+Random forests are an instance of this method, with decision
+trees as the underlying classifiers.
+%
+The training process involves taking $N$ random subsets of the training
+data and training a separate decision tree on each subset --- the
+training process for the decision trees is often modified slightly to
+reduce correlation between trees, by forcing the tree to pick features
+from a random subset of all features at each node.
+%
+In order to make a prediction for an unseen sample, the random forest
+asks each decision tree to make a prediction, and then predicts the most
+common label.
+
+The diversity of the underlying models tends to make random forests less
+susceptible to the overfitting and instability of decision trees, but it
+also makes the learned model more difficult to interpret.
+%
+Furthermore, the number of trees in the forest, $N$, becomes an important
+hyper-parameter that must be set manually.
+
 
 \paragraph{Neural Networks}
 The last (and most complex) model we discuss is a type of neural network
-called a \emph{multi-layer perceptron} \ES{CITE}.
+called a \emph{multi-layer perceptron} (see \citealt{Nielsen2015-pu} for
+a thorough introduction to neural networks).
 %
 Neural networks can be understood as a collection of linear models, just
 like the one used in logistic regression, arranged in a directed graph.
@@ -361,10 +443,10 @@ propagated out.
 These activation functions are what allow neural networks to accurately
 model nonlinear functions.
 %
-A common choice of activation function is the same sigmoid function
-used by logistic regression, alternatives include the hyperbolic $\tanh$
-function, and more recently the \emph{rectified linear unit} (ReLU)
-$f(x) = \mathsf{max}(0,x)$ \ES{CITE}.
+A common choice of activation function is the same sigmoid function used
+by logistic regression, alternatives include the hyperbolic $\tanh$
+function, and more recently the \emph{rectified linear unit} (ReLU),
+defined as $f(x) = \mathsf{max}(0,x)$ \citep{Nair2010-xg}.
 
 The neurons are arranged in \emph{layers}; each layer contains a set of
 neurons that take in signals from the previous layer and propagate
@@ -385,6 +467,30 @@ vary the number of neurons in our experiments.
 Neural networks are trained similarly to logistic regression using
 stochastic gradient descent, and thus the learning rate $\eta$ and
 regularization rate $\lambda$ are also important hyper-parameters.
+%
+They are, however, much more difficult to train as they require larger
+training sets.
+
+Neural networks are popular for their ability to uncover ``hidden''
+features in the data.
+%
+Each neuron learns a different linear combination of the signals from
+the previous layer; combined with the activation function this can be
+thought of as the neuron learning to respond to a new, \emph{compound}
+feature of its inputs.
+%
+This ability to discover interesting combinations of features makes
+neural networks easier to use in some respect; they can reduce the
+importance of manual \emph{feature engineering} (selecting interesting
+features to provide as inputs).
+%
+However, the sheer size and complexity of neural networks makes the
+model particularly difficult to interpret --- they are generally regarded
+as ``black boxes.''
+%
+Neural networks are also very susceptible to overfitting, so
+regularization methods like the $L_2$ norm used for logistic regression
+are important.
 
 \ES{should mention that logistic regression can be thought of as a degenerate MLP with 0 layers, and perhaps add a diagram?}
 

@@ -88,13 +88,22 @@ These contextual features include the syntactic class of the neighboring
 expressions, their inferred types (when available), and, crucially, whether
 the expression occurs in a minimal type error \emph{slice}.
 %
-A minimal type error slice of a program includes all expressions that
-are necessary for the error to manifest and no more. We propose to
-use type error slices to communicate to the classifier which expressions
-could potentially be blamed --- a change to an expression outside of the
-minimal slice cannot possibly fix the type error. This is conceptually
-related to the use of fault localization in other program analysis
-and transformation techniques (see Section~\ref{sec:related-work}).
+A minimal type error slice \citep{Haack2003-vc} includes all expressions that
+are necessary for the error to manifest and no more.
+%
+We propose to use type error slices to communicate to the classifier
+which expressions could potentially be blamed --- a change to an
+expression outside of the minimal slice cannot possibly fix the type
+error.
+%
+We will show that the type error slice is so important
+(\autoref{sec:feature-utility}) that it is actually beneficial to
+automatically discard expressions that are not part of the slice, rather
+than letting the classifier learn to do so.
+%
+Our use of type error slices is conceptually related to the use of fault
+localization in other program analysis and transformation techniques
+(see \autoref{sec:related-work}).
 
 \paragraph{\textbf{Challenge (2): What is the ``correct'' expression to blame?}}
 As we saw in \autoref{fig:sumList}, type errors admit many different
