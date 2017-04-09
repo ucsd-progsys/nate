@@ -79,28 +79,15 @@ program, including:
 \end{enumerate}
 
 \paragraph{Blame Oracle}
-We identified the fixes for each ill-typed program with an
-expression-level diff~\citep{Lempsink2009-xf}.
-%
-We consider two sources of changes:
-%
-\begin{enumerate}
-\item If an expression has been removed wholesale, \eg if $\eapp{f}{x}$
-  is rewritten to $\eapp{g}{x}$, we will mark the expression $f$ as
-  changed, as it has been replaced by $g$.
-\item If a new expression has been inserted \emph{around} an existing
-  expression, \eg if $\eapp{f}{x}$ is rewritten to
-  $\eplus{\eapp{f}{x}}{1}$, we will mark the application expression
-  $\eapp{f}{x}$ (but not $f$ or $x$) as changed, as the $+$ operator now
-  occupies the original location of the application.
-\end{enumerate}
 
-Students may have made many, potentially unrelated, changes between
-compilations, but at some point the ``fix'' becomes a ``rewrite''.
+A disadvantage of using diffs as blame oracles is that students may have
+made many, potentially unrelated, changes between compilations; at some
+point the ``fix'' becomes a ``rewrite''.
 %
 We do not wish to consider the ``rewrites'' in our evaluation, so we
 discard outliers where the fraction of expressions that have changed is
-more than one standard deviation above the mean, or 44\%.
+more than one standard deviation above the mean, establishing a diff
+threshold of 44\%.
 %
 This accounts for roughly 14\% of each dataset, leaving us with
 2,425 program pairs for \SPRING and 2,325 pairs for \FALL.
