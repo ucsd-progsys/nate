@@ -57,15 +57,19 @@ Our classifiers are:
 \item[\linear] A logistic regression trained with a learning rate
   $\eta = 0.001$, an $L_2$ regularization rate $\lambda = 0.001$, and a
   mini-batch size of 200.
-\item[\dectree] A decision tree trained with the \ES{HUMA?} algorithm and \ES{HUMA: hyperparams?}.
-\item[\forest] A random forest trained with the \ES{HUMA?} algorithm and 30 estimators \ES{HUMA: hyperparams?}.
-\item[\hiddenT and \hiddenFH] Two multi-layer perceptron neural networks, both trained with $\eta = 0.001$,
-  $\lambda = 0.001$, and a mini-batch size of 200. The first MLP
-  contains a single hidden layer of 10 neurons, and the second contains
-  a hidden layer of 500 neurons. This allows us to investigate how well
-  the MLP can \emph{compress} its model (cf.~\cite{FIXME}). The neurons
-  use rectified linear units (ReLU) as their activation function, a
-  common practice in modern neural networks.
+\item[\dectree] A decision tree trained with the CART algorithm
+  \citep{Breiman1984-qy} and an impurity threshold of $10^{-7}$ (used to
+  avoid overfitting via early stopping).
+\item[\forest] A random forest \citep{Breiman2001-wo} of 30
+  estimators, trained with an impurity threshold of $10^{-7}$.
+\item[\hiddenT and \hiddenFH] Two multi-layer perceptron neural
+  networks, both trained with $\eta = 0.001$, $\lambda = 0.001$, and a
+  mini-batch size of 200. The first MLP contains a single hidden layer
+  of 10 neurons, and the second contains a hidden layer of 500
+  neurons. This allows us to investigate how well the MLP can
+  \emph{compress} its model (cf.~\cite{FIXME}). The neurons use
+  rectified linear units (ReLU) as their activation function, a common
+  practice in modern neural networks.
 \end{description}
 %
 All classifiers were trained for 20 epochs on one dataset
@@ -90,13 +94,13 @@ accuracy (58\% Top-3), while \ocaml achieves a Top-1 accuracy of 45\%.
 Interestingly, one only needs two \emph{random} guesses to outperform
 \ocaml, with 47\% accuracy.
 %
-\sherrloc outperforms both baselines with 56\% Top-1 accuracy (84\% Top
+\sherrloc outperforms both baselines with 56\% Top-1 accuracy (84--86\% Top
 3), while \mycroft actually underperforms \ocaml with 38--41\% Top-1
 accuracy.
 %
 Finally, we find that \emph{all} of our classifiers outperform \sherrloc,
-ranging from 59--63\% Top-1 accuracy (86--88\% Top-3) for the \linear
-classifier to 70--74\% Top-1 accuracy (91--92\% Top-3) for the \hiddenFH.
+ranging from 58--62\% Top-1 accuracy (86--88\% Top-3) for the \linear
+classifier to 71--74\% Top-1 accuracy (91\% Top-3) for the \hiddenFH.
 
 Surprisingly, there is little variation in accuracy between classifiers.
 With the exception of the \linear model, they all achieve around 70\%

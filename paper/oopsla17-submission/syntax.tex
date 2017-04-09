@@ -1,4 +1,4 @@
-\begin{figure}
+\begin{figure}[t]
 $$
 \begin{array}{rrcl}
 \emphbf{Expressions}
@@ -20,4 +20,23 @@ $$
 $$
 \caption{Syntax of \lang}
 \label{fig:syntax}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+$$
+\begin{array}{lcl}
+  \V          & \defeq & \List{\R}\\
+
+  \featuresym & : & \List{e \to \R} \\
+  \labelsym   & : & e \times e \to \List{e} \\
+  \extractsym & : & \List{e \to \R} \to e \times e \to \List{\V \times \Runit} \\
+  \trainsym   & : & \List{\V \times \B} \to \Model \\
+  \evalsym    & : & \Model \to \V \to \Runit \\
+  \midrule
+  \blamesym   & : & \Model \to e \to \List{e \times \Runit}
+\end{array}
+$$
+\caption{A high-level API for converting program pairs to feature vectors and labels}
+\label{fig:api}
 \end{figure}

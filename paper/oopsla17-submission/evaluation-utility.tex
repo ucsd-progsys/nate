@@ -203,8 +203,10 @@ Top-1 accuracy by 7\% (\resp 16\%).
 Furthermore, while \ExprSize does provide some benefit when it is the
 only additional feature, it does not appear to provide any real increase
 in accuracy when added alongside the contextual or typing features.
-\ES{FIXME: Indicate that this is expected because of feature overlap: the
-contextual ``child'' features partially encode subtree size.}
+%
+This is likely explained by \emph{feature overlap}, \ie the contextual
+features of ``child'' expressions additionally provide some information
+about the size of the subtree.
 
 As one might expect, the typing features are more beneficial than the
 contextual syntactic features.
