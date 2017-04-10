@@ -31,12 +31,14 @@
     %legend pos = outer north east,
     at={(1.5,0.5)},
     anchor=center,
-    legend columns=4
+    legend columns=5
   },
 ]
 
 % ES: NOTE: ORDER OF PLOTS/LEGEND ENTRIES MATTERS
 
+\addplot+[stack plots=false, draw=black, fill=none, thick, bar shift=.25cm] table[x=features, y=recall] {\SliceHiddenBench};
+\addlegendentry{Recall}
 \addplot[draw=black, fill=green1, bar shift=.25cm] table[x=features, y=top-1] {\SliceHiddenBench};
 \addlegendentry{Top-1}
 \addplot[draw=black, fill=green2, bar shift=.25cm] table[x=features, y expr=\thisrow{top-2} - \thisrow{top-1}] {\SliceHiddenBench};
@@ -48,6 +50,8 @@
 
 \resetstackedplots
 
+\addplot+[stack plots=false, draw=black, fill=none, thick, bar shift=-.25cm] table[x=features, y=recall] {\SliceLinearBench};
+\addlegendentry{Recall}
 \addplot[draw=black, fill=blue1, bar shift=-.25cm] table[x=features, y=top-1] {\SliceLinearBench};
 \addlegendentry{Top-1}
 \addplot[draw=black, fill=blue2, bar shift=-.25cm] table[x=features, y expr=\thisrow{top-2} - \thisrow{top-1}] {\SliceLinearBench};
@@ -56,6 +60,9 @@
 \addlegendentry{Top-3}
 \addlegendimage{empty legend}
 \addlegendentry{\linear}
+
+
+
 \end{axis}
 \end{tikzpicture}
 \caption{Impact of type error slice on blame accuracy.}\label{fig:slice-utility}
@@ -104,6 +111,8 @@
 
 % ES: NOTE: ORDER OF PLOTS/LEGEND ENTRIES MATTERS
 
+\addplot+[stack plots=false, draw=black, fill=none, thick, bar shift=.25cm] table[x=features, y=recall] {\FeatureHiddenBench};
+%\addlegendentry{Recall}
 \addplot[draw=black, fill=green1, bar shift=.25cm] table[x=features, y=top-1] {\FeatureHiddenBench};
 % \addlegendentry{Top-1}
 \addplot[draw=black, fill=green2, bar shift=.25cm] table[x=features, y expr=\thisrow{top-2} - \thisrow{top-1}] {\FeatureHiddenBench};
@@ -115,6 +124,7 @@
 
 \resetstackedplots
 
+\addplot+[stack plots=false, draw=black, fill=none, thick, bar shift=-.25cm] table[x=features, y=recall] {\FeatureLinearBench};
 \addplot[draw=black, fill=blue1, bar shift=-.25cm] table[x=features, y=top-1] {\FeatureLinearBench};
 % \addlegendentry{Top-1}
 \addplot[draw=black, fill=blue2, bar shift=-.25cm] table[x=features, y expr=\thisrow{top-2} - \thisrow{top-1}] {\FeatureLinearBench};
