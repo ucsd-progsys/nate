@@ -1,10 +1,22 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-
-
-
-
+We have presented a new data-driven approach to localizing type errors,
+using machine learning to assign blame based on previously seen novice
+mistakes.
+%
+We translate ill-typed programs into sets of feature vectors, predict
+for each sub-expression whether it should be blamed, rank the
+predictions based on the model's confidence, and select the top three
+blame assignments to present to the user.
+%
+We represent expressions solely by their syntactic class and type, and
+those of their parent and children.
+%
+We have evaluated our approach with five different learning algorithms
+on a suite of over 4,500 student programs, and found that all of our
+models outperform the state of the art, by up to a 16\% margin.
+%
 
 
 
