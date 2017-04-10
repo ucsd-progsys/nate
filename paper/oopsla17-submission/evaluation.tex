@@ -74,7 +74,7 @@ program, including:
 \item One feature denoting whether each sub-expression is part of the
   minimal type error slice. We use this feature as a ``hard''
   constraint, sub-expressions that are not part of the minimal slice
-  will be preemptively discarded, we justify this decision in
+  will be preemptively discarded. We justify this decision in
   \autoref{sec:feature-utility}.
 \end{enumerate}
 
@@ -148,6 +148,13 @@ We acknowledge, of course, that students are not industrial programmers
 and our results may not translate to large-scale software development;
 however, we are particularly interested in aiding novice programmers
 as they learn to work inside the type system.
+
+A related threat to construct validity is our definition of the immedate
+next well-typed program as the intended ground truth answer (see
+\autoref{sec:overview}, Challenge 2). Students may, in theory, submit
+intermediate well-typed program ``rewrites'' between the original ill-typed
+program and the final intended answer. Our approach to discarding outliers
+(see \autoref{sec:evaluation}) is designed to mitigate this threat. 
 
 Our removal of program pairs that changed too much, where our oracle
 could not identify the blame of the other tools, or where the other
