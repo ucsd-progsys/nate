@@ -1,6 +1,10 @@
 \subsection{Explaining Predictions}
 \label{sec:qualitative}
 
+\definecolor{tree}{HTML}{66C2A5}
+\definecolor{sherrloc}{HTML}{FC8D62}
+\definecolor{fix}{HTML}{8DA0CB}
+
 Next, we present a \emph{qualitative} evaluation that compares the
 predictions made by our classifiers with those of \sherrloc.
 %
@@ -12,9 +16,9 @@ For each example, we provide
 %
 (1) the code,
 %
-(2) \sherrloc's prediction (in \textbf{bold}),
+(2) \colorbox{sherrloc!75}{\sherrloc's} prediction,
 %
-(3) the prediction of our \dectree classifier (\underline{underlined}), and
+(3) our \colorbox{tree!75}{\dectree's} prediction, and
 %
 (4) an \emph{explanation} of why our classifier made its prediction.
 %
@@ -38,7 +42,7 @@ the decision tree by the features of the input programs.
 We begin with a few programs where our classifier fails to
 make the correct prediction.
 %
-For these programs we will additionally \colorbox{red!50}{highlight} the
+For these programs we will additionally \colorbox{fix!75}{highlight} the
 correct blame location.
 
 \paragraph{Constructing a List of Duplicates}
@@ -47,13 +51,22 @@ Our first program is a simple recursive function |clone| that takes an
 item |x| and a count |n|, and produces a list containing |n| copies of
 |x|.
 %
+% \begin{ecode}
+%   let rec clone x n =
+%     let loop acc n =
+%       if n <= 0 then
+%         acc
+%       else
+%         (*@\colorbox{red!50}{clone}@*) ==([==_=x=_==] @ acc)== (n - 1) in
+%     loop [] n
+% \end{ecode}
 \begin{ecode}
   let rec clone x n =
     let loop acc n =
       if n <= 0 then
         acc
       else
-        (*@\colorbox{red!50}{clone}@*) ==([==_=x=_==] @ acc)== (n - 1) in
+        (*@\colorbox{fix!75}{clone} \colorbox{sherrloc!75}{([\colorbox{tree!75}{x}] @\ acc)}@*) (n - 1) in
     loop [] n
 \end{ecode}
 % \ES{TODO: our 2nd prediction matches \sherrloc and \ocaml (occurs check), correct fix is to replace recursive call to clone with loop}
@@ -98,13 +111,14 @@ Our next example is another ill-fated attempt at |clone|.
 %
 \begin{ecode}
   let rec clone x n =
-    let rec loop (*@\colorbox{red!50}{x n acc}@*) =
+    let rec loop (*@\colorbox{fix!75}{x n acc}@*) =
       if n < 0 then
         acc
       else
-        ==loop== __(x, (n - 1), (x :: acc))__ in
+        (*@\colorbox{sherrloc!75}{loop} \colorbox{tree!75}{(x, (n - 1), (x :: acc))}@*) in
     loop (x, n, [])
 \end{ecode}
+%
 The issue here is that \ocaml functions are \emph{curried} by default
 --- \ie they take their arguments one at a time --- but our student has
 called the inner |loop| with all three arguments in a tuple.
@@ -174,7 +188,7 @@ the digits of an |int|.
     if n <= 0 then
       []
     else
-      [n mod 10] @ __[ ___=digitsOfInt (n / 10)=___ ]__
+      [n mod 10] @ (*@\colorbox{tree!75}{[ \colorbox{sherrloc!75}{digitsOfInt (n / 10)} ]}@*)
 \end{ecode}
 %
 Unfortunately, the student has decided to wrap the recursive call to
@@ -233,7 +247,7 @@ zeros.
     if n < 0 then
       (clone 0 ((-1) * n) @ l2, l2)
     else
-      (l1, _=clone 0 n=___ :: l2__)
+      (l1, (*@\colorbox{tree!75}{\colorbox{sherrloc!75}{clone 0 n} :: l2}@*))
 \end{ecode}
 \lstset{firstnumber=1}
 %
