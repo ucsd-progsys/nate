@@ -298,10 +298,10 @@ Recall that we formulate type error localization as a supervised
 classification problem.
 %
 This means that we assume the existence of a training set
-$S = \{\langle \mathbf{x}_i, y_i \rangle\}_{i=1}^{n}$
-of sample inputs $\mathbf{x}$ and their corresponding labels $y$.
+$S = \{\langle \mathbf{v}_i, b_i \rangle\}_{i=1}^{n}$
+of sample inputs $\mathbf{v}$ and their corresponding labels $b$.
 %
-The learning task is to model the probability $Pr(y\ |\ \mathbf{x})$
+The learning task is to model the probability $Pr(b\ |\ \mathbf{v})$
 of a label being assigned to a given input.
 
 There are many learning algorithms to choose from, existing
@@ -322,12 +322,12 @@ We will briefly introduce each technique by describing the model it
 learns, the training procedure, any hyper-parameters that must be tuned
 by a human, and a summary of its advantages and disadvantages.
 
-FIXME: Wes thinks the entire rest of this section, up to ``4. Evaluation'', 
+\ES{FIXME: Wes thinks the entire rest of this section, up to ``4. Evaluation'',
 contains much more detail than an OOPSLA audience wants on
 introductory/undergraduate machine learning. (Especially since nothing
 after this point is a novel contribution we make.) Perhaps we can cut some
 space by focusing on the pros and cons of each technique rather than
-describing the details? This is a PL paper. 
+describing the details? This is a PL paper. }
 
 \paragraph{Logistic Regression}
 % The simplest model we investigate is logistic regression, which learns a
@@ -347,20 +347,20 @@ describing the details? This is a PL paper.
 The simplest model we investigate is logistic regression, which can be
 understood in two steps.
 %
-First, we compute the \emph{evidence} for a label $y$ as a linear
-function of the feature vector $\mathbf{x}$, using a weight vector
-$\mathbf{w}$ and a bias $b$ that will be learned from the training set.
+First, we compute the \emph{evidence} for a label $b$ as a linear
+function of the feature vector $\mathbf{v}$, using a weight vector
+$\mathbf{w}$ and a bias $w_0$ that will be learned from the training set.
 $$
-\mathsf{ev} = \sum_j w_j x_j + b
+\mathsf{ev} = \sum_j w_j v_j + w_0
 $$
 Then we use the logistic function (also called a sigmoid function)
 $\sigma(x) = 1 / (1 + e^{-x})$ to compress the evidence term into the
 $[0,1]$ interval, which can then be interpreted as the probability that
-the label $y$ should be applied.
+the label $b$ should be applied.
 %
 This gives us the final model:
 $$
-Pr(y\ |\ \mathbf{x}) = \frac{1}{1 + \mathsf{exp}(-\sum_j w_j x_j - b)}
+Pr(b\ |\ \mathbf{v}) = \frac{1}{1 + \mathsf{exp}(-\sum_j w_j v_j - w_0)}
 $$
 % $$
 % Pr(y\ |\ \mathbf{x}) = \frac{1}{1 + e^{-\mathsf{ev}}}
@@ -411,7 +411,7 @@ In particular, it may perform poorly when asked to learn an inherently
 %
 This limitation can be mitigated by adding transformed or compound
 features to the model --- \eg if one knows that the label has a
-quadratic relationship with a feature $x$, the transformed feature $x^2$
+quadratic relationship with a feature $v$, the transformed feature $v^2$
 can be added --- but this typically requires knowledge of the underlying
 model.
 
@@ -425,7 +425,7 @@ features, recursively partitioning the input space until a final
 classification can be made.
 %
 Each node in the tree contains a single predicate of the form
-$x_j \leq t$ for some feature $x_j$ and threshold $t$, which determines
+$v_j \leq t$ for some feature $v_j$ and threshold $t$, which determines
 whether a given input should proceed down the left or right subtree.
 %
 Each leaf is labeled with a prediction and the fraction of training
