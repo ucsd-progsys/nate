@@ -4,7 +4,7 @@
 \centering
 \begin{tikzpicture}
 \begin{axis}[
-  % name=slice,
+  name=slice,
   % scale only axis,
   %at=(feature.above north), anchor=below south east,
   ybar stacked,
@@ -60,13 +60,14 @@
 \addlegendentry{Top-3}
 \addlegendimage{empty legend}
 \addlegendentry{\linear}
-
-
-
 \end{axis}
 \end{tikzpicture}
 \caption{Impact of type error slice on blame accuracy.}\label{fig:slice-utility}
 \end{subfigure}
+
+%\hfill\mbox{}
+
+\vspace{1\baselineskip}
 
 
 \begin{subfigure}[t]{\linewidth}
