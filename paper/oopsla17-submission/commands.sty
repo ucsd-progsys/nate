@@ -134,3 +134,12 @@
 \newcommand\Runit{\mathcal{P}}
 \newcommand\B{\mathcal{B}}
 \newcommand\List[1]{[#1]}
+
+
+\makeatletter
+\newcommand\resetstackedplots{
+\makeatletter
+\pgfplots@stacked@isfirstplottrue
+\makeatother
+}
+\makeatother
