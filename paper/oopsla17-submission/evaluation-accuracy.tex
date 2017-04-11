@@ -64,12 +64,19 @@ Our classifiers are:
   estimators, trained with an impurity threshold of $10^{-7}$.
 \item[\hiddenT and \hiddenFH] Two multi-layer perceptron neural
   networks, both trained with $\eta = 0.001$, $\lambda = 0.001$, and a
-  mini-batch size of 200. The first MLP contains a single hidden layer
-  of 10 neurons, and the second contains a hidden layer of 500
-  neurons. This allows us to investigate how well the MLP can
-  \emph{compress} its model (cf.~\cite{FIXME}). The neurons use
-  rectified linear units (ReLU) as their activation function, a common
-  practice in modern neural networks.
+  mini-batch size of 200.
+  %
+  The first MLP contains a single hidden layer of 10 neurons, and the
+  second contains a hidden layer of 500 neurons.
+  %
+  This gives us a measure of the complexity of the MLP's model, \ie
+  if the model requires many compound features, one would expect \hiddenFH
+  to outperform \hiddenT.
+  % This allows us to investigate how well the MLP can \emph{compress} its
+  % model (cf.~\cite{FIXME}).
+  %
+  The neurons use rectified linear units (ReLU) as their activation
+  function, a common practice in modern neural networks.
 \end{description}
 %
 All classifiers were trained for 20 epochs on one dataset
