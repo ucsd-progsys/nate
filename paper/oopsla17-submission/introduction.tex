@@ -65,8 +65,10 @@ constraint.
 %
 In this case it blames the recursive call to |sumList|, complaining that
 |sumList| returns a |list| where an |int| was expected by the |+|
-operator. Note that this blame is inconsistent with the programmer's
-intention and thus may not be helpful debugging information to a novice.
+operator.
+%
+Note that this blame is inconsistent with the programmer's intention and
+may not be helpful debugging information to a novice.
 
 Recent work on type error \emph{localization}
 %
