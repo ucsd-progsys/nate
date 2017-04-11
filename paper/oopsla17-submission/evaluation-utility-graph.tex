@@ -29,7 +29,7 @@
   transpose legend,
   legend style={
     %legend pos = outer north east,
-    at={(1.5,0.5)},
+    at={(1.75,0.5)},
     anchor=center,
     legend columns=5
   },
@@ -61,6 +61,22 @@
 \addlegendimage{empty legend}
 \addlegendentry{\linear}
 \end{axis}
+\begin{axis}[
+  ybar stacked,
+  width=0.5\linewidth,
+  height=5cm,
+  ylabel={Recall},
+  axis y line*=right,
+  ymin=0.2,
+  ymax=1,
+  ytick={0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0},
+  yticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\,\%},
+  ytick style={draw=none},
+  ymajorgrids = false,
+  xmin=0, xmax=1,
+  hide x axis,
+]
+\end{axis}
 \end{tikzpicture}
 \caption{Impact of type error slice on blame accuracy.}\label{fig:slice-utility}
 \end{subfigure}
@@ -76,7 +92,7 @@
   % name=feature,
   % scale only axis,
   ybar stacked,
-  width=\linewidth,
+  width=0.9\linewidth,
   height=6cm,
   %title={Impact of Contextual Feature Classes},
   ylabel={Accuracy},
@@ -138,6 +154,22 @@
 
 
 %\legend{Top-1, Top-2, Top-3}
+\end{axis}
+\begin{axis}[
+  ybar stacked,
+  width=0.9\linewidth,
+  height=6cm,
+  ylabel={Recall},
+  axis y line*=right,
+  ymin=0.5,
+  ymax=1,
+  ytick={0.5, 0.6, 0.7, 0.8, 0.9, 1.0},
+  yticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\,\%},
+  ytick style={draw=none},
+  ymajorgrids = false,
+  xmin=0, xmax=1,
+  hide x axis,
+]
 \end{axis}
 
 \end{tikzpicture}
