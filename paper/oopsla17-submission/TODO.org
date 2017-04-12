@@ -142,21 +142,39 @@
 
 ** FROM KAMALIKA
 *** OVERVIEW
-   - point (2) in "key tech challenges": phrasing in CHALLENGE 2 is much
+   - [X] point (2) in "key tech challenges": phrasing in CHALLENGE 2 is much
      clearer
-   - challenge 1: make it clear that we're specifically interested in
+   - [X] challenge 1: make it clear that we're specifically interested in
      representations for LOCALIZING TYPE ERRORS
-     - and tie in from SOLUTION
-   - challenge 2: want blame assignment that is USEFUL and PREDICTABLE
-   - challenge 3: phrase challenge in terms of INTUITIVE PRESENTATION
+     - [X] and tie in from SOLUTION
+   - [ ] challenge 2: want blame assignment that is USEFUL and PREDICTABLE
+   - [X] challenge 3: phrase challenge in terms of INTUITIVE PRESENTATION
 *** LEARNING > LABELS
-   - make it clearer that we have a two-stage process
+   - [ ] make it clearer that we have a two-stage process
      1. per-expression labels (good/bad)
      2. per-program labels (ranked list of blame)
-   - perhaps an algorithm-style box
+   - [ ] perhaps an algorithm-style box
 *** EVALUATION
-   - maybe make headlining questions more precise
+   - [ ] maybe make headlining questions more precise
      - highlight results too?
-   - add a sentence in 4.3 explaining why we don't use ANOVA/RELIEF
+   - [ ] add a sentence in 4.3 explaining why we don't use ANOVA/RELIEF
      - hard to make sense of results when you have a few categorical
        features expanded into many binary features
+   - [ ] "oracle" is the student fixes
+   - [ ] "utility": what *classes* of features are contributing most to accuracy
+   - [ ] should threats come earlier
+   - [ ] explain that dropping programs where oracle doesnt recognize
+     sherrloc predcition favors sherlroc, NOT us
+   - [ ] crispen the "results" paragraphs, highlight our results (eg put
+     them first?)
+**** qualitative
+     - [ ] what is goal of analysis?
+       - qualitiative
+       - featuers used
+     - [ ] at beginning: high-level description of examining decision
+       paths to help explain predictions
+**** threat mitigation
+     - [ ] make a bigger deal of train/test split
+     - [ ] explaining predictions
+     - [ ] point out that we are also doing cross-validation across
+       joint dataset, model appears relatively stable

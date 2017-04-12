@@ -13,9 +13,9 @@ For each example, we provide
 %
 (1) the code,
 %
-(2) \colorbox{sherrloc!75}{\sherrloc's} prediction,
+(2) \hlSherrloc{\sherrloc's} prediction,
 %
-(3) our \colorbox{tree!75}{\dectree's} prediction, and
+(3) our \hlTree{\dectree's} prediction, and
 %
 (4) an \emph{explanation} of why our classifier made its prediction.
 %
@@ -39,7 +39,7 @@ the decision tree by the features of the input programs.
 We begin with a few programs where our classifier fails to
 make the correct prediction.
 %
-For these programs we will additionally \colorbox{fix!75}{highlight} the
+For these programs we will additionally \hlFix{highlight} the
 correct blame location.
 
 \paragraph{Constructing a List of Duplicates}
@@ -63,7 +63,7 @@ item |x| and a count |n|, and produces a list containing |n| copies of
       if n <= 0 then
         acc
       else
-        (*@\colorbox{fix!75}{clone} \colorbox{sherrloc!75}{([\colorbox{tree!75}{x}] @\ acc)}@*) (n - 1) in
+        (*@\hlFix{clone} \hlSherrloc{([\hlTree{x}] @\ acc)}@*) (n - 1) in
     loop [] n
 \end{ecode}
 % \ES{TODO: our 2nd prediction matches \sherrloc and \ocaml (occurs check), correct fix is to replace recursive call to clone with loop}
@@ -108,11 +108,11 @@ Our next example is another ill-fated attempt at |clone|.
 %
 \begin{ecode}
   let rec clone x n =
-    let rec loop (*@\colorbox{fix!75}{x n acc}@*) =
+    let rec loop (*@\hlFix{x n acc}@*) =
       if n < 0 then
         acc
       else
-        (*@\colorbox{sherrloc!75}{loop} \colorbox{tree!75}{(x, (n - 1), (x :: acc))}@*) in
+        (*@\hlSherrloc{loop} \hlTree{(x, (n - 1), (x :: acc))}@*) in
     loop (x, n, [])
 \end{ecode}
 %
@@ -185,7 +185,7 @@ the digits of an |int|.
     if n <= 0 then
       []
     else
-      [n mod 10] @ (*@\colorbox{tree!75}{[ \colorbox{sherrloc!75}{digitsOfInt (n / 10)} ]}@*)
+      [n mod 10] @ (*@\hlTree{[ \hlSherrloc{digitsOfInt (n / 10)} ]}@*)
 \end{ecode}
 %
 Unfortunately, the student has decided to wrap the recursive call to
@@ -244,7 +244,7 @@ zeros.
     if n < 0 then
       (clone 0 ((-1) * n) @ l2, l2)
     else
-      (l1, (*@\colorbox{tree!75}{\colorbox{sherrloc!75}{clone 0 n} :: l2}@*))
+      (l1, (*@\hlTree{\hlSherrloc{clone 0 n} :: l2}@*))
 \end{ecode}
 \lstset{firstnumber=1}
 %

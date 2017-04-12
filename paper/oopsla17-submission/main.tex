@@ -59,9 +59,16 @@
 \lstMakeShortInline{|}
 
 % colors from http://colorbrewer2.org/?type=qualitative&scheme=Set2&n=3
-\definecolor{tree}{HTML}{66C2A5}
-\definecolor{sherrloc}{HTML}{FC8D62}
-\definecolor{fix}{HTML}{8DA0CB}
+% \definecolor{tree}{HTML}{66C2A5}
+% \definecolor{sherrloc}{HTML}{FC8D62}
+% \definecolor{fix}{HTML}{8DA0CB}
+\definecolor{tree}{HTML}{8dd3c7}
+\definecolor{sherrloc}{HTML}{ffffb3}
+\definecolor{fix}{HTML}{bebada}
+
+\newcommand\hlTree[1]{\fcolorbox{black}{tree}{#1}}
+\newcommand\hlSherrloc[1]{\fcolorbox{black}{sherrloc}{#1}}
+\newcommand\hlFix[1]{\fcolorbox{black}{fix!50}{#1}}
 
 \usepackage{commands}
 \def\sectionautorefname{\S}
