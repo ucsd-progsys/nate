@@ -294,7 +294,7 @@ We consider two sources of changes:
 \label{sec:models}
 \lstDeleteShortInline{|} % sigh...
 
-Recall that we formulate type error detection at a single expression as a supervised classification problem. This means that there is a training data set $S = \{ (x_i, y_i) \}_{i=1}^n$ of labeled examples, and our goal is to use it to build a classifier or a prediction rule that can predict a label for an input $x$. Because we run the classifier on each expression in order to determine the most likely type error location, we also require the classifier to output a {\em{confidence score}} that indicates how certain it is about its prediction. 
+Recall that we formulate type error detection at a single expression as a supervised classification problem. This means that we are given a training data set $S = \{ (x_i, y_i) \}_{i=1}^n$ of labeled examples, and our goal is to use it to build a {\em{classifier}}, or a prediction rule that can predict a label for an input $x$. Since we apply the classifier on each expression in the program to determine those that are the most likely to be type errors, we also require the classifier to output a {\em{confidence score}} that measures how sure the classifier is about its prediction. 
 
 
 %Recall that we formulate type error localization as a supervised
@@ -314,7 +314,7 @@ machine learning textbooks (\eg \cite{FriedmanHastieTibshirani2000}).
 % \ES{TODO: huma/kamalika?}).
 %
 
-Below we briefly introduce each technique by describing the model it learns, and summarize its advantages and disadvantages. For our application, we are particularly interested in three properties -- expressiveness, interpretability and proneness to overfitting. Expressiveness measures how complex the prediction rule is allowed to be, and interpretability measures how easy it is to explain the cause of prediction to a human. Finally proneness to overfitting measures how easily the rule generalizes to unseen examples that are not in the training set; a rule that is highly prone to overfitting might perform poorly on a test set even though its training performance is very high.
+Below we briefly introduce each technique by describing the model it learns, and summarize its advantages and disadvantages. For our application, we are particularly interested in three properties -- expressiveness, interpretability and ease of generalization. Expressiveness measures how complex prediction rules are allowed to be, and interpretability measures how easy it is to explain the cause of prediction to a human. Finally ease of generalization measures how easily the rule generalizes to unseen examples that are not in the training set; a rule that is not easily generalizable might perform poorly on an unseen test set even when its training performance is high.
 
 %We will briefly introduce each technique by describing the model it
 %learns, the training procedure, any hyper-parameters that must be tuned
@@ -330,7 +330,7 @@ describing the details? This is a PL paper. } \ES{KC: I completely agree. Perhap
 
 \paragraph{Logistic Regression.} The simplest classifier we investigate is logistic regression. This is a linear model, where the goal is to learn a set of weights $W$ and a bias $b$ that describe the following model for predicting a label $y$ from a feature vector $x$:
 \[ \Pr(y = 1 | x) = \frac{1}{1 + e^{-W^{\top} x - b}} \]
-The weights $W$ and $b$ are learnt from training data, and the value of $\Pr(y | x)$ naturally leads to a confidence score. Logistic regression is a widely used classification algorithm, which is largely preferred for its simplicity, relative ease of generalization as well as ease of human interpretability. The main limitation is that the prediction rule is constrained to be a linear combination of the features, and hence relatively simple. While this can be somewhat mitigated by adding higher order (quadratic or cubic) features, this often requires thorough domain knowledge.
+The weights $W$ and $b$ are learnt from training data, and the value of $\Pr(y | x)$ naturally leads to a confidence score. Logistic regression is a widely used classification algorithm, which is largely preferred for its simplicity, ease of generalization as well as interpretability. Its main limitation is that the prediction rule is constrained to be a linear combination of the features, and hence relatively simple. While this can be somewhat mitigated by adding higher order (quadratic or cubic) features, this often requires substantial domain knowledge.
 
 % The simplest model we investigate is logistic regression, which learns a
 % linear function of the features.
@@ -429,12 +429,12 @@ Each leaf is labeled with a prediction and the fraction of training
 samples that would reach it, the latter quantity can be interpreted as
 \ES{HUMA: is this correct?}
 the decision tree's confidence in its prediction. This leads to a prediction rule
-that can be quite complex depending on the input data. 
+that can be quite expressive depending on the data used to build it. 
 
-Training a decision tree entails finding both a set of good partitioning and a good ordering of the predicates. This is usually done in a top-down greedy manner, and there are several standard training algorithms such as C4.5
+Training a decision tree entails finding both a set of good partitioning and a good ordering of the predicates based on data. This is usually done in a top-down greedy manner, and there are several standard training algorithms such as C4.5
 \citep{Quinlan1993-de} and CART \citep{Breiman1984-qy}.
 
-Another advantage of decision trees is their ease of interpretation --  the decision rule is a white-box model that can be readily described to a human, especially when the tree is small. The main limitation is that these trees are often prone to overfitting; while this is somewhat mitigated in practice by pruning the tree, this is still a well-known problem.
+Another advantage of decision trees is their ease of interpretation --  the decision rule is a white-box model that can be readily described to a human, especially when the tree is small. However, main limitation is that these trees often do not generalize well; while this is somewhat mitigated in practice by pruning the tree, this is still a well-known problem.
 
 
 %predicates and a good ordering of the predicates.
@@ -460,7 +460,7 @@ Another advantage of decision trees is their ease of interpretation --  the deci
 %
 %Both disadvantages are addressed by random forests.
 
-\paragraph{Random Forests.} Random forests mitigate the overfitting problem by training an {\em{ensemble}} of distinct decision trees and then using a majority vote to make a prediction. The agreement among the distinct trees in the ensemble forms a natural confidence score. Since each classifier in the ensemble is a decision tree, this still allows for complex and highly expressive classifiers. \ES{Huma: is this the confidence score that we are using?} 
+\paragraph{Random Forests.} Random forests mitigate the generalization problem by training an {\em{ensemble}} of distinct decision trees and then using a majority vote to make a prediction. The agreement among the distinct trees in the ensemble forms a natural confidence score. Since each classifier in the ensemble is a decision tree, this still allows for complex and highly expressive classifiers. \ES{Huma: is this the confidence score that we are using?} 
 
 %One technique for increasing the accuracy of a classifier is to train an
 %\emph{ensemble} of distinct classifiers and use a majority vote
@@ -488,54 +488,59 @@ also makes the learned model more difficult to interpret.
 
 
 \paragraph{Neural Networks}
-The last (and most complex) model we discuss is a type of neural network
+The last (and most complex) model we use is a type of neural network
 called a \emph{multi-layer perceptron} (see \citealt{Nielsen2015-pu} for
-a thorough introduction to neural networks).
-%
-Neural networks can be understood as a collection of linear models, just
-like the one used in logistic regression, arranged in a directed graph.
-%
-Each node in the graph corresponds to a single linear model, called a
-\emph{neuron}, and the edges propagate signals from the input features,
-through the neurons, to the output labels.
-%
-The linear model in each neuron is wrapped in an \emph{activation
-  function}, which controls whether (or how strongly) the signal will be
-propagated out.
-%
-These activation functions are what allow neural networks to accurately
-model nonlinear functions.
-%
-A common choice of activation function is the same sigmoid function used
-by logistic regression, alternatives include the hyperbolic $\tanh$
-function, and more recently the \emph{rectified linear unit} (ReLU),
-defined as $f(x) = \mathsf{max}(0,x)$ \citep{Nair2010-xg}.
+an introduction to neural networks).
 
-The neurons are arranged in \emph{layers}; each layer contains a set of
-neurons that take in signals from the previous layer and propagate
-signals to the next layer.
-%
-The number of layers, the number of neurons per layer, and the
-connections between layers constitute the \emph{architecture} of a
-neural network, and are all important hyper-parameters.
-%
-We consider a particular class of neural networks called
-\emph{multi-layer perceptrons} (MLP), where the layers a fully connected to
-each other, \ie each neuron propagates its signal to every neuron in the
-subsequent layer.
-%
-We will only consider MLPs with a single layer of neurons, but we will
-vary the number of neurons in our experiments.
+A multi-layered perceptron can be represented as a directed acyclic graph whose nodes are arranged in layers that are fully connected by weighted edges. The first layer corresponds to the input features, and the final to the output. The output of a node $v$ in layer $l$ is given by:
+\[ h_v = g(\sum_{j \in N(v)} W_{jv} h_j ) \]
+where $N(v)$ is the set of nodes in the previous layer that are adjacent to $v$, $W_{jv}$ is the weight of the $(j, v)$ edge and $h_j$ is the output of node $j$ in the previous layer. Finally $g$ is a non-linear function, called the activation function, which in recent work is commonly chosen to be the \emph{rectified linear unit} (ReLU),
+defined as $g(x) = \mathsf{max}(0,x)$ \citep{Nair2010-xg}. The number of layers, the number of neurons per layer, and the connections between layers constitute the \emph{architecture} of a neural network. In our work, we use relatively simple neural networks which have an input layer, a single hidden layer and an output layer. 
 
-Neural networks are trained similarly to logistic regression using
-stochastic gradient descent, and thus the learning rate $\eta$ and
-regularization rate $\lambda$ are also important hyper-parameters.
+HEREHERE
 %
-They are, however, much more difficult to train as they require larger
-training sets.
+%Neural networks can be understood as a collection of linear models, just
+%like the one used in logistic regression, arranged in a directed graph.
+%
+%Each node in the graph corresponds to a single linear model, called a
+%\emph{neuron}, and the edges propagate signals from the input features,
+%through the neurons, to the output labels.
+%
+%The linear model in each neuron is wrapped in an \emph{activation
+%  function}, which controls whether (or how strongly) the signal will be
+%propagated out.
+%
+%These activation functions are what allow neural networks to accurately
+%model nonlinear functions.
+%
+%A common choice of activation function is the same sigmoid function used
+%by logistic regression, alternatives include the hyperbolic $\tanh$
+%function, and more recently the \emph{rectified linear unit} (ReLU),
+%defined as $f(x) = \mathsf{max}(0,x)$ \citep{Nair2010-xg}.
 
-Neural networks are popular for their ability to uncover ``hidden''
-features in the data.
+%The neurons are arranged in \emph{layers}; each layer contains a set of
+%neurons that take in signals from the previous layer and propagate
+%signals to the next layer.
+%
+% and are all important hyper-parameters.
+%
+%We consider a particular class of neural networks called
+%\emph{multi-layer perceptrons} (MLP), where the layers a fully connected to
+%each other, \ie each neuron propagates its signal to every neuron in the
+%subsequent layer.
+%
+%We will only consider MLPs with a single layer of neurons, but we will
+%vary the number of neurons in our experiments.
+
+%Neural networks are trained similarly to logistic regression using
+%stochastic gradient descent, and thus the learning rate $\eta$ and
+%regularization rate $\lambda$ are also important hyper-parameters.
+%
+%They are, however, much more difficult to train as they require larger
+%training sets.
+
+%Neural networks are popular for their ability to uncover ``hidden''
+%features in the data.
 %
 Each neuron learns a different linear combination of the signals from
 the previous layer; combined with the activation function this can be
