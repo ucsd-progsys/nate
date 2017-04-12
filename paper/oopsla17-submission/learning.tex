@@ -492,12 +492,14 @@ The last (and most complex) model we use is a type of neural network
 called a \emph{multi-layer perceptron} (see \citealt{Nielsen2015-pu} for
 an introduction to neural networks).
 
-A multi-layered perceptron can be represented as a directed acyclic graph whose nodes are arranged in layers that are fully connected by weighted edges. The first layer corresponds to the input features, and the final to the output. The output of a node $v$ in layer $l$ is given by:
+A multi-layered perceptron can be represented as a directed acyclic graph whose nodes are arranged in layers that are fully connected by weighted edges. The first layer corresponds to the input features, and the final to the output. The output of a node $v$ in an internal layer is given by:
 \[ h_v = g(\sum_{j \in N(v)} W_{jv} h_j ) \]
 where $N(v)$ is the set of nodes in the previous layer that are adjacent to $v$, $W_{jv}$ is the weight of the $(j, v)$ edge and $h_j$ is the output of node $j$ in the previous layer. Finally $g$ is a non-linear function, called the activation function, which in recent work is commonly chosen to be the \emph{rectified linear unit} (ReLU),
-defined as $g(x) = \mathsf{max}(0,x)$ \citep{Nair2010-xg}. The number of layers, the number of neurons per layer, and the connections between layers constitute the \emph{architecture} of a neural network. In our work, we use relatively simple neural networks which have an input layer, a single hidden layer and an output layer. 
+defined as $g(x) = \mathsf{max}(0,x)$ \citep{Nair2010-xg}. The number of layers, the number of neurons per layer, and the connections between layers constitute the \emph{architecture} of a neural network. In this work, we use relatively simple neural networks which have an input layer, a single hidden layer and an output layer. 
 
-HEREHERE
+A major advantage of neural networks is its ability to discover interesting combinations of features through non-linearity, which significantly reduces the need for manual feature engineering, and allows high expressivity. On the other hand, this makes the networks particularly difficult to interpret and also difficult to generalize under vast amounts of training data are available. 
+
+%HEREHERE
 %
 %Neural networks can be understood as a collection of linear models, just
 %like the one used in logistic regression, arranged in a directed graph.
@@ -542,27 +544,27 @@ HEREHERE
 %Neural networks are popular for their ability to uncover ``hidden''
 %features in the data.
 %
-Each neuron learns a different linear combination of the signals from
-the previous layer; combined with the activation function this can be
-thought of as the neuron learning to respond to a new, \emph{compound}
-feature of its inputs.
+%Each neuron learns a different linear combination of the signals from
+%the previous layer; combined with the activation function this can be
+%thought of as the neuron learning to respond to a new, \emph{compound}
+%feature of its inputs.
 %
-This ability to discover interesting combinations of features makes
-neural networks easier to use in some respect; they can reduce the
-importance of manual \emph{feature engineering} (selecting interesting
-features to provide as inputs).
+%This ability to discover interesting combinations of features makes
+%neural networks easier to use in some respect; they can reduce the
+%importance of manual \emph{feature engineering} (selecting interesting
+%features to provide as inputs).
 %
-However, the sheer size and complexity of neural networks makes the
-model particularly difficult to interpret --- they are generally regarded
-as ``black boxes.''
+%However, the sheer size and complexity of neural networks makes the
+%model particularly difficult to interpret --- they are generally regarded
+%as ``black boxes.''
 %
-Neural networks are also very susceptible to overfitting, so
-regularization methods like the $L_2$ norm used for logistic regression
-are important.
+%Neural networks are also very susceptible to overfitting, so
+%regularization methods like the $L_2$ norm used for logistic regression
+%are important.
 
-\ES{should mention that logistic regression can be thought of as a degenerate MLP with 0 layers, and perhaps add a diagram?}
+%\ES{should mention that logistic regression can be thought of as a degenerate MLP with 0 layers, and perhaps add a diagram?}
 
-\ES{need to say something about neurons corresponding to ``hidden'' features, give intuition..}
+%\ES{need to say something about neurons corresponding to ``hidden'' features, give intuition..}
 
 % The fundamental building block of an ANN is the linear model, the
 % nonlinearity arises from the \emph{activation functions} that govern
