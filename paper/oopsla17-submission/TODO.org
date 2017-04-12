@@ -136,3 +136,24 @@
 - only enabled features on path are =F-Is-App-P= and =F-Is-Type-List-C3=
 - VERY confident, all training samples were true positive, but only ~20 in total
 - perhaps need more training data? prediction seems totally bogus...
+
+** FROM KAMALIKA
+*** OVERVIEW
+   - point (2) in "key tech challenges": phrasing in CHALLENGE 2 is much
+     clearer
+   - challenge 1: make it clear that we're specifically interested in
+     representations for LOCALIZING TYPE ERRORS
+     - and tie in from SOLUTION
+   - challenge 2: want blame assignment that is USEFUL and PREDICTABLE
+   - challenge 3: phrase challenge in terms of INTUITIVE PRESENTATION
+*** LEARNING > LABELS
+   - make it clearer that we have a two-stage process
+     1. per-expression labels (good/bad)
+     2. per-program labels (ranked list of blame)
+   - perhaps an algorithm-style box
+*** EVALUATION
+   - maybe make headlining questions more precise
+     - highlight results too?
+   - add a sentence in 4.3 explaining why we don't use ANOVA/RELIEF
+     - hard to make sense of results when you have a few categorical
+       features expanded into many binary features
