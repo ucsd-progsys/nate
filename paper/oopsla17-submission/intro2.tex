@@ -85,8 +85,8 @@ be found.
 %
 Given a new ill-typed program,
 \toolname simply executes the model
-to generate a list of potential error
-locations ranked by likelihood.
+to generate a list of potential
+blame assignments ranked by likelihood.
 %
 We evaluate \toolname by comparing its
 precision against the state-of-the-art
@@ -94,15 +94,16 @@ on a set of over 4,500 ill-typed \ocaml
 programs drawn from introductory
 programming classes.
 %
-We show that \toolname's data-driven
+We show that, when restricted to a
+\emph{single} prediction, \toolname's data-driven
 model is able to correctly predict
-the exact sub-expression that needs to
+the exact sub-expression that should
 be changed 74\% of the time,
 29 points higher than \ocaml and
 18 points higher than the state-of-the-art
 \sherrloc tool.
 %
-Further, \toolname's accuracy surpasses
+Furthermore, \toolname's accuracy surpasses
 85\% when we consider the \emph{top two}
 locations and reaches 91\% if consider
 the \emph{top three}.
@@ -135,7 +136,7 @@ intended.
 
 Our \emph{first contribution} (\autoref{sec:overview})
 is a set of more than 4,500 labeled programs,
-gives us an accurate ground truth of
+giving us an accurate ground truth of
 the kinds of errors and the (locations
 of the) fixes that novices make in
 practice.
@@ -166,7 +167,7 @@ a set of pairs of ill-typed programs and their
 subsequent \emph{fixes}, the first (type-)~correct
 program in the trace suffix.
 %
-Finally, we label the changed locations by computing a
+Finally, we compute the blame labels using a
 \emph{tree-diff} between the two terms to find
 the exact sub-terms that were changed in the fix.
 
@@ -186,7 +187,7 @@ programs.
 
 Our \emph{second contribution} (\autoref{sec:learning})
 solves this problem with a simple, yet expressive, representation called
-a \emph{Bag-of-Abstract-Terms (BOAT)} wherein
+a \emph{Bag-of-Abstracted-Terms (BOAT)} wherein
 %
 (1)~each program is represented by the \emph{bag}
     or multiset of (sub-)~terms that appears inside
@@ -197,7 +198,7 @@ a \emph{Bag-of-Abstract-Terms (BOAT)} wherein
     each $f_i$ is a \emph{feature abstraction}
     that maps a term to a numeric value.
 %
-We can model the error labels with a simple feature
+We can model the blame labels with a simple feature
 abstraction (\eg does-change-in-fix).
 %
 We can even account for \emph{contextual} information like
@@ -216,8 +217,8 @@ their own variants of classifiers to obtain their results.
 %
 Finally, the last and most important challenge is to
 use the labeled BOAT data to train classifiers that
-are capable of \emph{precisely} pinpointing the error
-locations in real programs.
+are capable of \emph{precisely} pinpointing the errors
+in real programs.
 %
 The key here is to find the right set of feature
 abstractions and classification algorithms, that
