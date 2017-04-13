@@ -1,32 +1,227 @@
-\section{Overview}
-\label{sec:overview}
+\mysection{Overview} \label{sec:overview}
 
-We start with an overview of our approach to localizing type errors by
-learning a model of the mistakes programmers actually make.
-%
-We formulate the problem of type error localization as a
-\emph{supervised classification} problem (see \citealt{Kotsiantis2007-pj}
-for a survey).
-%
-A \emph{classification} problem entails learning a function that maps
-inputs to a discrete set of output \emph{labels}, in contrast to
-\emph{regression}, where the output is typically a real number.
-%
-In a \emph{supervised} learning problem one is given a \emph{training}
-set where the inputs and labels are known, and the task is to learn a
-function that accurately maps the inputs to outputs and
-\emph{generalizes} to new, yet-unseen inputs.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The key technical challenges we address are:
+\begin{figure}[t!]
+\begin{minipage}{0.45\linewidth}
+\begin{ecode}
+  let rec sumList xs =
+    match xs with
+    | []   -> (*@\hlTree{\hlSherrloc{[]}}@*)
+    | h::t -> h (*@\hlTree{+}@*) (*@\hlFix{sumList t}@*)
+\end{ecode}
+\end{minipage}
+\begin{minipage}{0.49\linewidth}
+\begin{verbatim}
+File "sumList.ml", line 4, characters 16-25:
+  This expression has type 'a list
+  but an expression was expected of type int
+\end{verbatim}
+\end{minipage}
+\caption{(left) An ill-typed \ocaml program that should sum the elements of a
+  list, with highlights indicating three possible blame assignments based on:
+  %
+  (1) the \hlFix{\ocaml} compiler;
+  %
+  (2) the \hlSherrloc{fix} made by the programmer; and
+  %
+  (3) \hlTree{minimizing} the number of edits required.
+  % The \underline{underlined} expressions are equally valid
+  % locations to blame. The expression blamed by the \ocaml compiler
+  % is in \textbf{bold}.
+  %
+  % FIXME: This bolding is ambiguous, because ``let rec'', ``match'' and
+  % ``with'' are also bolded (by \\ecode)! You need to find another way to
+  % highlight what ocaml is yelling about.
+  %
+  (right) The error reported by \ocaml.}
+\label{fig:sumList}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Lets start with an overview of \toolname's
+approach to localizing type errors by
+collectively learning from the mistakes
+programmers actually make.
+
+\mypara{The Problem}
 %
-(1) formulating type error localization as a classification problem;
+Consider the |sumList| program in
+\autoref{fig:sumList}, written by
+a student in an undergraduate
+Programming Languages course.
 %
-%(2) generating correct labels for supervised learning; and
-(2) identifying ``correct'' blame assignments in our dataset; and
+The program is meant to add up the
+integers in a list, but the student
+has accidentally given the empty
+list as the base case, rather than |0|.
 %
-(3) presenting the predictions of the classifier in an intuitive manner.
+The \ocaml compiler collects typing
+constraints as it traverses the program,
+and reports an error the moment it finds
+an inconsistent constraint.
+%
+In this case it blames the recursive call
+to |sumList|, complaining that |sumList|
+returns a |list| where an |int| was
+expected by the |+| operator.
+%
+This \emph{blame} assignment is inconsistent
+with the programmer's intention and may
+not be helpful debugging information to
+a novice.
+
+It may appear obvious to the reader that
+|[]| is the correct expression to blame,
+but how is a type checker to know that?
+%
+Indeed, both the venerable
+\ocaml compiler as well as
+recent techniques like
+\sherrloc and \mycroft~\citep{Zhang2014-lv,Loncaric2016-uk,Pavlinovic2014-mr}.
+fail to distinguish between
+the two underlined expressions
+in \autoref{fig:sumList};
+it would be equally valid
+to blame \emph{either}
+of them alone.
+%
+The |[]| on line 3 could be changed to |0|,
+or the |+| on line 4 could be changed to
+either |@| (list append) or |::|, all of
+which would give type-correct programs.
+%
+Thus, these state-of-the-art techniques
+are forced to either blame \emph{both}
+locations, or choose one \emph{arbitrarily}.
+
+\mypara{Error Localization via Supervised Classification}
+%
+Our approach is to view error localization as a
+\emph{supervised classification}
+problem~\citep{Kotsiantis2007-pj}.
+%
+A \emph{classification} problem entails learning
+a function that maps \emph{inputs} to a discrete
+set of output \emph{labels} (in contrast to, say,
+\emph{regression}, where the output is typically
+a real number.)
+%
+A \emph{supervised} learning problem is one where
+we are given a \emph{training set} where the
+inputs and labels are known, and the task is to
+learn a function that accurately maps the inputs
+to output labels and \emph{generalizes} to new,
+yet-unseen inputs.
+%
+To realize the above approach for error localization
+as a practical tool, we have to solve four sub-problems.
+%
+\begin{enumerate}
+  \item How can we acquire a \emph{training set} of
+        blame-labeled ill-typed programs?
+
+  \item How can we \emph{represent} blame-labeled programs
+        as numeric vectors amenable to machine learning?
+
+  \item How can we find \emph{features} that yield predictive
+        models?
+
+  \item How can we use the models to give localized
+        \emph{feedback} to the programmer?
+\end{enumerate}
+
+\mysubsection{Step 1: Acquiring a Blame-Labeled Training Set}
+
+The first step is to create a training
+set of ill-typed programs, where each
+erroneous sub-term is explicitly labeled.
+%
+Prior work has often enlisted
+expert users to curate a set of
+ill-typed programs and then
+\emph{manually} determine the
+correct fix~\citep[\eg][]{Lerner2007-dt,Loncaric2016-uk}.
+%
+This method is suitable for evaluating
+the quality of a localization (or repair)
+algorithm on a small number (\eg, 10-100s)
+of programs.
+%
+However, in general it requires a great
+deal of effort for the expert to divine
+the original programmers' intentions.
+%
+Consequently, is difficult to scale the
+expert-labeling to yield a dataset large
+enough (\eg, 1000s of programs) needed to
+facilitate machine learning.
+%
+More importantly, this approach fails to
+capture the \emph{frequency} with which
+errors occur in practice.
+
+We solve both the scale and frequency problems
+by instead extracting blame-labeled data sets
+from \emph{interaction traces}.
+%
+Software development is an iterative process.
+Programmers, perhaps after a lengthy (and
+sometimes frustrating) back-and-forth with
+the type checker, eventually end up fixing
+their own programs.
+%
+Thus, we implemented an instrumented
+version of the \ocaml compiler that records
+this conversation, \ie records the sequence
+of programs submitted by each programmer and
+whether or not it was deemed type-correct.
+%
+For each ill-typed program in
+a particular programmer's trace,
+we find the \emph{first subsequent}
+program in the trace that type checks
+and declare it to be the fixed version.
+%
+From this pair of an ill-typed program
+and its fix, we can extract a \emph{diff}
+of the abstract syntax trees, and then assign
+the blame labels to the \emph{smallest}
+sub-tree in the diff.
+
+For example, suppose our student
+fixed the |sumList| program in
+\autoref{fig:sumList} by replacing
+|[]| with |0|, the diff would
+include only the |[]| expression.
+%
+Thus we would determine that the
+|[]| expression (and \emph{not} the
+|+| or the recursive call |sumList t|)
+is to blame.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\mysubsection{Step 2: Representing Programs as Vectors}
+
+\mysubsection{Step 3: Feature Discovery}
+
+\mysubsection{Step 4: Generating Feedback}
+
+% Evaluation
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
 
 \paragraph{\textbf{Challenge (1): How to represent programs?}}
+
 The first and prime challenge we address is how to translate programs
 into a format favorable to learning a model of type errors.
 %
@@ -126,19 +321,15 @@ localization in other program analysis and transformation techniques
 (see \autoref{sec:related-work}).
 
 \paragraph{\textbf{Challenge (2): What is the ``correct'' expression to blame?}}
-As we saw in \autoref{fig:sumList}, type errors admit many different
-fixes to different expressions, each resulting in a different program.
 %
-How is the type checker to judge which expressions are more likely to be
-incorrect than others?
-%
-Prior work has often enlisted expert users to manually judge ill-typed
-programs and determine the ``correct'' fix
-\citep[\eg][]{Lerner2007-dt,Loncaric2016-uk}, but this approach does not
-scale well to a dataset large enough to support machine learning.
-%
-Furthermore, while expert users have intimate knowledge of the type system,
-they cannot know in general what novice users \emph{intended} to do.
+%% As we saw in \autoref{fig:sumList},
+%% type errors admit many different
+%% fixes to different expressions,
+%% each resulting in a different program.
+%% %
+%% How is the type checker to judge
+%% which expressions are more likely
+%% to be incorrect than others?
 
 \paragraph{\textbf{Solution: Use the students' subsequent fixes}}
 %
@@ -149,20 +340,8 @@ do the work of assigning blame themselves.
 Software development is an iterative process and our students
 eventually fix their own programs, perhaps after multiple ill-fated
 attempts.
-%
-For each ill-typed program in our dataset, we find the first
-\emph{subsequent} program that type checks and declare that to be the
-fix.
-%
-From this pair of an ill-typed program and its fix, we can extract a
-\emph{diff} of the abstract syntax trees.
-%
-For example, suppose our student fixed the |sumList| program in
-\autoref{fig:sumList} by replacing |[]| with |0|, the diff would include
-only the |[]| expression.
-%
-Thus we would determine that the |[]| expression (and \emph{not} the
-|+| or the recursive call |sumList t|) is to blame.
+
+
 
 \paragraph{\textbf{Challenge (3): How can we intuitively present our feedback?}}
 We now have the features and labels needed to train a classifier to
