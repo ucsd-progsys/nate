@@ -148,33 +148,37 @@
      representations for LOCALIZING TYPE ERRORS
      - [X] and tie in from SOLUTION
    - [ ] challenge 2: want blame assignment that is USEFUL and PREDICTABLE
+   - [X] may want to tone down "prior work has often used expert users
+     to judge blame", have also used student fixes
+     - actually unclear: seminal, mycroft, minerrloc all claim expert oracle,
+     - sherrloc seems to claim user oracle
    - [X] challenge 3: phrase challenge in terms of INTUITIVE PRESENTATION
 *** LEARNING > LABELS
-   - [ ] make it clearer that we have a two-stage process
+   - [X] make it clearer that we have a two-stage process
      1. per-expression labels (good/bad)
      2. per-program labels (ranked list of blame)
    - [ ] perhaps an algorithm-style box
 *** EVALUATION
-   - [ ] maybe make headlining questions more precise
+   - [X] maybe make headlining questions more precise
      - highlight results too?
-   - [ ] add a sentence in 4.3 explaining why we don't use ANOVA/RELIEF
+   - [X] add a sentence in 4.3 explaining why we don't use ANOVA/RELIEF
      - hard to make sense of results when you have a few categorical
        features expanded into many binary features
-   - [ ] "oracle" is the student fixes
-   - [ ] "utility": what *classes* of features are contributing most to accuracy
-   - [ ] should threats come earlier
-   - [ ] explain that dropping programs where oracle doesnt recognize
+   - [X] "oracle" is the student fixes
+   - [X] "utility": what *classes* of features are contributing most to accuracy
+   - [ ] should threats come earlier?
+   - [X] explain that dropping programs where oracle doesnt recognize
      sherrloc predcition favors sherlroc, NOT us
-   - [ ] crispen the "results" paragraphs, highlight our results (eg put
+   - [X] crispen the "results" paragraphs, highlight our results (eg put
      them first?)
 **** qualitative
-     - [ ] what is goal of analysis?
+     - [X] what is goal of analysis?
        - qualitiative
        - featuers used
-     - [ ] at beginning: high-level description of examining decision
+     - [X] at beginning: high-level description of examining decision
        paths to help explain predictions
 **** threat mitigation
-     - [ ] make a bigger deal of train/test split
+     - [X] make a bigger deal of train/test split
      - [ ] explaining predictions
-     - [ ] point out that we are also doing cross-validation across
-       joint dataset, model appears relatively stable
+     - [X] point out that we are also doing cross-validation across
+           joint dataset, model appears relatively stable

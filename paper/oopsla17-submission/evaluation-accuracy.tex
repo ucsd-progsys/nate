@@ -27,16 +27,19 @@ likelihood.
 Comparing source locations from multiple tools with their own parsers is
 not trivial.
 %
-To ensure a fair comparison when evaluating \mycroft and
-\sherrloc, we removed from the dataset programs where they predicted
-locations that our oracle could not match with a program expression:
-6--8\% of programs for \mycroft and 3--4\% for \sherrloc.
+Our experimental design gives the state of the art tools the ``benefit
+of the doubt'' in two ways.
+% To ensure a fair comparison when evaluating \mycroft and
+% \sherrloc, 
+First, when evaluating \mycroft and \sherrloc, we did not consider
+programs where they predicted locations that our oracle could not match
+with a program expression: 6--8\% of programs for \mycroft and 3--4\%
+for \sherrloc.
 %
-We also do not consider programs where \mycroft or \sherrloc timed out
-(after one minute) or where they encountered an unsupported language
-feature: another 5\% for \mycroft and 12--13\% for \sherrloc. This
-experimental design gives the state of the art tools the ``benefit of the
-doubt''.
+Second, we similarly ignored programs where \mycroft or \sherrloc timed
+out (after one minute) or where they encountered an unsupported language
+feature: another 5\% for \mycroft and 12--13\% for \sherrloc.
+%
 
 
 \paragraph{Our Classifiers}
@@ -95,21 +98,27 @@ descent that has been found to converge faster.
 Localizing the type errors in our benchmarks amounted, on average, to
 selecting one of 3 correct locations out of a slice of 10.
 %
+Our classifiers consistently outperform the competition, ranging from
+58--62\% Top-1 accuracy (86--88\% Top-3) for the \linear classifier to
+71--74\% Top-1 accuracy (91\% Top-3) for the \hiddenFH.
+%
 Our baseline of selecting at random achieves 30\% Top-1
 accuracy (58\% Top-3), while \ocaml achieves a Top-1 accuracy of 45\%.
 %
 Interestingly, one only needs two \emph{random} guesses to outperform
 \ocaml, with 47\% accuracy.
 %
-\sherrloc outperforms both baselines with 56\% Top-1 accuracy (84--86\% Top
-3), while \mycroft actually underperforms \ocaml with 38--41\% Top-1
-accuracy.
+\sherrloc outperforms both baselines, and comes close to our \linear
+classifier, with 56\% Top-1 accuracy (84--86\% Top 3), while \mycroft
+actually underperforms \ocaml with 38--41\% Top-1 accuracy.
 %
-Finally, we find that \emph{all} of our classifiers outperform \sherrloc,
-ranging from 58--62\% Top-1 accuracy (86--88\% Top-3) for the \linear
-classifier to 71--74\% Top-1 accuracy (91\% Top-3) for the \hiddenFH.
+% Finally, we find that \emph{all} of our classifiers outperform \sherrloc,
+% ranging from 58--62\% Top-1 accuracy (86--88\% Top-3) for the \linear
+% classifier to 71--74\% Top-1 accuracy (91\% Top-3) for the \hiddenFH.
 
-Surprisingly, there is little variation in accuracy between classifiers.
+Surprisingly, there is little variation in accuracy between our
+classifiers.
+%
 With the exception of the \linear model, they all achieve around 70\%
 Top-1 accuracy and around 90\% Top-3 accuracy.
 %

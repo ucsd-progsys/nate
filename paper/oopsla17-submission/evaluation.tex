@@ -10,12 +10,16 @@ We seek to answer three questions in our evaluation:
 \begin{description}
 \item[1. Blame Accuracy (\autoref{sec:quantitative})]
   %
-  How often are our predictions \emph{correct}?
+  How often do we \emph{correctly} assign blame for the type error?
+  %
+  % We compare our technique with a variety of off-the-shelf classifiers
+  % and find that our top-ranked blame assignments have an accuracy of
+  % 72\%, compared to a state-of-the-art 56\%.
   % For how many ill-typed programs can we accurately predict the source
   % of the error?
 \item[2. Feature Utility (\autoref{sec:feature-utility})]
   %
-  Which feature sets are \emph{most important} in general?
+  Which feature sets are \emph{most important} for accurate predictions?
   % How much do the features described in \autoref{sec:features}
   % contribute to our predictions?
 \item[3. Explaining Predictions (\autoref{sec:qualitative})]
@@ -79,8 +83,11 @@ program, including:
 \end{enumerate}
 
 \paragraph{Blame Oracle}
-
-A disadvantage of using diffs as blame oracles is that students may have
+Recall from \autoref{sec:labels} that we automatically extract a blame
+oracle for each ill-typed program from the (AST) diff between it and the
+student's eventual fix.
+%
+A disadvantage of using diffs in this manner is that students may have
 made many, potentially unrelated, changes between compilations; at some
 point the ``fix'' becomes a ``rewrite''.
 %
@@ -132,9 +139,19 @@ One threat to validity associated with supervised machine learning is
 overfitting (\ie learning a model that is too complex with respect to
 the data).
 %
-We mitigate this threat by having separate training and testing datasets
-(\autoref{sec:quantitative}) and via cross-validation
-(\autoref{sec:feature-utility})~\cite{FIXME}.
+A similar issue that arises in machine learning is model stability (\ie
+can small changes to the training set produce large changes in the model?).
+%
+We mitigate these threats by:
+%
+(1) using separate training and testing datasets drawn from distinct
+student populations (\autoref{sec:quantitative}), demonstrating the
+generality of our models; and
+%
+(2) via cross-validation on the joint dataset
+(\autoref{sec:feature-utility}), which demonstrates the stability of our
+models by averaging the accuracy of 10 models trained on distinct
+subsets of the data.
 
 Our benchmarks were drawn from students in an undergraduate course and
 may not be representative of other student populations.
@@ -177,8 +194,8 @@ only tie our \hiddenFH in Top-1 accuracy.
 \ES{I think this is accurate, but should double check..}
 
 Examining programs written in \ocaml as opposed to \haskell or any other
-language poses another threat to validity, common type errors may differ
-in different languages.
+typed functional language poses yet another threat, common type errors
+may differ in different languages.
 %
 \ocaml is, however, a standard target for research in type error
 localization and thus our choice admits a direct comparison with prior

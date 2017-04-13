@@ -134,16 +134,17 @@ incorrect than others?
 %
 Prior work has often enlisted expert users to manually judge ill-typed
 programs and determine the ``correct'' fix
-\citep[\eg][]{Loncaric2016-uk}, but this approach does not scale well to
-a dataset large enough to support machine learning.
+\citep[\eg][]{Lerner2007-dt,Loncaric2016-uk}, but this approach does not
+scale well to a dataset large enough to support machine learning.
 %
 Furthermore, while expert users have intimate knowledge of the type system,
 they cannot know in general what novice users \emph{intended} to do.
 
 \paragraph{\textbf{Solution: Use the students' subsequent fixes}}
 %
-Rather than relying on expert users, we allow our
-students to do the work of assigning blame themselves.
+Rather than relying on expert users, we follow
+\citet{Zhang2014-lv} \RJ{CHECK} and allow our students to
+do the work of assigning blame themselves.
 %
 Software development is an iterative process and our students
 eventually fix their own programs, perhaps after multiple ill-fated
@@ -162,7 +163,6 @@ only the |[]| expression.
 %
 Thus we would determine that the |[]| expression (and \emph{not} the
 |+| or the recursive call |sumList t|) is to blame.
-
 
 \paragraph{\textbf{Challenge (3): How can we intuitively present our feedback?}}
 We now have the features and labels needed to train a classifier to
