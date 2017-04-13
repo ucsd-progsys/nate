@@ -9,15 +9,19 @@ In particular, we demonstrate, with a series of example programs from
 our student dataset, how our classifiers are able to use past student
 mistakes to make more accurate predictions of future fixes.
 %
+We also take this opportunity to examine some of the specific features
+our classifiers use to assign blame.
+%
 For each example, we provide
 %
-(1) the code,
+(1) the code;
 %
-(2) \hlSherrloc{\sherrloc's} prediction,
+(2) \hlSherrloc{\sherrloc's} prediction;
 %
-(3) our \hlTree{\dectree's} prediction, and
+(3) our \hlTree{\dectree's} prediction; and
 %
-(4) an \emph{explanation} of why our classifier made its prediction.
+(4) an \emph{explanation} of why our classifier made its prediction, in
+terms of the features used and their values.
 %
 We choose the \dectree classifier for this section as its model is more
 easily interpreted than the MLP.\@
@@ -26,9 +30,10 @@ We also exclude the \ExprSize feature from the model used in this
 section, as it makes the predictions harder to motivate, and as we saw
 in \autoref{sec:feature-utility} it does not appear to contribute
 significantly to the model's accuracy.
-%
+
 We explain the predictions by analyzing the paths induced in
 the decision tree by the features of the input programs.
+\ES{TODO: EXPOUND!!}
 %
 % We will also attempt, for each program, to explain \emph{why} the
 % Decision Tree made its prediction, by analyzing the paths induced

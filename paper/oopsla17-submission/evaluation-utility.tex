@@ -1,11 +1,24 @@
 \subsection{Feature Utility}
 \label{sec:feature-utility}
 We have shown that we can train a classifier to effectively localize
-type errors, but which of the 276 features that we use are contributing
-the most?
+type errors, but which of the feature classes from
+\autoref{sec:features} are contributing the most to our accuracy?
 %
-To answer this question we investigate the performance of
-classifiers trained on various subsets of the features.
+We focus specifically on feature \emph{classes} rather than individual
+features as our 276 features are conceptually grouped into a much
+smaller number of \emph{categorical} features.
+%
+For example, the syntactic class of an expression is conceptually a
+feature but there are 44 possible values it could take; to encode this
+feature for learning we split it into 44 distinct binary features.
+%
+Analyses that focus on individual features, \eg \textsc{ANOVA},
+are difficult to interpret in our setting, as they will tell us the
+importance of the binary features but not the higher-level categorical
+features.
+%
+Thus, to answer our question we investigate the performance of
+classifiers trained on various subsets of the feature classes.
 
 \subsubsection{Type Error Slice}
 \label{sec:type-error-slice}
@@ -69,11 +82,13 @@ $$
      {|\mathsf{oracle}|}
 $$
 where $\mathsf{predicted}$ is limited to the top 3 predictions of the
-classier, and $\mathsf{oracle}$ is limited to the expressions that
-changed \emph{and} were part of the type error slice. We make the
-latter distinction as (1) changes that are not part of the type error
-slice are noise in the data set, and (2) it makes the comparison between
-feature sets easier to interpret since $\mathsf{oracle}$ never changes.
+classier, and $\mathsf{oracle}$ is the student's fix, limited to changes
+that part of the type error slice.
+%
+We make the latter distinction as (1) changes that are not part of the
+type error slice are noise in the data set, and (2) it makes the
+comparison between feature sets easier to interpret since
+$\mathsf{oracle}$ never changes.
 % NOTE: keep this at the end of the para or it screws up spacing...
 \lstMakeShortInline{|}
 %
@@ -97,6 +112,7 @@ feature sets easier to interpret since $\mathsf{oracle}$ never changes.
 %   \end{tabular}
 % \end{table}
 
+\paragraph{Results}
 \autoref{fig:slice-utility} shows the results of our experiment.
 %
 As expected, the baseline performs the worst, with a mere 27.7\% \linear

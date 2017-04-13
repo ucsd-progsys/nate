@@ -148,7 +148,7 @@
      representations for LOCALIZING TYPE ERRORS
      - [X] and tie in from SOLUTION
    - [ ] challenge 2: want blame assignment that is USEFUL and PREDICTABLE
-   - [ ] may want to tone down "prior work has often used expert users
+   - [X] may want to tone down "prior work has often used expert users
      to judge blame", have also used student fixes
      - actually unclear: seminal, mycroft, minerrloc all claim expert oracle,
      - sherrloc seems to claim user oracle
@@ -159,17 +159,17 @@
      2. per-program labels (ranked list of blame)
    - [ ] perhaps an algorithm-style box
 *** EVALUATION
-   - [ ] maybe make headlining questions more precise
+   - [X] maybe make headlining questions more precise
      - highlight results too?
-   - [ ] add a sentence in 4.3 explaining why we don't use ANOVA/RELIEF
+   - [X] add a sentence in 4.3 explaining why we don't use ANOVA/RELIEF
      - hard to make sense of results when you have a few categorical
        features expanded into many binary features
    - [X] "oracle" is the student fixes
-   - [ ] "utility": what *classes* of features are contributing most to accuracy
+   - [X] "utility": what *classes* of features are contributing most to accuracy
    - [ ] should threats come earlier?
    - [X] explain that dropping programs where oracle doesnt recognize
      sherrloc predcition favors sherlroc, NOT us
-   - [ ] crispen the "results" paragraphs, highlight our results (eg put
+   - [X] crispen the "results" paragraphs, highlight our results (eg put
      them first?)
 **** qualitative
      - [ ] what is goal of analysis?
