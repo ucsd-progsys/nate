@@ -111,7 +111,7 @@ This accounts for roughly 14\% of each dataset, leaving us with
 
 \paragraph{Accuracy Metric}
 All of the tools we compare (with the exception of the standard \ocaml
-compiler) can produce a list of potential error locations. 
+compiler) can produce a list of potential error locations.
 %
 However, in a study of fault localization techniques,
 \citet{Kochhar2016-oc} show that most developers will not consider more
@@ -129,11 +129,11 @@ top one, top two, or top three predictions.
 \input{evaluation-utility}
 \input{gallery}
 
-\subsection{Threats to Validity} 
+\subsection{Threats to Validity}
 
 Although our experiments demonstrate that our technique can pinpoint type
 errors more accurately than the state of the art and that our features are
-relevant to blame assignment, our results may not generalize. 
+relevant to blame assignment, our results may not generalize.
 
 One threat to validity associated with supervised machine learning is
 overfitting (\ie learning a model that is too complex with respect to
@@ -171,7 +171,7 @@ next well-typed program as the intended ground truth answer (see
 \autoref{sec:overview}, Challenge 2). Students may, in theory, submit
 intermediate well-typed program ``rewrites'' between the original ill-typed
 program and the final intended answer. Our approach to discarding outliers
-(see \autoref{sec:evaluation}) is designed to mitigate this threat. 
+(see \autoref{sec:evaluation}) is designed to mitigate this threat.
 
 Our removal of program pairs that changed too much, where our oracle
 could not identify the blame of the other tools, or where the other

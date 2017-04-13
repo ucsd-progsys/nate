@@ -77,36 +77,9 @@ $\labelsym$.
 %   sub-expressions (right).}
 % \label{fig:sumList}
 % \end{figure}
-\begin{table}[ht]
-\caption{Example Feature Vectors}\label{tab:sumList}
-\begin{tabular}{lrrrrrr}
-\toprule
-Expression
-  & \IsNil & \IsCaseListP & \ExprSize
-  & \HasTypeIntCOne & \HasTypeList & \InSlice \\
-\midrule
-|[]|
-  & 1 & 1 & 1 & 0 & 1 & 1 \\
-|hd + sumList tl|
-  & 0 & 1 & 5 & 1 & 0 & 1 \\
-|sumList tl|
-  & 0 & 0 & 3 & 0 & 1 & 1 \\
-|tl|
-  & 0 & 0 & 1 & 0 & 1 & 0 \\
-\bottomrule
-\end{tabular}
-\bigskip
-\caption*{A selection of the features we would extract from the
-\lstinline!sumList! program in \autoref{fig:sumList}. A feature is
-considered \emph{enabled} if it has a non-zero value, and
-\emph{disabled} otherwise. A ``-P'' suffix indicates that the feature
-describes the parent of the current expression, a ``-C$n$'' suffix
-indicates that the feature describes the $n$-th (left-to-right) child of
-the current expression.  Note that, since we rely on a partial typing
-derivation, we are subject to the well-known traversal bias and label
-the expression \lstinline!sumList tl! as having type
-$\tlist{\cdot}$. The model will have to learn to correct for this bias.}
-\end{table}
+
+\input{feature-table}
+
 The first issue we must tackle is formulating our learning task in
 machine learning terms.
 %
@@ -304,7 +277,7 @@ We consider two sources of changes:
 \label{sec:models}
 \lstDeleteShortInline{|} % sigh...
 
-Recall that we formulate type error detection at a single expression as a supervised classification problem. This means that we are given a training data set $S = \{ (x_i, y_i) \}_{i=1}^n$ of labeled examples, and our goal is to use it to build a {\em{classifier}}, or a prediction rule that can predict a label for an input $x$. Since we apply the classifier on each expression in the program to determine those that are the most likely to be type errors, we also require the classifier to output a {\em{confidence score}} that measures how sure the classifier is about its prediction. 
+Recall that we formulate type error detection at a single expression as a supervised classification problem. This means that we are given a training data set $S = \{ (x_i, y_i) \}_{i=1}^n$ of labeled examples, and our goal is to use it to build a {\em{classifier}}, or a prediction rule that can predict a label for an input $x$. Since we apply the classifier on each expression in the program to determine those that are the most likely to be type errors, we also require the classifier to output a {\em{confidence score}} that measures how sure the classifier is about its prediction.
 
 
 %Recall that we formulate type error localization as a supervised
@@ -439,7 +412,7 @@ Each leaf is labeled with a prediction and the fraction of training
 samples that would reach it, the latter quantity can be interpreted as
 \ES{HUMA: is this correct?}
 the decision tree's confidence in its prediction. This leads to a prediction rule
-that can be quite expressive depending on the data used to build it. 
+that can be quite expressive depending on the data used to build it.
 
 Training a decision tree entails finding both a set of good partitioning and a good ordering of the predicates based on data. This is usually done in a top-down greedy manner, and there are several standard training algorithms such as C4.5
 \citep{Quinlan1993-de} and CART \citep{Breiman1984-qy}.
@@ -470,7 +443,7 @@ Another advantage of decision trees is their ease of interpretation --  the deci
 %
 %Both disadvantages are addressed by random forests.
 
-\paragraph{Random Forests.} Random forests mitigate the generalization problem by training an {\em{ensemble}} of distinct decision trees and then using a majority vote to make a prediction. The agreement among the distinct trees in the ensemble forms a natural confidence score. Since each classifier in the ensemble is a decision tree, this still allows for complex and highly expressive classifiers. \ES{Huma: is this the confidence score that we are using?} 
+\paragraph{Random Forests.} Random forests mitigate the generalization problem by training an {\em{ensemble}} of distinct decision trees and then using a majority vote to make a prediction. The agreement among the distinct trees in the ensemble forms a natural confidence score. Since each classifier in the ensemble is a decision tree, this still allows for complex and highly expressive classifiers. \ES{Huma: is this the confidence score that we are using?}
 
 %One technique for increasing the accuracy of a classifier is to train an
 %\emph{ensemble} of distinct classifiers and use a majority vote
@@ -491,7 +464,7 @@ from a random subset of all features at each node.
 
 The diversity of the underlying models tends to make random forests less
 susceptible to the overfitting, but it
-also makes the learned model more difficult to interpret. 
+also makes the learned model more difficult to interpret.
 %
 %Furthermore, the number of trees in the forest, $N$, becomes an important
 %hyper-parameter that must be set manually.
@@ -505,9 +478,9 @@ an introduction to neural networks).
 A multi-layered perceptron can be represented as a directed acyclic graph whose nodes are arranged in layers that are fully connected by weighted edges. The first layer corresponds to the input features, and the final to the output. The output of a node $v$ in an internal layer is given by:
 \[ h_v = g(\sum_{j \in N(v)} W_{jv} h_j ) \]
 where $N(v)$ is the set of nodes in the previous layer that are adjacent to $v$, $W_{jv}$ is the weight of the $(j, v)$ edge and $h_j$ is the output of node $j$ in the previous layer. Finally $g$ is a non-linear function, called the activation function, which in recent work is commonly chosen to be the \emph{rectified linear unit} (ReLU),
-defined as $g(x) = \mathsf{max}(0,x)$ \citep{Nair2010-xg}. The number of layers, the number of neurons per layer, and the connections between layers constitute the \emph{architecture} of a neural network. In this work, we use relatively simple neural networks which have an input layer, a single hidden layer and an output layer. 
+defined as $g(x) = \mathsf{max}(0,x)$ \citep{Nair2010-xg}. The number of layers, the number of neurons per layer, and the connections between layers constitute the \emph{architecture} of a neural network. In this work, we use relatively simple neural networks which have an input layer, a single hidden layer and an output layer.
 
-A major advantage of neural networks is its ability to discover interesting combinations of features through non-linearity, which significantly reduces the need for manual feature engineering, and allows high expressivity. On the other hand, this makes the networks particularly difficult to interpret and also difficult to generalize under vast amounts of training data are available. 
+A major advantage of neural networks is its ability to discover interesting combinations of features through non-linearity, which significantly reduces the need for manual feature engineering, and allows high expressivity. On the other hand, this makes the networks particularly difficult to interpret and also difficult to generalize under vast amounts of training data are available.
 
 %HEREHERE
 %
