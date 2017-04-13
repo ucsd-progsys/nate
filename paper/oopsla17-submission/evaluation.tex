@@ -15,7 +15,7 @@ We seek to answer three questions in our evaluation:
   % of the error?
 \item[2. Feature Utility (\autoref{sec:feature-utility})]
   %
-  Which feature sets are \emph{most important} in general?
+  Which feature sets are \emph{most important} for accurate predictions?
   % How much do the features described in \autoref{sec:features}
   % contribute to our predictions?
 \item[3. Explaining Predictions (\autoref{sec:qualitative})]
@@ -79,8 +79,11 @@ program, including:
 \end{enumerate}
 
 \paragraph{Blame Oracle}
-
-A disadvantage of using diffs as blame oracles is that students may have
+Recall from \autoref{sec:labels} that we automatically extract a blame
+oracle for each ill-typed program from the (AST) diff between it and the
+student's eventual fix.
+%
+A disadvantage of using diffs in this manner is that students may have
 made many, potentially unrelated, changes between compilations; at some
 point the ``fix'' becomes a ``rewrite''.
 %
