@@ -154,7 +154,7 @@
      - sherrloc seems to claim user oracle
    - [X] challenge 3: phrase challenge in terms of INTUITIVE PRESENTATION
 *** LEARNING > LABELS
-   - [ ] make it clearer that we have a two-stage process
+   - [X] make it clearer that we have a two-stage process
      1. per-expression labels (good/bad)
      2. per-program labels (ranked list of blame)
    - [ ] perhaps an algorithm-style box
@@ -172,13 +172,13 @@
    - [X] crispen the "results" paragraphs, highlight our results (eg put
      them first?)
 **** qualitative
-     - [ ] what is goal of analysis?
+     - [X] what is goal of analysis?
        - qualitiative
        - featuers used
-     - [ ] at beginning: high-level description of examining decision
+     - [X] at beginning: high-level description of examining decision
        paths to help explain predictions
 **** threat mitigation
-     - [ ] make a bigger deal of train/test split
+     - [X] make a bigger deal of train/test split
      - [ ] explaining predictions
-     - [ ] point out that we are also doing cross-validation across
-       joint dataset, model appears relatively stable
+     - [X] point out that we are also doing cross-validation across
+           joint dataset, model appears relatively stable

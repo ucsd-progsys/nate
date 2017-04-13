@@ -259,20 +259,30 @@ classifier.
 
 \subsection{Labels}
 \label{sec:labels}
-We define the output of the model to be a boolean label, where ``false''
-means the expression \emph{should not} change and ``true'' means the
-expression \emph{should} change.
+Recall that we make predictions in two stages.
+%
+First, we use $\evalsym$ to predict for each subexpression whether it
+should be blamed, and extract a confidence score $\mathcal{P}$ from the
+$\Model$.
+%
+Thus, we define the output of the $\Model$ to be a boolean label, where
+``false'' means the expression \emph{should not} change and ``true''
+means the expression \emph{should} change.
 %
 This allows us to predict whether any individual expression should
 change, but we would actually like to predict the \emph{most likely}
 expressions to change.
 %
-Many learning algorithms produce not only a prediction, but also a
-metric that can be interpreted as a \emph{confidence} in the prediction.
-%
-Thus, we \emph{rank} the expressions by the model's confidence that they
-will change, and select only the top $k$ (in practice $k=3$) to present
-to the user.
+Second, we \emph{rank} each subexpression by the confidence $\mathcal{P}$
+that it should be blamed, and return to the user the top $k$
+most likely blame assignments (in practice $k=3$).
+
+% Many learning algorithms produce not only a prediction, but also a
+% metric that can be interpreted as a \emph{confidence} in the prediction.
+% %
+% Thus, we \emph{rank} the expressions by the model's confidence that they
+% will change, and select only the top $k$ (in practice $k=3$) to present
+% to the user.
 
 We identify the fixes for each ill-typed program with an
 expression-level diff~\citep{Lempsink2009-xf}.

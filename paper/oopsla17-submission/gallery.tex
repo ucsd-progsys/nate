@@ -32,8 +32,27 @@ in \autoref{sec:feature-utility} it does not appear to contribute
 significantly to the model's accuracy.
 
 We explain the predictions by analyzing the paths induced in
-the decision tree by the features of the input programs.
-\ES{TODO: EXPOUND!!}
+the decision tree by the features of the input expressions.
+%
+Recall that each node in a decision tree contains a simple predicate of
+the features, \eg ``is feature $v_j$ enabled?'', which determines
+whether a sample will continue down the left or right subtree.
+%
+Thus, we can examine the predicates used and the values of the
+corresponding features to explain \emph{why} our \dectree made its
+prediction.
+%
+We will focus particularly on the enabled features, as they generally
+provide more information than the disabled features.
+%
+Furthermore, each node is additionally labeled with the ratio of
+``blamed'' vs ``not-blamed'' training expressions that passed through
+it.
+%
+We can use this information to identify particularly important
+decisions, \ie we consider a decision that changes the ratio to be more
+interesting than a decision that does not.
+
 %
 % We will also attempt, for each program, to explain \emph{why} the
 % Decision Tree made its prediction, by analyzing the paths induced
