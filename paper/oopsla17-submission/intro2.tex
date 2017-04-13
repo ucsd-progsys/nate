@@ -44,9 +44,9 @@ satisfiable and hence, memory-safe~\citep{Jose:2011}
 or well-typed~\citep{Zhang2014-lv,Loncaric2016-uk,Chen2014-gd,Pavlinovic2014-mr}.
 The finger of blame is then pointed at the
 sub-terms that yielded those constraints.
-
+%
 This minimum-weight approach suffers
-from several drawbacks.
+from two drawbacks.
 %
 First, they are not \emph{extensible}:
 % the weights and analyses are limited
@@ -65,10 +65,8 @@ weights are fixed in an ad-hoc fashion, based on the
 \emph{analysis designer's} notion
 of what kinds of errors are more
 or less likely, rather than
-capturing and adapting to the
-ground truth about the kinds
-of errors programmers actually
-make in practice.
+adapting to the kinds of mistakes
+programmers actually make in practice.
 
 \mypara{A Data-Driven Approach}
 %
@@ -152,14 +150,16 @@ exploratory attempts.
 To exploit this observation we instrumented
 the \ocaml compiler to collect fine-grained
 traces of student interactions over two instances
-of an undergraduate Programming Languages course at
+of an undergraduate Programming Languages course
 %
-\begin{anonsuppress}
-UC San Diego (IRB \#140608).
-\end{anonsuppress}
-\begin{noanonsuppress}
-AUTHOR's INSTITUTION (IRB HIDDEN).
-\end{noanonsuppress}
+\footnote{
+% \begin{anonsuppress}
+% UC San Diego (IRB \#140608).
+% \end{anonsuppress}
+% \begin{noanonsuppress}
+at AUTHOR's INSTITUTION (IRB HIDDEN).
+% \end{noanonsuppress}
+}
 %
 We then post-process the resulting time-series
 of programs submitted to the \ocaml compiler into
@@ -245,14 +245,15 @@ the resulting classifier significantly outperforms
 state-of-the-art by 18 percentage points.
 
 Thus, by combining modern statistical methods
-with domain-specific feature engineering
-to open the door to a new data-driven
-path to precise error localization.
+with domain-specific feature engineering, \toolname
+opens the door to a new data-driven path to
+precise error localization.
 %
-We can easily \emph{extend} \toolname to
-new languages or forms of correctness
-checks by swapping in a different
-set of feature abstraction functions.
+In the future, we could \emph{extend}
+\toolname to new languages or forms
+of correctness checks by swapping in
+a different set of feature abstraction
+functions.
 %
 Furthermore, our data-driven approach
 allows \toolname to \emph{adapt} to
