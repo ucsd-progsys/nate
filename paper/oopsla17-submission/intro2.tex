@@ -1,22 +1,25 @@
 \section{Introduction}
 \label{sec:introduction}
 
-In Robin Milner's memorable words
+% In Robin Milner's memorable words
+% %
+% ``types are the leaven of computer programming;
+  % they make it digestible''~\cite{tapl}.
 %
-``types are the leaven of computer programming;
-  they make it digestible.''
+Types are wonderful.
 %
 Languages like \ocaml and \haskell make
 the value-proposition for types even more
-appealing by using constraints to (mostly)
-automatically synthesize the types for all
-program terms without troubling the
-programmer for any annotations.
-
+appealing by using constraints to automatically
+synthesize the types for all program terms
+without troubling the programmer for any
+annotations.
+%
 Unfortunately, this automation has come at a price.
-Verbose type annotations (as in, \eg Java) signify
-the programmer's \emph{intent} and help to correctly
-pinpoint the error when the code is ill-typed.
+Verbose type annotations (as in, \eg, Java) signify
+the programmer's intent and help to correctly
+blame the erroneous sub-term when the code is
+ill-typed.
 %
 In contrast, lacking such signifiers, automatic
 type inference algorithms are prone to report
@@ -43,23 +46,20 @@ sub-terms that yielded those constraints.
 This minimum-weight approach suffers
 from several drawbacks.
 %
-First, they are not \emph{portable}:
+First, they are not \emph{extensible}:
+the weights and analyses are limited
+to attributes of the constraints, and
+not other \emph{signals} from the
+program's syntax that may be more
+germane to error localization. Furthermore,
 the algorithms for computing
 the minimum weighted subset must be
 designed afresh for different kinds
 of type systems and constraints.
 %
-Second, they are not \emph{extensible}:
-the weights and analyses are limited
-to attributes of the constraints, and
-not other \emph{signals} from the
-program's syntax that may be more
-germane to error localization.
-%
-Third, and perhaps most importantly,
+Second, and perhaps most importantly,
 they are not \emph{adaptable}: the
-actual ``weights'' are fixed in
-an ad-hoc fashion, based on the
+weights are fixed in an ad-hoc fashion, based on the
 \emph{analysis designers} notion
 of what kinds of errors are more
 or less likely, rather than
@@ -70,9 +70,10 @@ make in practice.
 
 \mypara{A Data-Driven Approach}
 %
-In this paper, we introduce \toolname
+In this paper, we introduce \toolname \footnote{Numeric Analysis of Type Errors}
 a \emph{data-driven} approach to error
-localization.
+localization based on supervised
+classification~\citep{Kotsiantis2007-pj}.
 %
 \toolname works by using a large corpus
 of training data --- pairs of ill-typed
@@ -101,44 +102,50 @@ When the \emph{top} ranked location
 is considered. \toolname's accuracy jumps
 to above 85\% (resp. 90\%) when we consider
 the \emph{top-2} and \emph{top-3} locations.
-
-% - 45
-% - 56
-% - 74
 %
-% - 85
-% - 91
+We achieve these advances by identifying
+and then solving three key challenges.
 
-AST-Dispersion
-
-AST
-
-\toolname addresses both of the limitations
-of previous
-
-* portable   [use different features]
-* extensible [add more features]
-* adaptable  [add more data]
-
-
+\mypara{Challenge 1: Acquiring Labeled Programs}
 %
-Our solution is to \emph{learn} how to
-localize type errors by observing
-a large set of (novice) errors and their
-\emph{subsequent fixes}.
+The first challenge for supervised learning
+is to acquire a corpus of training data, here,
+a set of ill-typed programs \emph{labeled}
+with the exact sub-terms that are the actual
+cause of the type error.
 %
+Prior work has often enlisted expert users
+to manually judge ill-typed programs and
+determine the ``correct'' fix \citep[\eg][]{Loncaric2016-uk},
+but this approach does not scale well to
+a dataset large enough to support machine
+learning.
+%
+Worse, while expert users have intimate
+knowledge of the type system, they may
+have a blind spot with regards to the
+kinds of mistakes novices make, and
+cannot know in general what novice users
+intended to do.
 
-\mypara{Contributions}
+Our \emph{first contribution} \autoref{sec:overview}
+is a set of more than 4,500 labeled programs,
+gives us an accurate ground truth of
+the kinds of errors and the (locations
+of the) fixes that novices make in
+practice.
 %
-We accomplish this via three concrete contributions.
-
-\paragraph{\textbf{(1) A Dataset of Novice \ocaml Programs}}
-Our first contribution is a large dataset of novice \ocaml programs,
-including, but not limited to, \emph{ill-typed} programs.
+We obtain this set by observing that
+software development is an iterative
+process and programmers eventually
+fix their own ill-typed programs,
+perhaps after multiple incorrect
+exploratory attempts.
 %
-We used an instrumented version of the \ocaml compiler
-to collect student interactions over two instances of
-an undergraduate Programming Languages course at
+To exploit this observation we instrumented
+the \ocaml compiler to collect fine-grained
+traces of student interactions over two instances
+of an undergraduate Programming Languages course at
 %
 \begin{anonsuppress}
 UC San Diego (IRB \#140608).
@@ -147,182 +154,112 @@ UC San Diego (IRB \#140608).
 AUTHOR's INSTITUTION (IRB HIDDEN).
 \end{noanonsuppress}
 %
-The data consist of a time-series of programs submitted to the \ocaml
-compiler, from which we extracted a set of \emph{ill-typed} programs
-and their \emph{subsequent fixes}.
+We can then post-process the resulting time-series
+of programs submitted to the \ocaml compiler into
+a set of pairs of ill-typed programs and their
+\emph{fixed} versions, the \emph{first} (type-)correct
+program in the trace suffix.
 %
-Our dataset comprises over 4,500 such pairs of programs, and many more
-programs that are either well-typed or lack a corresponding fix.
-%
-The entire dataset (both the raw time-series and our extracted pairs of
-ill-typed programs and fixes) is available at
-%
-\begin{anonsuppress}
-\ES{TODO: finally post the data somehwere..}.
-\end{anonsuppress}
-\begin{noanonsuppress}
-HIDDEN FOR DOUBLE-BLIND REVIEW.
-\end{noanonsuppress}
-%
+We obtain the location labels by computing a
+\emph{tree-diff} between the two terms to find
+the exact sub-terms that were changed in the fix.
 
-\paragraph{\textbf{(2) Data-Driven Diagnosis of Type Errors}}
-Our second contribution is a \emph{data-driven} technique for localizing
-type errors (\autoref{sec:learning}).
+\mypara{Challenge 2: Modeling Programs as Vectors}
 %
-We use machine learning techniques to train a set of classifiers that can
-predict, given an ill-typed program, which expressions should be changed
-for the program to type check.
+Modern supervised learning algorithms work on sets of
+\emph{feature vectors}: real-valued points in an
+$n$-dimensional space. While it is easy to compute such
+vectors for documents, images and sound (respectively
+word-counts, pixel-values and frequencies), it has
+hitherto been unclear how to precisely model program
+structure as numeric data.
+
+Our \emph{second contribution} (\autoref{sec:learning})
+solves this problem with a new representation called
+a \emph{Bag-of-Abstract-Terms (BOAT)} wherein
 %
-Our classifiers can be trained on a relatively small set of programs
-(\ie a single course's worth).
+(1)~each program is represented by the \emph{bag}
+    or multiset of (sub-)terms that appears inside
+    it, and
 %
-% and outperform the state of the art by
-% 15--30\% in blame accuracy.
+(2)~each (sub-)term $t$ is \emph{abstracted} as
+    a vector $[f_1(t), \ldots, f_n(t)]$ where
+    each $f_i$ is a \emph{feature abstraction}
+    that maps a term to a numeric value.
 %
-The key technical challenge that we tackle is defining a suitable
-interface between the type checker and the classifier, specifically
-\emph{embedding} programs as feature vectors and presenting the
-classifier's predictions to the user.
-
-\paragraph{\textbf{(3) A Large-Scale Evaluation of Type Error Localization}}
-Our third contribution is an evaluation of our classifiers and the
-state-of-the-art techniques on our suite of over 4,500 student programs
-(\autoref{sec:evaluation}), the largest evaluation of type error
-localization techniques we are aware of.
+We can model the error labels with a simple feature
+abstraction (\eg is-a-diff-subterm).
 %
-We judge the correctness of a localization by comparing it to the
-student's eventual fix and find that our classifiers are 15--30\% more
-accurate than the state of the art.
+We can even account for \emph{contextual} information like
+the features of the parent- and children- terms by
+concatenating the feature vectors of each term with those
+of its parent and children.
+
+\mypara{Challenge 3: Training Precise Classifiers}
 %
-We also examine which features contribute the most to our
-classifiers' predictions, and endeavor to \emph{explain} specific
-predictions that our classifiers get right (and wrong).
-
-Overall, our results show that data-driven diagnosis is a practical
-technique for localizing type errors by learning from past mistakes.
-
+Finally, the last and most important challenge is to
+use the labeled BOAT data to train classifiers that
+are capable of \emph{precisely} pinpointing the error
+locations in real programs.
 %
-% We believe, furthermore, that with the right set of features our
-% approach could be applied to other domains where there are multiple,
-% equally valid explanations for an error.
-% \ES{this sounds really dumb... need better phrasing}
-
-
-
-Consider the |sumList| program in \autoref{fig:sumList},
-written by a student in an undergraduate Programming Languages
-course.
+The key here is to find the right set of feature
+abstractions and classification algorithms, that
+lead to precise predictions.
 %
-The program is meant to sum the integers in a list, but
-the student has accidentally given the empty list as the
-base case, rather than 0.
+Fortunately, our BOAT model allows us a great deal of
+latitude in our choice of features.
 %
-The \ocaml compiler collects typing constraints as it
-traverses the program, and reports an error the moment
-it finds an inconsistent constraint.
+We can use abstraction functions to capture different
+aspects of a term ranging from
 %
-In this case it blames the recursive call to |sumList|,
-complaining that |sumList| returns a |list| where an |int|
-was expected by the |+| operator.
+syntactic features (\eg is-a-data constructor, is-a-literal,
+is-an-arithmetic-operation, is-a-function-application \etc),
 %
-Note that this \emph{blame} is inconsistent with the
-programmer's intention and may not be helpful debugging
-information to a novice.
+to semantic features captured by the type system (\eg is-a-list,
+is-an-integer, is-a-function \etc).
 
-It may appear obvious to the reader that
-|[]| is the correct expression to blame,
-but how is the type checker to know that?
-
-Indeed, both the venerable
-Ocaml compiler as well as
-recent techniques~\citep{Zhang2014-lv,Loncaric2016-uk,Pavlinovic2014-mr}.
-fail to distinguish between
-the two underlined expressions
-in \autoref{fig:sumList};
-it would be equally valid
-to blame \emph{either}
-of them alone.
+Our \emph{third contribution} \autoref{sec:evaluation}
+is a systematic evaluation of our data-driven approach
+using different classes of features like the above, and
+with three different classification algorithms: linear
+classifiers, decision forests and deep neural networks.
 %
-The |[]| on line 3 could be changed to |0|,
-or the |+| on line 4 could be changed to
-either |@| (list append) or |::|, all of
-which would give type-correct programs.
+Our evaluation lets us identify the best features and
+classifier and empirically characterize the importance
+of different features for error localization.
 %
-Thus, these state-of-the-art techniques
-are forced to either blame \emph{both}
-locations, or choose one \emph{arbitrarily}.
+In particular, we find that while machine learning
+on its own performs slightly worse than existing
+purely constraint based approaches (\eg \ocaml, \sherrloc),
+once we augment the data with feature abstraction
+corresponding to the \emph{type error slice} \cite{Tip2001-qp},
+the resulting classifier significantly outperforms
+state-of-the-art by 18 percentage points.
 
-\begin{figure}[ht]
-\begin{minipage}{0.45\linewidth}
-\begin{ecode}
-  let rec sumList xs =
-    match xs with
-    | []   -> (*@\hlTree{\hlSherrloc{[]}}@*)
-    | h::t -> h (*@\hlTree{+}@*) (*@\hlFix{sumList t}@*)
-\end{ecode}
-\end{minipage}
-\begin{minipage}{0.49\linewidth}
-\begin{verbatim}
-File "sumList.ml", line 4, characters 16-25:
-  This expression has type 'a list
-  but an expression was expected of type int
-\end{verbatim}
-\end{minipage}
-\caption{(left) An ill-typed \ocaml program that should sum the elements of a
-  list, with highlights indicating three possible blame assignments based on:
-  %
-  (1) the \hlFix{\ocaml} compiler;
-  %
-  (2) the \hlSherrloc{fix} made by the programmer; and
-  %
-  (3) \hlTree{minimizing} the number of edits required.
-  % The \underline{underlined} expressions are equally valid
-  % locations to blame. The expression blamed by the \ocaml compiler
-  % is in \textbf{bold}.
-  %
-  % FIXME: This bolding is ambiguous, because ``let rec'', ``match'' and
-  % ``with'' are also bolded (by \\ecode)! You need to find another way to
-  % highlight what ocaml is yelling about.
-  %
-  (right) The error reported by \ocaml.}
-\label{fig:sumList}
-\end{figure}
-
-% \begin{enumerate}
-% \item An large-scale evaluation of state-of-the-art type error
-%   localization techniques on over 4,500 student programs.
-%   %
-%   We collected a time-series of \ocaml programs from our students, and
-%   use their subsequent \emph{fixes} to ill-typed programs as
-%   \emph{oracles} for the location of the error.
-%   %
-%   This is the most extensive evaluation of the accuracy of type error
-%   localization techniques that we are aware of.
-%   % based not on expert \emph{opinion}, but
-%   % on the eventual \emph{fix} implemented by a novice user.
-%   %
-%   % \ES{need to explain \emph{why} this is superior..}
-% \item A machine learning approach to \emph{modeling} (novice) type
-%   errors that can outperform the state-of-the-art by 15--30\% in
-%   localizing errors.
-%   %
-%   Our classifiers can be trained on a relatively small amount of data --- we
-%   used a single class of around 50 students --- and appear to
-%   generalize to other instances of the same class.
-%   %
-%   \ES{and hopefully completely separate classes!}
-%   %
-%   In contrast to many approaches to \emph{fault localization} from the
-%   software engineering community, our model does not use any linguistic
-%   modeling techniques, \eg \emph{n-grams} over the token stream; rather,
-%   it relies entirely on features of the abstract syntax tree and a
-%   partial typing derivation.
-%   %
-%   \ES{if there's time, investigate adding Wes' n-gram model}
-% \end{enumerate}
-
-
-
+Thus, by combining modern statistical methods
+with domain-specific feature engineering
+to open the door to a new data-driven
+path to precise error localization.
+%
+We can easily \emph{extend} \toolname to
+new languages or forms of correctness
+checks by swapping in a different
+set of feature abstraction functions.
+%
+Furthermore, our data-driven approach
+allows \toolname to \emph{adapt} to
+the kinds of errors that programmers
+(specifically, novices who are in greatest
+need of precise feedback) actually make
+rather than hardwiring the biases of
+compiler authors who, by dint of their
+training and experience, may suffer from
+blind spots with regards to such problems.
+%
+In contrast, our results show that \toolname's
+data-driven diagnosis can be an effective
+technique for localizing errors by collectively
+learning from past mistakes.
 
 %%% Local Variables:
 %%% mode: latex

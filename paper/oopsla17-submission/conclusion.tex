@@ -1,27 +1,73 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-We have presented a new data-driven approach to localizing type errors,
-using machine learning to assign blame based on previously seen novice
-mistakes.
+We have presented \toolname which
+combining modern statistical methods
+with domain-specific feature engineering
+to open the door to a new data-driven
+path to precise error localization.
 %
-We translate ill-typed programs into sets of feature vectors, predict
-for each sub-expression whether it should be blamed, rank the
-predictions based on the model's confidence, and select the top three
-blame assignments to present to the user.
+\toolname
+translates pairs of
+blame-labeled ill-typed
+programs into bags-of-abstracted-terms,
+and then trains a classifier that
+predicts the value of the
+whether a feature vector gets
+a blame label.
 %
-We represent expressions solely by their syntactic class and type, and
-those of their parent and children.
-%
-We have evaluated our approach with five different classifiers
-on a suite of over 4,500 student programs, and found that all of our
-models outperform the state of the art, by up to a 16\% margin.
-%
-We are particularly excited that our classifiers can be trained on a
-modest amount of data, \eg a single course's worth, and envision a
-future where each course has a model of its students' errors.
+Given a new ill-typed program,
+we extract its bag-of-extracted-terms
+to compute the blame label for each
+term and rank the predictions based
+on the model's confidence, to select
+the top 1-3 blame assignments to
+present to the user.
+
+We have evaluated our approach with
+five different classifiers on a suite
+of over 4,500 student programs.
+We find that while machine
+learning on its own performs slightly worse
+than existing purely constraint based
+approaches (\eg \ocaml, \sherrloc), once
+we augment the data with feature abstraction
+corresponding to the \emph{type error slice}~\cite{Tip2001-qp},
+the resulting models models outperform
+the state of the art by up to 18
+percentage points.
 
 
+As with other forms of machine learning,
+a key concern is that of \emph{data-set bias}: are
+the models learned by \toolname specific
+to our data set, and would they fail on
+\emph{other} \ocaml programs?
+%
+We address this concern in two ways.
+%
+First, we partition the data by year,
+and show that models learned from one
+year generalize to, \ie perform nearly
+as well on the programs from the other
+year.
+%
+Second, we argue that in our setting
+this bias is \emph{feature} (and not
+a bug): it allows \toolname to \emph{adapt}
+to the kinds of errors that programmers
+(specifically, novices who are in greatest
+need of precise feedback) actually make
+rather than hardwiring the biases of
+compiler authors who, by dint of their
+training and experience, may suffer from
+blind spots with regards to such problems.
+%
+In this regard, we are particularly pleased
+that our classifiers can be trained on a
+modest amount of data, \eg a single course's
+worth, and envision a future where each course
+has a model of its students' errors.
 
 
 

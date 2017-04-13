@@ -1,27 +1,42 @@
 
 \begin{abstract}
-  Localizing type errors is challenging in languages with global type
-  inference, as the type checker must make assumptions about what the
-  programmer intended to do.
-  %
-
-  We present a data-driven approach to type error localization that uses
-  machine learning to assign blame based on previous
-  ill-typed programs and their fixes.
-  %
-  First, we gather a large set of over 4,500 ill-typed student programs
-  and their subsequent fixes.
-  %
-  Second, we frame type error localization as a supervised learning
-  problem: to predict, for each expression in the
-  program, whether it should be blamed.
-  %
-  We represent each expression by its syntactic class and type and those
-  of its parent and children, associating blame with expressions that
-  were changed in the human-fixed program.
-  %
-  Finally, we train and evaluate a series of off-the-shelf classifiers
-  on our suite of programs,
-  and find that they improve localization accuracy from a state-of-the-art
-  56\% to 72\%.
+Localizing type errors is challenging in
+languages with global type inference, as
+the type checker must make assumptions
+about what the programmer intended to do.
+%
+We introduce \toolname, a \emph{data-driven}
+approach to error localization based on
+supervised learning.
+%
+\toolname works by using a large corpus
+of training data --- pairs of ill-typed
+programs and their ``fixed'' versions ---
+to automatically \emph{learn a model}
+of where the error is most likely.
+%
+When given a new ill-typed program,
+\toolname executes the model to
+generate a list of likely error
+locations ranked by likelihood.
+%
+We evaluate \toolname by comparing its
+precision against the state-of-the-art
+on a set of over 4,500 ill-typed Ocaml
+programs drawn from introductory
+programming classes.
+%
+We show that when the top-ranked location
+is considered, \toolname's data-driven
+model is able to correctly predict
+the exact sub-expression that needs to
+be changed, 74\% of the time, which is
+29 points higher than \ocaml, and
+18 points higher than the state-of-the-art
+\sherrloc tool.
+%
+Further, \toolname's accuracy surpasses
+85\% when we consider the \emph{top-2}
+locations and reaches 91\% if consider
+the \emph{top-3}.
 \end{abstract}
