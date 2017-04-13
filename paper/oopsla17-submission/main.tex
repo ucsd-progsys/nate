@@ -62,8 +62,9 @@
 % \definecolor{tree}{HTML}{66C2A5}
 % \definecolor{sherrloc}{HTML}{FC8D62}
 % \definecolor{fix}{HTML}{8DA0CB}
+% \definecolor{sherrloc}{HTML}{FC8D62}
 \definecolor{tree}{HTML}{8dd3c7}
-\definecolor{sherrloc}{HTML}{ffffb3}
+\definecolor{sherrloc}{HTML}{FFFFB3}
 \definecolor{fix}{HTML}{bebada}
 
 \newcommand\hlTree[1]{\fcolorbox{black}{tree}{#1}}
@@ -224,11 +225,15 @@
 %% Abstract
 %% Note: \begin{abstract}...\end{abstract} environment must come
 %% before \maketitle command
+
+\input{abstract}
+
 \begin{abstract}
   Localizing type errors is challenging in languages with global type
   inference, as the type checker must make assumptions about what the
   programmer intended to do.
   %
+
   We present a data-driven approach to type error localization that uses
   machine learning to assign blame based on previous
   ill-typed programs and their fixes.
@@ -248,9 +253,6 @@
   on our suite of programs,
   and find that they improve localization accuracy from a state-of-the-art
   56\% to 72\%.
-  % and find that they are 15--30\% more
-  % accurate in locating the source of a type error than the state of the
-  % art.
 \end{abstract}
 
 
@@ -294,7 +296,8 @@
 \maketitle
 
 
-\input{introduction}
+% \input{introduction}
+\input{intro2}
 \input{overview}
 \input{learning}
 \input{evaluation}
