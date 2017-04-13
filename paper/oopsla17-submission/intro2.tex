@@ -6,7 +6,7 @@
 % ``types are the leaven of computer programming;
   % they make it digestible''~\cite{tapl}.
 %
-Types are wonderful.
+Types are awesome.
 %
 Languages like \ocaml and \haskell make
 the value-proposition for types even more
@@ -70,14 +70,15 @@ make in practice.
 
 \mypara{A Data-Driven Approach}
 %
-In this paper, we introduce \toolname \footnote{Numeric Analysis of Type Errors}
+In this paper, we introduce \toolname
+\footnote{``Numeric Analysis of Type Errors''; any resemblance to persons living or dead is purely coincidental.}
 a \emph{data-driven} approach to error
 localization based on supervised
 classification~\citep{Kotsiantis2007-pj}.
 %
 \toolname works by using a large corpus
 of training data --- pairs of ill-typed
-programs and their ``fixed'' versions ---
+programs and their fixed versions ---
 to automatically \emph{learn a model}
 of where the error is most likely.
 %
@@ -95,13 +96,15 @@ programming classes.
 We show that \toolname's data-driven
 model is able to correctly predict
 the exact sub-expression that needs to
-be changed, 74\% of the time compared
-to \ocaml's 45\% and \sherrloc's 56\%.
+be changed, 74\% of the time, which is
+29 points higher than \ocaml, and
+18 points higher than the state-of-the-art
+\sherrloc tool.
 %
-When the \emph{top} ranked location
-is considered. \toolname's accuracy jumps
-to above 85\% (resp. 90\%) when we consider
-the \emph{top-2} and \emph{top-3} locations.
+Further, \toolname's accuracy surpasses
+85\% when we consider the \emph{top-2}
+locations and reaches 91\% if consider
+the \emph{top-3}.
 %
 We achieve these advances by identifying
 and then solving three key challenges.
