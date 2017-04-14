@@ -1,4 +1,4 @@
-\mysection{Overview} \label{sec:overview}
+\mysection{Overview}\label{sec:overview}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -40,7 +40,7 @@ File "sumList.ml", line 4, characters 16-25:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Lets start with an overview of \toolname's
+Let us start with an overview of \toolname's
 approach to localizing type errors by
 collectively learning from the mistakes
 programmers actually make.
@@ -79,9 +79,10 @@ but how is a type checker to know that?
 Indeed, both the venerable
 \ocaml compiler as well as
 recent techniques like
-\sherrloc and \mycroft~\citep{Zhang2014-lv,Loncaric2016-uk,Pavlinovic2014-mr}.
+\sherrloc and \mycroft
+\citep{Zhang2014-lv,Loncaric2016-uk,Pavlinovic2014-mr}
 fail to distinguish between
-the two underlined expressions
+the |[]| and |+| expressions
 in \autoref{fig:sumList};
 it would be equally valid
 to blame \emph{either}
@@ -104,9 +105,9 @@ problem~\citep{Kotsiantis2007-pj}.
 %
 A \emph{classification} problem entails learning
 a function that maps \emph{inputs} to a discrete
-set of output \emph{labels} (in contrast to, say,
+set of output \emph{labels} (in contrast to %, say,
 \emph{regression}, where the output is typically
-a real number.)
+a real number).
 %
 A \emph{supervised} learning problem is one where
 we are given a \emph{training set} where the
@@ -134,7 +135,7 @@ as a practical tool, we have to solve four sub-problems.
 
 \mysubsection{Step 1: Acquiring a Blame-Labeled Training Set}
 
-The first step is to create a training
+The first step is to gather a training
 set of ill-typed programs, where each
 erroneous sub-term is explicitly labeled.
 %
@@ -148,17 +149,17 @@ This method is suitable for
 \emph{evaluating} the quality
 of a localization (or repair)
 algorithm on a small number
-(\eg, 10-100s) of programs.
+(\eg 10s--100s) of programs.
 %
 However, in general it requires
 a great deal of effort for the
 expert to divine the original
-programmers' intentions.
+programmer's intentions.
 %
 Consequently, is difficult to
 scale the expert-labeling to
 yield a dataset large enough
-(\eg, 1000s of programs) needed
+(\eg 1000s of programs) needed
 to facilitate machine learning.
 %
 More importantly, this approach
@@ -178,9 +179,9 @@ sometimes frustrating) back-and-forth with
 the type checker, eventually end up fixing
 their own programs.
 %
-Thus, we implemented an instrumented
-version of the \ocaml compiler that records
-this conversation, \ie records the sequence
+Thus, we instrumented
+the \ocaml compiler to record
+this conversation, \ie record the sequence
 of programs submitted by each programmer and
 whether or not it was deemed type-correct.
 %
@@ -220,8 +221,8 @@ that are needed for supervised
 classification.
 %
 While the PL literature is full
-of different kinds of ways to
-represent programs, from raw
+of different program
+representations, from raw
 sequences of tokens, to
 richly-structured
 abstract syntax trees (AST) or
@@ -232,8 +233,8 @@ above into a vector space.
 Furthermore, it is unclear whether
 recent program representations that
 are amenable to one learning task,
-\eg code completion \cite{Devanbu:2012,Raychev:2014}
-or decompilation \cite{Raychev2015-jg,Bielik2016-br}
+\eg code completion \citep{Devanbu:2012,Raychev:2014}
+or decompilation \citep{Raychev2015-jg,Bielik2016-br}
 are suitable for our problem of
 assigning blame for type errors.
 
@@ -241,25 +242,25 @@ assigning blame for type errors.
 %
 We present a new representation of programs
 that draws inspiration from the theory of
-abstract interpretation~\cite{CousotCousot77}.
+abstract interpretation \citep{CousotCousot77}.
 %
 Our representation as parameterized by a
 set of \emph{feature abstraction} functions,
 (abbreviated to feature abstractions)
 $f_1, \ldots, f_n$, that map terms to a
 numeric value (or just $\{0, 1\}$ to
-encode a Boolean property.)
+encode a boolean property).
 %
 Given a set of feature abstractions, we
 can represent a single program's AST as
 a \emph{bag-of-abstracted-terms} (BOAT)
 by:
 %
-(1)~Decomposing the AST (term) $t$ into
+(1)~decomposing the AST (term) $t$ into
     a \emph{bag} of its constituent sub-trees
-    (terms) $\{t_1,\ldots,t_m\}$, and then
+    (terms) $\{t_1,\ldots,t_m\}$; and then
 %
-(2)~Representing each sub-term $t_i$
+(2)~representing each sub-term $t_i$
     with the $n$-dimensional
     vector $[f_1(t_i),\ldots, f_n(t_i)]$.
 %
@@ -281,7 +282,7 @@ for our task as each expression
 imposes typing constraints on its
 neighbors.
 %
-For example, \eg a |+| operator tells
+For example, a |+| operator tells
 the type checker that both \emph{children}
 must have type |int| and that the \emph{parent}
 must accept an |int|.
@@ -321,9 +322,10 @@ then repeatedly adding more
 and more to capture important
 aspects needed to improve precision.
 %
-Our set feature abstractions
-includes those that capture the
-\emph{syntax}, \emph{types} and
+Our set of feature abstractions
+%includes those that capture the
+captures the
+\emph{syntax}, \emph{types}, and
 \emph{context} of each expression.
 
 \mypara{Syntax and Type Features}
@@ -367,14 +369,15 @@ in~\autoref{sec:discussion}.
 %
 Our contextual features include the
 syntactic class of the neighboring
-expressions, their inferred types
+expressions and their inferred types
 (when available).
 %
-However, in we have found that
+However, we have found that
 the most important contextual
 signal is whether or not the
 expression occurs in a
-\emph{minimal type error slice}~\citep{Haack2003-vc}
+\emph{minimal type error slice}
+\citep{Tip2001-qp,Haack2003-vc}
 which includes the smallest
 subset of all expressions
 that are necessary for the
@@ -425,13 +428,13 @@ corresponding feature vectors.
 
 \mysubsection{Step 4: Generating Feedback}
 
-Finally, after we have trained a classifier
+Finally, having trained a classifier
 using the labeled data set, we need to use
 it to help users localize type errors in
 their programs.
 %
 The classifier tells us whether or not
-a given sub-expression \emph{should be}
+a sub-term \emph{should be}
 blamed (\ie has the blame label) but this
 is not yet particularly suitable as
 \emph{user feedback}.
@@ -473,7 +476,7 @@ In \autoref{sec:evaluation} we show
 that \toolname's ranking approach
 yields a high-precision localizer:
 when the top-3 locations are considered,
-one of them is the real location
+at least one matches an actual student fix
 more than 90\% of the time.
 
 
