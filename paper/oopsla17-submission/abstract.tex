@@ -9,34 +9,35 @@ We introduce \toolname, a \emph{data-driven}
 approach to error localization based on
 supervised learning.
 %
-\toolname works by using a large corpus
+\toolname analyzes a large corpus
 of training data --- pairs of ill-typed
 programs and their ``fixed'' versions ---
 to automatically \emph{learn a model}
-of where the error is most likely.
+of where the error is most likely
+to be found.
 %
-When given a new ill-typed program,
+Given a new ill-typed program,
 \toolname executes the model to
-generate a list of likely error
-locations ranked by likelihood.
+generate a list of potential blame
+assignments ranked by likelihood.
 %
 We evaluate \toolname by comparing its
-precision against the state-of-the-art
+precision to the state of the art
 on a set of over 4,500 ill-typed Ocaml
 programs drawn from introductory
 programming classes.
 %
-We show that when the top-ranked location
+We show that when the top-ranked blame assignment
 is considered, \toolname's data-driven
 model is able to correctly predict
-the exact sub-expression that needs to
-be changed, 74\% of the time, which is
-29 points higher than \ocaml, and
+the exact sub-expression that should
+be changed 74\% of the time, %which is
+29 points higher than \ocaml and
 18 points higher than the state-of-the-art
 \sherrloc tool.
 %
-Further, \toolname's accuracy surpasses
-85\% when we consider the \emph{top-2}
+Furthermore, \toolname's accuracy surpasses
+85\% when we consider the top \emph{two}
 locations and reaches 91\% if consider
-the \emph{top-3}.
+the top \emph{three}.
 \end{abstract}

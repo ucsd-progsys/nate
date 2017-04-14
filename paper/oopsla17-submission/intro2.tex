@@ -16,18 +16,20 @@ without troubling the programmer for any
 annotations.
 %
 Unfortunately, this automation has come at a price.
-Verbose type annotations (as in, \eg, Java) signify
+Verbose type annotations (as in, \eg, \java) signify
 the programmer's intent and help to correctly
 blame the erroneous sub-term when the code is
 ill-typed.
 %
-In contrast, lacking such signifiers, automatic
+In the absence of such signifiers, automatic
 type inference algorithms are prone to report
-type errors quite far from their actual source.
+type errors far from their actual source
+\citep{Wand1986-nw}.
 %
 While this can seem like a minor annoyance to
-veteran programmers, it turns out to be a significant
-stumbling block for novices~\citep{Wand1986-nw,Joosten1993-yx}.
+veteran programmers, \citet{Joosten1993-yx} have found
+that novices often focus their attention on the \emph{location}
+reported and disregard the \emph{message}.
 
 \mypara{Localizing Errors}
 %
@@ -39,7 +41,7 @@ the set of typing constraints to find
 the minimum (weighted) subset that,
 if removed would make the constraints
 satisfiable and hence, memory-safe~\citep{Jose:2011}
-or well-typed~\citep{Zhang2014-lv,Loncaric2016-uk,Chen2014-vm,Pavlinovic2014-mr}.
+or well-typed~\citep{Zhang2014-lv,Loncaric2016-uk,Chen2014-gd,Pavlinovic2014-mr}.
 The finger of blame is then pointed at the
 sub-terms that yielded those constraints.
 %
@@ -47,20 +49,20 @@ This minimum-weight approach suffers
 from two drawbacks.
 %
 First, they are not \emph{extensible}:
-the weights and analyses are limited
-to attributes of the constraints, and
-not other \emph{signals} from the
-program's syntax that may be more
-germane to error localization. Furthermore,
-the algorithms for computing
+% the weights and analyses are limited
+% to attributes of the constraints, and
+% not other \emph{signals} from the
+% program's syntax that may be more
+% germane to error localization. Furthermore,
+the constraint languages and algorithms for computing
 the minimum weighted subset must be
 designed afresh for different kinds
-of type systems and constraints.
+of type systems and constraints \citep{Loncaric2016-uk}.
 %
 Second, and perhaps most importantly,
 they are not \emph{adaptable}: the
 weights are fixed in an ad-hoc fashion, based on the
-\emph{analysis designers} notion
+\emph{analysis designer's} notion
 of what kinds of errors are more
 or less likely, rather than
 adapting to the kinds of mistakes
@@ -72,37 +74,39 @@ In this paper, we introduce \toolname
 \footnote{``Numeric Analysis of Type Errors''; any resemblance to persons living or dead is purely coincidental.}
 a \emph{data-driven} approach to error
 localization based on supervised
-classification~\citep{Kotsiantis2007-pj}.
+learning (see \citealt{Kotsiantis2007-pj} for a survey).
 %
-\toolname works by using a large corpus
+\toolname analyzes a large corpus
 of training data --- pairs of ill-typed
-programs and their fixed versions ---
+programs and their subsequent fixes ---
 to automatically \emph{learn a model}
-of where the error is most likely.
+of where errors are most likely to
+be found.
 %
-When given a new ill-typed program,
+Given a new ill-typed program,
 \toolname simply executes the model
-to generate a list of likely error
-locations ranked by likelihood.
+to generate a list of potential
+blame assignments ranked by likelihood.
 %
 We evaluate \toolname by comparing its
 precision against the state-of-the-art
-on a set of over 4,500 ill-typed Ocaml
+on a set of over 4,500 ill-typed \ocaml
 programs drawn from introductory
 programming classes.
 %
-We show that \toolname's data-driven
+We show that, when restricted to a
+\emph{single} prediction, \toolname's data-driven
 model is able to correctly predict
-the exact sub-expression that needs to
-be changed, 74\% of the time, which is
-29 points higher than \ocaml, and
+the exact sub-expression that should
+be changed 74\% of the time,
+29 points higher than \ocaml and
 18 points higher than the state-of-the-art
 \sherrloc tool.
 %
-Further, \toolname's accuracy surpasses
-85\% when we consider the \emph{top-2}
+Furthermore, \toolname's accuracy surpasses
+85\% when we consider the top \emph{two}
 locations and reaches 91\% if consider
-the \emph{top-3}.
+the top \emph{three}.
 %
 We achieve these advances by identifying
 and then solving three key challenges.
@@ -110,14 +114,15 @@ and then solving three key challenges.
 \mypara{Challenge 1: Acquiring Labeled Programs}
 %
 The first challenge for supervised learning
-is to acquire a corpus of training data, here,
+is to acquire a corpus of training data, in our setting
 a set of ill-typed programs \emph{labeled}
 with the exact sub-terms that are the actual
 cause of the type error.
 %
 Prior work has often enlisted expert users
 to manually judge ill-typed programs and
-determine the ``correct'' fix \citep[\eg][]{Loncaric2016-uk},
+determine the ``correct'' fix
+\citep[\eg][]{Lerner2007-dt,Loncaric2016-uk},
 but this approach does not scale well to
 a dataset large enough to support machine
 learning.
@@ -131,14 +136,14 @@ intended.
 
 Our \emph{first contribution} (\autoref{sec:overview})
 is a set of more than 4,500 labeled programs,
-gives us an accurate ground truth of
+giving us an accurate ground truth of
 the kinds of errors and the (locations
 of the) fixes that novices make in
 practice.
 %
 We obtain this set by observing that
 software development is an iterative
-process and programmers eventually
+process; programmers eventually
 fix their own ill-typed programs,
 perhaps after multiple incorrect
 exploratory attempts.
@@ -146,9 +151,8 @@ exploratory attempts.
 To exploit this observation we instrumented
 the \ocaml compiler to collect fine-grained
 traces of student interactions over two instances
-of an undergraduate Programming Languages course
-%
-\footnote{
+of an undergraduate Programming Languages
+course.\footnote{
 % \begin{anonsuppress}
 % UC San Diego (IRB \#140608).
 % \end{anonsuppress}
@@ -157,53 +161,64 @@ at AUTHOR's INSTITUTION (IRB HIDDEN).
 % \end{noanonsuppress}
 }
 %
-We can then post-process the resulting time-series
+We then post-process the resulting time-series
 of programs submitted to the \ocaml compiler into
 a set of pairs of ill-typed programs and their
-\emph{fixed} versions, the \emph{first} (type-)correct
+subsequent \emph{fixes}, the first (type-)~correct
 program in the trace suffix.
 %
-We obtain the location labels by computing a
+Finally, we compute the blame labels using a
 \emph{tree-diff} between the two terms to find
 the exact sub-terms that were changed in the fix.
 
 \mypara{Challenge 2: Modeling Programs as Vectors}
 %
-Modern supervised learning algorithms work on sets of
+Modern supervised learning algorithms work on %sets of
 \emph{feature vectors}: real-valued points in an
-$n$-dimensional space. While it is easy to compute such
-vectors for documents, images and sound (respectively
-word-counts, pixel-values and frequencies), it has
-hitherto been unclear how to precisely model program
-structure as numeric data.
+$n$-dimensional space. While there are standard
+techniques for computing such
+vectors for documents, images, and sound (respectively
+word-counts, pixel-values, and frequencies),
+% it has
+% hitherto been unclear how to precisely model program
+% structure as numeric data.
+there are no similarly standard representations for
+programs.
 
 Our \emph{second contribution} (\autoref{sec:learning})
-solves this problem with a new representation called
-a \emph{Bag-of-Abstract-Terms (BOAT)} wherein
+solves this problem with a simple, yet expressive, representation called
+a \emph{Bag-of-Abstracted-Terms (BOAT)} wherein
 %
 (1)~each program is represented by the \emph{bag}
-    or multiset of (sub-)terms that appears inside
-    it, and
+    or multiset of (sub-)~terms that appears inside
+    it; and
 %
-(2)~each (sub-)term $t$ is \emph{abstracted} as
-    a vector $[f_1(t), \ldots, f_n(t)]$ where
+(2)~each (sub-)~term $t$ is \emph{abstracted} as
+    a vector $[f_1(t), \ldots, f_n(t)]$, where
     each $f_i$ is a \emph{feature abstraction}
     that maps a term to a numeric value.
 %
-We can model the error labels with a simple feature
-abstraction (\eg is-a-diff-subterm).
+We can model the blame labels with a simple feature
+abstraction (\eg does-change-in-fix).
 %
 We can even account for \emph{contextual} information like
-the features of the parent- and children- terms by
+the features of the parent- and child- terms by
 concatenating the feature vectors of each term with those
 of its parent and children.
+%
+We have found this representation to be particularly
+convenient as it gives us flexibility
+in modeling the syntactic and semantic structure of programs
+while retaining compatibility with off-the-shelf classifiers,
+in contrast to, \eg, \citet{Raychev2015-jg}, who had to develop
+their own variants of classifiers to obtain their results.
 
 \mypara{Challenge 3: Training Precise Classifiers}
 %
 Finally, the last and most important challenge is to
 use the labeled BOAT data to train classifiers that
-are capable of \emph{precisely} pinpointing the error
-locations in real programs.
+are capable of \emph{precisely} pinpointing the errors
+in real programs.
 %
 The key here is to find the right set of feature
 abstractions and classification algorithms, that
@@ -216,28 +231,38 @@ We can use abstraction functions to capture different
 aspects of a term ranging from
 %
 syntactic features (\eg is-a-data constructor, is-a-literal,
-is-an-arithmetic-operation, is-a-function-application \etc),
+is-an-arithmetic-operation, is-a-function-application, \etc),
 %
 to semantic features captured by the type system (\eg is-a-list,
-is-an-integer, is-a-function \etc).
+is-an-integer, is-a-function, \etc).
 
 Our \emph{third contribution} (\autoref{sec:evaluation})
 is a systematic evaluation of our data-driven approach
 using different classes of features like the above, and
-with three different classification algorithms: linear
-classifiers, decision forests and deep neural networks.
+with three different classification algorithms: logistic
+regression, decision trees, and neural networks.
 %
 Our evaluation lets us identify the best features and
 classifier and empirically characterize the importance
 of different features for error localization.
 %
 In particular, we find that while machine learning
-on its own performs slightly worse than existing
+over syntactic features of each term in isolation
+performs worse than existing
 purely constraint based approaches (\eg \ocaml, \sherrloc),
-once we augment the data with feature abstraction
-corresponding to the \emph{type error slice} \cite{Tip2001-qp},
-the resulting classifier significantly outperforms
-state-of-the-art by 18 percentage points.
+augmenting the data with a single feature corresponding to
+the \emph{type error slice} \citep{Tip2001-qp} brings our
+classifiers up to par with the state of the art,
+and further augmenting the data with \emph{contextual}
+features allows our classifiers to outperform
+the state of the art by 18 percentage points.
+% In particular, we find that while machine learning
+% on its own performs slightly worse than existing
+% purely constraint based approaches (\eg \ocaml, \sherrloc),
+% once we augment the data with feature abstraction
+% corresponding to the \emph{type error slice} \citep{Tip2001-qp},
+% the resulting classifier significantly outperforms the
+% state of the art by 18 percentage points.
 
 Thus, by combining modern statistical methods
 with domain-specific feature engineering, \toolname
