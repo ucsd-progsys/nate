@@ -1,4 +1,4 @@
-\section{Related Work}
+\mysection{Related Work}
 \label{sec:related-work}
 
 In this section we describe two relevant aspects of related work:
@@ -9,7 +9,7 @@ software engineering approaches to fault localization.
 %
 % applying machine learning techniques to problems in programming languages.
 
-\subsection{Type Error Diagnosis}
+\mysubsection{Type Error Diagnosis}
 \label{sec:type-error-diagnosis}
 Languages with static type systems and type inference produce type
 errors that novices often perceive as difficult to
@@ -31,7 +31,7 @@ fix the error automatically.
 % and our approach contains \ES{TODO}, which is not present in previous
 % work.
 
-\paragraph{Localizing Type Errors}
+\mypara{Localizing Type Errors}
 It is well-known that the original Damas-Milner algorithm $\mathcal{W}$
 produces poor error locations~\citep{Wand1986-nw}, often reported far
 from their source.
@@ -53,6 +53,7 @@ traversal that checks sub-expressions independently and only reports an
 error when two inconsistent sets of constraints are
 merged~\citep{McAdam1998-ub,Yang1999-yr}.
 
+\mypara{Slicing}
 Type error \emph{slicing}~\citep{Haack2003-vc,Tip2001-qp,Rahli2010-ps}
 overcomes the traversal bias by extracting a complete and minimal subset
 of program expressions that contribute to the type error, \ie all of the
@@ -67,7 +68,8 @@ While slicing techniques guarantee enough information to diagnose the
 error, they can fall into the trap of providing \emph{too much}
 information, producing a slice that is not significantly smaller than
 the input program.
-%
+
+\mypara{Finding Likely Errors}
 Thus, recent work has focused on finding the \emph{most likely} source
 of a type error.
 %
@@ -99,7 +101,7 @@ constraint solver.
 It may be profitable to combine both approaches, \ie learn a set of good
 weights for one of the above techniques from our training data.
 
-\paragraph{Explaining Type Errors}
+\mypara{Explaining Type Errors}
 In this paper we have focused solely on the task of \emph{localizing} a
 type error, but a good error report should also \emph{explain} the
 error.
@@ -118,6 +120,7 @@ showing the flow of data from sources with incompatible types to a
 shared sink, borrowing the insight of dataflows-as-explanations from
 \textsc{MrSpidey}~\citep{Flanagan1996-bu}.
 
+\mypara{Interactive Explanations}
 Such \emph{static} explanations of type errors run the risk of
 overwhelming the user with too much information, it may be preferable to
 treat type error diagnosis as an \emph{interactive} debugging session.
@@ -136,6 +139,8 @@ expose the \emph{run-time} error that the type system prevented, and
 present users with an interactive visualization of the erroneous
 computation.
 
+\mypara{Programmatic Explanations}
+%
 The best explanation of a type error, however, might be given by an
 expert, \eg the compiler or library author.
 %
@@ -154,7 +159,7 @@ custom errors when type-class resolution or type-family reduction fail,
 but not for ordinary unification failures.
 
 
-\paragraph{Fixing Type Errors}
+\mypara{Fixing Type Errors}
 Some techniques go beyond explaining a type error or locating its
 source, and actually attempt to \emph{fix} the error automatically.
 %
@@ -176,7 +181,7 @@ may be possible to do so by training a classifier to predict the
 syntactic class of each expression in the \emph{fixed} program --- we
 believe this is an exciting direction for future work.
 
-\subsection{Fault Localization}
+\mysubsection{Fault Localization}
 Given a defect, \emph{fault localization} is the task of identifying
 ``suspicious'' program elements (\eg lines, statements) that are likely
 implicated in the defect (\ie that should be changed to fix the defect)

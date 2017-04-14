@@ -197,9 +197,9 @@ of the abstract syntax trees, and then assign
 the blame labels to the \emph{smallest}
 sub-tree in the diff.
 
-\ES{FIXME: this feels a bit redundant with CHALLENGE 1. the main thing i
-  get is that we use student fixes to extract AST-diffs, which is
-  already said in CHALLENGE 1}
+% \ES{FIXME: this feels a bit redundant with CHALLENGE 1. the main thing i
+%  get is that we use student fixes to extract AST-diffs, which is
+%  already said in CHALLENGE 1}
 
 \mypara{Example}
 Suppose our student
@@ -304,10 +304,10 @@ term's feature vector with the
 \emph{contextual features} of
 its parent and children.
 
-\ES{FIXME: this feels a bit redundant with CHALLENGE 2. the main things
-  i get here are that we use sets of feature vectors, and that we can
-  concatenate vectors to add context. but this is all said in CHALLENGE
-  2 already.}
+%% \ES{FIXME: this feels a bit redundant with CHALLENGE 2. the main things
+  %% i get here are that we use sets of feature vectors, and that we can
+  %% concatenate vectors to add context. but this is all said in CHALLENGE
+  %% 2 already.}
 
 %% \RJ{confusing -- delete}
 %% We might expect that the recursive
@@ -384,18 +384,16 @@ expressions and their inferred types
 However, we have found that
 the most important contextual
 signal is whether or not the
-expression occurs in a
-\emph{minimal type error slice}
+expression occurs in
+a minimal type error slice
 \citep{Tip2001-qp,Haack2003-vc}
-which includes the smallest
-subset of all expressions
-that are necessary for the
-error to manifest.
+which includes \emph{a minimal subset}
+of all expressions that are
+necessary for the error to manifest.
 %
-\ES{FIXME: this is a bit imprecise. we compute \textbf{a} minimal slice (ie if
-  you remove any more terms the error disappears) but not \textbf{the} minimal
-  slice. there may be other slices that are smaller, but computing all
-  slices is exponential, so we don’t want to do that..}
+(That is, replacing any subterm
+with |undefined| or |assert false|
+would yield a well-typed program.)
 %
 We propose to use type error slices
 to communicate to the classifier
@@ -433,6 +431,8 @@ of the sub-expressions of the example
 from \autoref{fig:sumList}, and their
 corresponding feature vectors.
 
+\input{feature-table}
+
 % Our use of type error slices is
 % conceptually related to the use
 % of fault localization in other
@@ -464,7 +464,7 @@ Thus, we should limit our predictions
 to a select few to be presented to
 the user.
 
-\mypara{Solution: Rank Locations by ``Confidence''}
+\mypara{Solution: Rank Locations by Confidence}
 %
 Fortunately, many machine learning
 classifiers produce not only a predicted

@@ -188,30 +188,28 @@ programs.
 Our \emph{second contribution} (\autoref{sec:learning})
 solves this problem with a simple, yet expressive, representation called
 a \emph{Bag-of-Abstracted-Terms (BOAT)} wherein
-%
-(1)~each program is represented by the \emph{bag}
-    or multiset of (sub-)~terms that appears inside
-    it; and
-%
-(2)~each (sub-)~term $t$ is \emph{abstracted} as
-    a vector $[f_1(t), \ldots, f_n(t)]$, where
-    each $f_i$ is a \emph{feature abstraction}
-    that maps a term to a numeric value.
+each program is represented by the \emph{bag}
+or multiset of (sub-)~terms that appears inside
+it; and further, each (sub-)~term is \emph{abstracted}
+as a feature vector comprising the numeric values
+returned by \emph{feature abstraction} functions
+that applied to the term.
 %
 We can model the blame labels with a simple feature
-abstraction (\eg does-change-in-fix).
+abstraction (\eg is-changed-in-fix).
 %
-We can even account for \emph{contextual} information like
-the features of the parent- and child- terms by
-concatenating the feature vectors of each term with those
-of its parent and children.
+We can even account for \emph{contextual} information
+like the features of the parent- and child- terms by
+\emph{concatenating} the feature vectors of each term
+with those of its parent and children.
 %
 We have found this representation to be particularly
-convenient as it gives us flexibility
-in modeling the syntactic and semantic structure of programs
-while retaining compatibility with off-the-shelf classifiers,
-in contrast to, \eg, \citet{Raychev2015-jg}, who had to develop
-their own variants of classifiers to obtain their results.
+convenient as it gives us flexibility in modeling the
+syntactic and semantic structure of programs while
+retaining compatibility with off-the-shelf classifiers,
+in contrast to, \eg, \citet{Raychev2015-jg}, who had
+to develop their own variants of classifiers to obtain
+their results.
 
 \mypara{Challenge 3: Training Precise Classifiers}
 %

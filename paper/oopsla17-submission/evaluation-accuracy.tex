@@ -1,14 +1,14 @@
-\subsection{Blame Accuracy}
+\mysubsection{Blame Accuracy}
 \label{sec:quantitative}
 
 In this experiment we compare the accuracy of our predictions to the
 state of the art in type error localization.
 
-\paragraph{Baseline}
+\mypara{Baseline}
 We provide two baselines for the comparison: a random choice of location
 from the minimized type error slice, and the standard \ocaml compiler.
 
-\paragraph{State of the Art}
+\mypara{State of the Art}
 \mycroft~\citep{Loncaric2016-uk} localizes type errors by searching for
 a minimal subset of typing constraints that can be removed, such that
 the resulting system is satisfiable.
@@ -30,7 +30,7 @@ not trivial.
 Our experimental design gives the state of the art tools the ``benefit
 of the doubt'' in two ways.
 % To ensure a fair comparison when evaluating \mycroft and
-% \sherrloc, 
+% \sherrloc,
 First, when evaluating \mycroft and \sherrloc, we did not consider
 programs where they predicted locations that our oracle could not match
 with a program expression: 6--8\% of programs for \mycroft and 3--4\%
@@ -42,7 +42,7 @@ feature: another 5\% for \mycroft and 12--13\% for \sherrloc.
 %
 
 
-\paragraph{Our Classifiers}
+\mypara{Our Classifiers}
 We evaluate five classifiers, each trained on the full set of features.
 % features: 44 local syntactic features, 176 contextual syntactic
 % features, 55 typing features, and a single expression size feature.
@@ -92,7 +92,7 @@ descent that has been found to converge faster.
 
 \input{evaluation-accuracy-graph}
 
-\paragraph{Results}
+\mypara{Results}
 \autoref{fig:accuracy-results} shows the results of our experiment.
 %
 Localizing the type errors in our benchmarks amounted, on average, to
