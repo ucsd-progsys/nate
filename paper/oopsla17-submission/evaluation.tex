@@ -1,4 +1,4 @@
-\section{Evaluation}
+\section{Quantitative Evaluation}
 \label{sec:evaluation}
 \input{data}
 
@@ -28,7 +28,7 @@ We seek to answer three questions in our evaluation:
 \end{description}
 %\ES{may want to swap (1) and (2)..}
 
-\subsection{Methodology}
+\mysubsection{Methodology}
 \label{sec:methodology}
 
 We answer our questions on two sets of data gathered from the
@@ -52,7 +52,7 @@ The extracted programs are relatively small, but they demonstrate a
 range of functional programming idioms, \eg higher-order functions and
 (polymorphic) algebraic data types.
 
-\paragraph{Feature Selection}
+\mypara{Feature Selection}
 We extract a set of 277 features from each sub-expression in a student
 program, including:
 %
@@ -82,7 +82,7 @@ program, including:
   \autoref{sec:feature-utility}.
 \end{enumerate}
 
-\paragraph{Blame Oracle}
+\mypara{Blame Oracle}
 Recall from \autoref{sec:labels} that we automatically extract a blame
 oracle for each ill-typed program from the (AST) diff between it and the
 student's eventual fix.
@@ -109,7 +109,7 @@ This accounts for roughly 14\% of each dataset, leaving us with
 % % here would take some of the pressure off.
 
 
-\paragraph{Accuracy Metric}
+\mypara{Accuracy Metric}
 All of the tools we compare (with the exception of the standard \ocaml
 compiler) can produce a list of potential error locations.
 %

@@ -1,9 +1,6 @@
 
-\section{Limitations and Threats to Validity}
+\mysection{Limitations and Threats to Validity}
 \label{sec:discussion}
-
-\subsection{Limitations}
-\label{sec:limitations}
 
 We have shown that we can outperform the state of the art in type error
 localization by learning a model of the errors that programmers make,
@@ -15,7 +12,10 @@ However, there is certainly room for improvement.
 In this section we highlight some limitations of our approach and
 potential avenues for future work.
 
-\paragraph{User-Defined Types}
+\mysubsection{Limitations}
+\label{sec:limitations}
+
+\mypara{User-Defined Types}
 Probably the single biggest limitation of our technique is that we have
 (a finite set of) features for specific data and type constructors.
 %
@@ -56,7 +56,7 @@ to be a challenging task.
 %   ``is-match'' feature, unclear how much it will help
 % \end{itemize}
 
-\paragraph{Additional Features}
+\mypara{Additional Features}
 There are a number of other features that could improve the model's
 ability to localize errors, that would be easier to add than
 user-defined types.
@@ -89,7 +89,7 @@ unusual about the program at that point, and it may signal an error.
 % \item ??
 % \end{itemize}
 
-\paragraph{Independent vs Joint Predictions}
+\mypara{Independent vs Joint Predictions}
 We treat each sub-expression as if it exists in a vacuum, but in reality
 the program has a rich \emph{graphical} structure, particularly if one adds
 edges connecting different occurrences of the same variable.
@@ -114,7 +114,7 @@ be interesting to see how structured learning over graphical models
 would perform.
 
 
-\subsection{Threats to Validity}
+\mysubsection{Threats to Validity}
 \label{sec:validity}
 
 Although our experiments demonstrate that our technique can pinpoint type

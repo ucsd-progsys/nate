@@ -310,7 +310,7 @@ space by focusing on the pros and cons of each technique rather than
 describing the details? This is a PL paper. } \ES{KC: I completely agree. Perhaps we can add a table here. Judging from what we use, the features we need are: (a) expressivity (b) proneness to overfitting and (c) interpretability. We can rate the four classifiers in these three areas.
 }
 
-\paragraph{Logistic Regression.} The simplest classifier we investigate is logistic regression. This is a linear model, where the goal is to learn a set of weights $W$ and a bias $b$ that describe the following model for predicting a label $y$ from a feature vector $x$:
+\mypara{Logistic Regression.} The simplest classifier we investigate is logistic regression. This is a linear model, where the goal is to learn a set of weights $W$ and a bias $b$ that describe the following model for predicting a label $y$ from a feature vector $x$:
 \[ \Pr(y = 1 | x) = \frac{1}{1 + e^{-W^{\top} x - b}} \]
 The weights $W$ and $b$ are learnt from training data, and the value of $\Pr(y | x)$ naturally leads to a confidence score. Logistic regression is a widely used classification algorithm, which is largely preferred for its simplicity, ease of generalization as well as interpretability. Its main limitation is that the prediction rule is constrained to be a linear combination of the features, and hence relatively simple. While this can be somewhat mitigated by adding higher order (quadratic or cubic) features, this often requires substantial domain knowledge.
 
@@ -403,7 +403,7 @@ The weights $W$ and $b$ are learnt from training data, and the value of $\Pr(y |
 % to the model (\eg combinations of the existing features \ES{CITE?}), but
 % the fundamental issue remains.
 
-\paragraph{Decision Trees.} Decision tree algorithms learn a tree of binary predicates over the features, recursively partitioning the input space until a final
+\mypara{Decision Trees.} Decision tree algorithms learn a tree of binary predicates over the features, recursively partitioning the input space until a final
 classification can be made. Each node in the tree contains a single predicate of the form
 $v_j \leq t$ for some feature $v_j$ and threshold $t$, which determines
 whether a given input should proceed down the left or right subtree.
@@ -442,7 +442,7 @@ Another advantage of decision trees is their ease of interpretation --  the deci
 %
 %Both disadvantages are addressed by random forests.
 
-\paragraph{Random Forests.} Random forests mitigate the generalization problem by training an {\em{ensemble}} of distinct decision trees and then using a majority vote to make a prediction. The agreement among the distinct trees in the ensemble forms a natural confidence score. Since each classifier in the ensemble is a decision tree, this still allows for complex and highly expressive classifiers. \ES{Huma: is this the confidence score that we are using?}
+\mypara{Random Forests.} Random forests mitigate the generalization problem by training an {\em{ensemble}} of distinct decision trees and then using a majority vote to make a prediction. The agreement among the distinct trees in the ensemble forms a natural confidence score. Since each classifier in the ensemble is a decision tree, this still allows for complex and highly expressive classifiers. \ES{Huma: is this the confidence score that we are using?}
 
 %One technique for increasing the accuracy of a classifier is to train an
 %\emph{ensemble} of distinct classifiers and use a majority vote
@@ -469,7 +469,7 @@ also makes the learned model more difficult to interpret.
 %hyper-parameter that must be set manually.
 
 
-\paragraph{Neural Networks}
+\mypara{Neural Networks}
 The last (and most complex) model we use is a type of neural network
 called a \emph{multi-layer perceptron} (see \citealt{Nielsen2015-pu} for
 an introduction to neural networks).
