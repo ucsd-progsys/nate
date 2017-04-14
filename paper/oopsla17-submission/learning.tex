@@ -1,4 +1,4 @@
-\section{Learning to Blame}
+\mysection{Learning to Blame}
 \label{sec:learning}
 In this section, we describe our approach to localizing type errors, in the
 context
@@ -53,7 +53,7 @@ $\labelsym$.
 
 \input{syntax}
 
-\subsection{Features}
+\mysubsection{Features}
 \label{sec:features}
 
 % \begin{figure}[ht]
@@ -99,7 +99,7 @@ transform each sub-expression into a single feature vector.
 We group the features into five categories, using \autoref{tab:sumList}
 as a running example of the feature extraction process.
 
-\subsubsection{Local syntactic features}
+\mypara{Local syntactic features}
 These features describe the syntactic category of each expression $e$.
 %
 In other words, for each production of $e$ in \autoref{fig:syntax} we
@@ -123,7 +123,7 @@ easily add features that specify whether a match \emph{contains} a
 particular pattern, and thus have a match expression that enables multiple
 features.
 
-\subsubsection{Contextual syntactic features}
+\mypara{Contextual syntactic features}
 These are similar to local syntactic features, but lifted to describe the
 parent and children of an expression.
 %
@@ -135,7 +135,7 @@ parent (\ie the root expression), we leave the corresponding features
 disabled.
 %
 This gives us a notion of the \emph{context} in which an expression
-occurs, similar to the \emph{n-grams} commonly used in linguistic
+occurs, similar to the \emph{n-grams} used in linguistic
 models \citep{Hindle2012-hf,Gabel2010-el}.
 
 % Instead of just describing the immediate context, we could describe
@@ -154,7 +154,7 @@ models \citep{Hindle2012-hf,Gabel2010-el}.
 % We will investigate (\ES{maybe..}) the impact of these alternatives
 % in \autoref{sec:evaluation}.
 
-\subsubsection{Expression size}
+\mypara{Expression size}
 We also propose a feature representing the \emph{size} of each expression,
 \ie how many sub-expressions does it contain?
 %
@@ -165,7 +165,7 @@ the two variables and the application itself.
 This allows the model to learn that, \eg, expressions closer to the
 leaves are more likely to be blamed than expressions closer to the root.
 
-\subsubsection{Typing features}
+\mypara{Typing features}
 A natural way of summarizing the context in which an expression occurs
 is with \emph{types}.
 %
@@ -192,9 +192,9 @@ context, but also for the current expression, as the type of an
 expression is not always clear \emph{syntactically}.
 %
 For example, the expressions |tl| and |sumList tl|
-in \autoref{tab:sumList} both enable the feature \HasTypeList, as they
-are both inferred to have a type that mentions the $\tlist{\cdot}$
-constructor.
+in \autoref{tab:sumList} both enable \HasTypeList, as they
+are both inferred to have a type that mentions $\tlist{\cdot}$.
+%constructor.
 
 Note that our use of typing features in an ill-typed program subjects us
 to \emph{traversal bias} \citep{McAdam1998-ub}. For example, the
@@ -204,7 +204,7 @@ $\tint$.
 Our models will have to learn good localizations in spite this bias (see
 \autoref{sec:evaluation}).
 
-\subsubsection{Type error slice}
+\mypara{Type error slice}
 Finally, we wish to distinguish between changes that could fix the
 error, and changes that \emph{cannot possibly} fix the error.
 %
@@ -230,7 +230,7 @@ classifier.
  We will demonstrate the importance of \InSlice empirically in
 \autoref{sec:feature-utility}.
 
-\subsection{Labels}
+\mysubsection{Labels}
 \label{sec:labels}
 Recall that we make predictions in two stages.
 %
@@ -273,11 +273,22 @@ We consider two sources of changes:
   occupies the original location of the application.
 \end{enumerate}
 
-\subsection{Learning Algorithms}
+\mysubsection{Learning Algorithms}
 \label{sec:models}
 \lstDeleteShortInline{|} % sigh...
 
-Recall that we formulate type error detection at a single expression as a supervised classification problem. This means that we are given a training data set $S = \{ (x_i, y_i) \}_{i=1}^n$ of labeled examples, and our goal is to use it to build a {\em{classifier}}, or a prediction rule that can predict a label for an input $x$. Since we apply the classifier on each expression in the program to determine those that are the most likely to be type errors, we also require the classifier to output a {\em{confidence score}} that measures how sure the classifier is about its prediction.
+Recall that we formulate type error detection at a single expression as
+a supervised classification problem.
+%
+This means that we are given a training data set
+$S = \{ \langle v_i, b_i \rangle \}_{i=1}^n$ of labeled examples, and
+our goal is to use it to build a \emph{classifier}, \ie a rule
+that can predict a label $b$ for an input $v$.
+%
+Since we apply the classifier on each expression in the program to
+determine those that are the most likely to be type errors, we also
+require the classifier to output a \emph{confidence score} that measures
+how sure the classifier is about its prediction.
 
 
 %Recall that we formulate type error localization as a supervised
@@ -290,30 +301,65 @@ Recall that we formulate type error detection at a single expression as a superv
 %The learning task is to model the probability $Pr(b\ |\ \mathbf{v})$
 %of a label being assigned to a given input.
 
-There are many learning algorithms to choose from, existing
-on a spectrum that balances expressiveness with ease of training (and of
-interpreting the learned model). In this section we consider four standard learning algorithms: (1) logistic regression, (2) decision trees, (3) random forests, and (4) neural networks. A thorough introduction to these techniques can be found in introductory
-machine learning textbooks (\eg \cite{FriedmanHastieTibshirani2000}).
+There are many learning algorithms to choose from, existing on a
+spectrum that balances expressiveness with ease of training (and of
+interpreting the learned model).
+%
+In this section we consider four standard learning algorithms: (1)
+logistic regression, (2) decision trees, (3) random forests, and (4)
+neural networks.
+%
+A thorough introduction to these techniques can be found in introductory
+machine learning textbooks \citep[\eg][]{FriedmanHastieTibshirani2000}.
 % \ES{TODO: huma/kamalika?}).
 %
 
-Below we briefly introduce each technique by describing the model it learns, and summarize its advantages and disadvantages. For our application, we are particularly interested in three properties -- expressiveness, interpretability and ease of generalization. Expressiveness measures how complex prediction rules are allowed to be, and interpretability measures how easy it is to explain the cause of prediction to a human. Finally ease of generalization measures how easily the rule generalizes to unseen examples that are not in the training set; a rule that is not easily generalizable might perform poorly on an unseen test set even when its training performance is high.
+Below we briefly introduce each technique by describing the rules it
+learns, and summarize its advantages and disadvantages.
+%
+For our application, we are particularly interested in three properties
+-- expressiveness, interpretability and ease of generalization.
+%
+Expressiveness measures how complex prediction rules are allowed to be,
+and interpretability measures how easy it is to explain the cause of
+prediction to a human.
+%
+Finally ease of generalization measures how easily the rule generalizes
+to examples that are not in the training set; a rule that is not
+easily generalizable might perform poorly on an unseen test set even
+when its training performance is high.
 
 %We will briefly introduce each technique by describing the model it
 %learns, the training procedure, any hyper-parameters that must be tuned
 %by a human, and a summary of its advantages and disadvantages.
 
-\ES{FIXME: Wes thinks the entire rest of this section, up to ``4. Evaluation'',
-contains much more detail than an OOPSLA audience wants on
-introductory/undergraduate machine learning. (Especially since nothing
-after this point is a novel contribution we make.) Perhaps we can cut some
-space by focusing on the pros and cons of each technique rather than
-describing the details? This is a PL paper. } \ES{KC: I completely agree. Perhaps we can add a table here. Judging from what we use, the features we need are: (a) expressivity (b) proneness to overfitting and (c) interpretability. We can rate the four classifiers in these three areas.
-}
+% \ES{FIXME: Wes thinks the entire rest of this section, up to ``4. Evaluation'',
+% contains much more detail than an OOPSLA audience wants on
+% introductory/undergraduate machine learning. (Especially since nothing
+% after this point is a novel contribution we make.) Perhaps we can cut some
+% space by focusing on the pros and cons of each technique rather than
+% describing the details? This is a PL paper. } \ES{KC: I completely agree. Perhaps we can add a table here. Judging from what we use, the features we need are: (a) expressivity (b) proneness to overfitting and (c) interpretability. We can rate the four classifiers in these three areas.
+% }
 
-\paragraph{Logistic Regression.} The simplest classifier we investigate is logistic regression. This is a linear model, where the goal is to learn a set of weights $W$ and a bias $b$ that describe the following model for predicting a label $y$ from a feature vector $x$:
-\[ \Pr(y = 1 | x) = \frac{1}{1 + e^{-W^{\top} x - b}} \]
-The weights $W$ and $b$ are learnt from training data, and the value of $\Pr(y | x)$ naturally leads to a confidence score. Logistic regression is a widely used classification algorithm, which is largely preferred for its simplicity, ease of generalization as well as interpretability. Its main limitation is that the prediction rule is constrained to be a linear combination of the features, and hence relatively simple. While this can be somewhat mitigated by adding higher order (quadratic or cubic) features, this often requires substantial domain knowledge.
+\mypara{Logistic Regression}
+The simplest classifier we investigate is logistic regression:
+a linear model where the goal is to learn a set of weights $W$
+that describe the following model for predicting a label
+$b$ from a feature vector $v$:
+%
+\[ \Pr(b = 1 | v) = \frac{1}{1 + e^{-W^{\top} v}} \]
+%
+The weights $W$ are learnt from training data, and the value of
+$\Pr(b | v)$ naturally leads to a confidence score $\Runit$.
+%
+Logistic regression is a widely used classification algorithm, preferred
+for its simplicity, ease of generalization, and interpretability.
+%
+Its main limitation is that the prediction rule is constrained to be a
+linear combination of the features, and hence relatively simple.
+%
+While this can be somewhat mitigated by adding higher order (quadratic
+or cubic) features, this often requires substantial domain knowledge.
 
 % The simplest model we investigate is logistic regression, which learns a
 % linear function of the features.
@@ -404,20 +450,36 @@ The weights $W$ and $b$ are learnt from training data, and the value of $\Pr(y |
 % to the model (\eg combinations of the existing features \ES{CITE?}), but
 % the fundamental issue remains.
 
-\paragraph{Decision Trees.} Decision tree algorithms learn a tree of binary predicates over the features, recursively partitioning the input space until a final
-classification can be made. Each node in the tree contains a single predicate of the form
+\mypara{Decision Trees}
+Decision tree algorithms learn a tree of binary predicates over the
+features, recursively partitioning the input space until a final
+classification can be made.
+%
+Each node in the tree contains a single predicate of the form
 $v_j \leq t$ for some feature $v_j$ and threshold $t$, which determines
 whether a given input should proceed down the left or right subtree.
+%
 Each leaf is labeled with a prediction and the fraction of training
-samples that would reach it, the latter quantity can be interpreted as
-\ES{HUMA: is this correct?}
-the decision tree's confidence in its prediction. This leads to a prediction rule
-that can be quite expressive depending on the data used to build it.
+samples that would reach it; the latter quantity can be interpreted as
+the decision tree's confidence in its prediction.
+%
+This leads to a prediction rule that can be quite expressive depending
+on the data used to build it.
 
-Training a decision tree entails finding both a set of good partitioning and a good ordering of the predicates based on data. This is usually done in a top-down greedy manner, and there are several standard training algorithms such as C4.5
-\citep{Quinlan1993-de} and CART \citep{Breiman1984-qy}.
+Training a decision tree entails finding both a set of good partitioning
+predicates and a good ordering of the predicates based on data.
+%
+This is usually done in a top-down greedy manner, and there are several
+standard training algorithms such as C4.5 \citep{Quinlan1993-de} and
+CART \citep{Breiman1984-qy}.
 
-Another advantage of decision trees is their ease of interpretation --  the decision rule is a white-box model that can be readily described to a human, especially when the tree is small. However, main limitation is that these trees often do not generalize well; while this is somewhat mitigated in practice by pruning the tree, this is still a well-known problem.
+Another advantage of decision trees is their ease of interpretation ---
+the decision rule is a white-box model that can be readily described to
+a human, especially when the tree is small.
+%
+However, the main limitation is that these trees often do not generalize
+well, though this can be somewhat mitigated by \emph{pruning} the tree.
+% this is still a well-known problem.
 
 
 %predicates and a good ordering of the predicates.
@@ -443,7 +505,18 @@ Another advantage of decision trees is their ease of interpretation --  the deci
 %
 %Both disadvantages are addressed by random forests.
 
-\paragraph{Random Forests.} Random forests mitigate the generalization problem by training an {\em{ensemble}} of distinct decision trees and then using a majority vote to make a prediction. The agreement among the distinct trees in the ensemble forms a natural confidence score. Since each classifier in the ensemble is a decision tree, this still allows for complex and highly expressive classifiers. \ES{Huma: is this the confidence score that we are using?}
+\mypara{Random Forests}
+%
+Random forests mitigate the generalization problem by training an
+\emph{ensemble} of distinct decision trees and then using a majority
+vote to make a prediction.
+%
+The agreement among the distinct trees in the ensemble forms a natural
+confidence score.
+%
+Since each classifier in the ensemble is a decision tree, this still
+allows for complex and highly expressive classifiers.
+%\ES{Huma: is this the confidence score that we are using?}
 
 %One technique for increasing the accuracy of a classifier is to train an
 %\emph{ensemble} of distinct classifiers and use a majority vote
@@ -455,7 +528,7 @@ Another advantage of decision trees is their ease of interpretation --  the deci
 The training process involves taking $N$ random subsets of the training
 data and training a separate decision tree on each subset --- the
 training process for the decision trees is often modified slightly to
-reduce correlation between trees, by forcing the tree to pick features
+reduce correlation between trees, by forcing each tree to pick features
 from a random subset of all features at each node.
 %
 %In order to make a prediction for an unseen sample, the random forest
@@ -470,17 +543,48 @@ also makes the learned model more difficult to interpret.
 %hyper-parameter that must be set manually.
 
 
-\paragraph{Neural Networks}
+\mypara{Neural Networks}
+%
 The last (and most complex) model we use is a type of neural network
 called a \emph{multi-layer perceptron} (see \citealt{Nielsen2015-pu} for
 an introduction to neural networks).
-
-A multi-layered perceptron can be represented as a directed acyclic graph whose nodes are arranged in layers that are fully connected by weighted edges. The first layer corresponds to the input features, and the final to the output. The output of a node $v$ in an internal layer is given by:
+%
+A multi-layer perceptron can be represented as a directed acyclic
+graph whose nodes are arranged in layers that are fully connected by
+weighted edges.
+%
+The first layer corresponds to the input features, and the final to the
+output.
+%
+%The output of a node $v$ in an internal layer is given by:
+The output of an internal node $v$ is
+%
 \[ h_v = g(\sum_{j \in N(v)} W_{jv} h_j ) \]
-where $N(v)$ is the set of nodes in the previous layer that are adjacent to $v$, $W_{jv}$ is the weight of the $(j, v)$ edge and $h_j$ is the output of node $j$ in the previous layer. Finally $g$ is a non-linear function, called the activation function, which in recent work is commonly chosen to be the \emph{rectified linear unit} (ReLU),
-defined as $g(x) = \mathsf{max}(0,x)$ \citep{Nair2010-xg}. The number of layers, the number of neurons per layer, and the connections between layers constitute the \emph{architecture} of a neural network. In this work, we use relatively simple neural networks which have an input layer, a single hidden layer and an output layer.
+%
+where $N(v)$ is the set of nodes in the previous layer that are adjacent
+to $v$, $W_{jv}$ is the weight of the $(j, v)$ edge and $h_j$ is the
+output of node $j$ in the previous layer.
+%
+Finally $g$ is a non-linear function, called the activation function,
+which in recent work is commonly chosen to be the \emph{rectified linear
+  unit} (ReLU), defined as $g(x) = \mathsf{max}(0,x)$
+\citep{Nair2010-xg}.
+%
+The number of layers, the number of neurons per layer, and the
+connections between layers constitute the \emph{architecture} of a
+neural network.
+%
+In this work, we use relatively simple neural networks which have an
+input layer, a single hidden layer and an output layer.
 
-A major advantage of neural networks is its ability to discover interesting combinations of features through non-linearity, which significantly reduces the need for manual feature engineering, and allows high expressivity. On the other hand, this makes the networks particularly difficult to interpret and also difficult to generalize under vast amounts of training data are available.
+A major advantage of neural networks is their ability to discover
+interesting combinations of features through non-linearity, which
+significantly reduces the need for manual feature engineering, and
+allows high expressivity.
+%
+On the other hand, this makes the networks particularly difficult to
+interpret and also difficult to generalize under vast amounts of
+training data are available.
 
 %HEREHERE
 %
