@@ -8,7 +8,7 @@ booleans, pairs, and lists.
 Our goal is to instantiate the $\blamesym$ function of
 \autoref{fig:api}, which takes as input a $\Model$ of type errors and an
 ill-typed program $e$, and returns an ordered list of subexpressions
-from $e$ paired with the probability $\Runit$ that they should be
+from $e$ paired with the confidence score $\Runit$ that they should be
 blamed.
 
 A $\Model$ is produced by the $\trainsym$ function, which performs
@@ -259,18 +259,19 @@ most likely blame assignments (in practice $k=3$).
 We identify the fixes for each ill-typed program with an
 expression-level diff~\citep{Lempsink2009-xf}.
 %
-We consider two sources of changes:
+We consider two sources of changes.
 %
-\begin{enumerate}
-\item If an expression has been removed wholesale, \eg if $\eapp{f}{x}$
+%\begin{enumerate}
+%\item 
+First, if an expression has been removed wholesale, \eg if $\eapp{f}{x}$
   is rewritten to $\eapp{g}{x}$, we will mark the expression $f$ as
   changed, as it has been replaced by $g$.
-\item If a new expression has been inserted \emph{around} an existing
+Second, if a new expression has been inserted \emph{around} an existing
   expression, \eg if $\eapp{f}{x}$ is rewritten to
   $\eplus{\eapp{f}{x}}{1}$, we will mark the application expression
   $\eapp{f}{x}$ (but not $f$ or $x$) as changed, as the $+$ operator now
   occupies the original location of the application.
-\end{enumerate}
+%\end{enumerate}
 
 \mysubsection{Learning Algorithms}
 \label{sec:models}
@@ -506,15 +507,15 @@ well, though this can be somewhat mitigated by \emph{pruning} the tree.
 
 \mypara{Random Forests}
 %
-Random forests mitigate the generalization problem by training an
-\emph{ensemble} of distinct decision trees and then using a majority
+Random forests improve generalization by training an
+\emph{ensemble} of distinct decision trees and using a majority
 vote to make a prediction.
 %
-The agreement among the distinct trees in the ensemble forms a natural
+The agreement among the trees forms a natural
 confidence score.
 %
 Since each classifier in the ensemble is a decision tree, this still
-allows for complex and highly expressive classifiers.
+allows for complex and expressive classifiers.
 %\ES{Huma: is this the confidence score that we are using?}
 
 %One technique for increasing the accuracy of a classifier is to train an
@@ -582,7 +583,7 @@ significantly reduces the need for manual feature engineering, and
 allows high expressivity.
 %
 On the other hand, this makes the networks particularly difficult to
-interpret and also difficult to generalize under vast amounts of
+interpret and also difficult to generalize unless vast amounts of
 training data are available.
 
 %HEREHERE

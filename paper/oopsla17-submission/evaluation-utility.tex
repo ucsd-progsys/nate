@@ -5,7 +5,7 @@ type errors, but which of the feature classes from
 \autoref{sec:features} are contributing the most to our accuracy?
 %
 We focus specifically on feature \emph{classes} rather than individual
-features as our 276 features are conceptually grouped into a much
+features as our 277 features are conceptually grouped into a much
 smaller number of \emph{categorical} features.
 %
 For example, the syntactic class of an expression is conceptually a
@@ -20,7 +20,7 @@ features.
 Thus, to answer our question we investigate the performance of
 classifiers trained on various subsets of the feature classes.
 
-\subsubsection{Type Error Slice}
+\mysubsubsection{Type Error Slice}
 \label{sec:type-error-slice}
 First we must justify our decision to automatically exclude expressions
 outside the minimal type error slice from consideration.
@@ -67,28 +67,33 @@ We tested our hypothesis with the \linear and
   surrounding sections.}
 %
 classifiers, cross-validated ($k=10$) over the combined SP14/FA15
-dataset. We used a learning rate $\eta=0.001$, $L_2$ regularization rate
-$\lambda=0.001$, and mini-batch size of 200. We trained for a single
-epoch on feature sets (1) and (2), and for 8 epochs on (3), so that the
-total number of training samples would be roughly equal for each feature
-set.
+dataset.
+% We used a learning rate $\eta=0.001$, $L_2$ regularization rate
+%$\lambda=0.001$, and mini-batch size of 200.
+%
+We trained for a single epoch on feature sets (1) and (2), and for 8
+epochs on (3), so that the total number of training samples would be
+roughly equal for each feature set.
 %
 \lstDeleteShortInline{|} % sigh...
-In addition to the accuracy metric from before, we report each
+In addition to accuracy, we report each
 classifier's \emph{recall} --- \ie ``How many true changes can we
 remember?'' --- defined as
 $$
 \frac{|\mathsf{predicted} \cap \mathsf{oracle}|}
      {|\mathsf{oracle}|}
 $$
-where $\mathsf{predicted}$ is limited to the top 3 predictions of the
-classier, and $\mathsf{oracle}$ is the student's fix, limited to changes
-that part of the type error slice.
+where $\mathsf{predicted}$ is limited to the top 3 predictions, and
+$\mathsf{oracle}$ is the student's fix, limited to changes that are in
+the type error slice.
 %
-We make the latter distinction as (1) changes that are not part of the
-type error slice are noise in the data set, and (2) it makes the
-comparison between feature sets easier to interpret since
-$\mathsf{oracle}$ never changes.
+We make the latter distinction as:
+%
+(1) changes that are not part of the type error slice are noise in the
+data set; and
+%
+(2) it makes the comparison easier to interpret since $\mathsf{oracle}$
+never changes.
 % NOTE: keep this at the end of the para or it screws up spacing...
 \lstMakeShortInline{|}
 %
@@ -131,13 +136,13 @@ the error slice features.
 Top-1 accuracy jumps from 32.4\% to 55.4\% when we add \InSlice, and only
 improves by 2\% when we filter out expressions that are not part of the
 error slice.
-
+%
 Still, the accuracy gain comes at zero cost, and given the other benefits
-of filtering out expressions that do not belong to the type error slice
+of filtering by \InSlice % out expressions that do not belong to the type error slice
 --- shrinking the search space and guaranteeing our predictions are actionable ---
 we choose to filter all programs by \InSlice.
 
-\subsubsection{Contextual Features}
+\mysubsubsection{Contextual Features}
 \label{sec:contextual-features}
 
 We investigate the relative impact of the other
@@ -151,9 +156,10 @@ features, extended by each combination of
 (2) contextual syntactic features; and
 (3) typing features.
 %
-As before, we perform a 10-fold cross-validation with $\eta = 0.001$,
-$\lambda = 0.001$, and a mini-batch size of 200, but we
-train for a full 20 epochs to make the differences more apparent.
+As before, we perform a 10-fold cross-validation,
+% with $\eta = 0.001$,
+% $\lambda = 0.001$, and a mini-batch size of 200
+but we train for a full 20 epochs to make the differences more apparent.
 %
 % \begin{table}[ht]
 %   \caption{
@@ -229,7 +235,7 @@ As one might expect, the typing features are more beneficial than the
 contextual syntactic features.
 %
 They improve Top-1 accuracy by an additional 2\%, and are much more
-compact --- requiring only have 55 typing features compared to 176
+compact --- requiring only 55 typing features compared to 176
 contextual syntactic features.
 %
 This aligns with our intuition that types should be a good summary of

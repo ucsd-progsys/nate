@@ -119,7 +119,7 @@
   yticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\,\%},
   ytick style={draw=none},
   ymajorgrids = true,
-  symbolic x coords={baseline, ocaml, spacer1, mycroft, sherrloc, spacer2,
+  symbolic x coords={baseline, ocaml, mycroft, sherrloc,
                      op+context+type+size/linear,
                      op+context+type+size/decision-tree,
                      op+context+type+size/random-forest,
@@ -130,7 +130,8 @@
   xtick style={draw=none},
   xticklabels={\random, \ocaml, \mycroft, \sherrloc,
                \linear, \dectree, \forest, \hiddenT, \hiddenFH},
-  x tick label style={rotate=45, anchor=north east},
+  %x tick label style={rotate=45, anchor=north east},
+  x tick label style={font=\small},
   reverse legend,
   transpose legend,
   legend style={legend pos = north west, legend columns=4},
@@ -174,8 +175,8 @@
   Our classifiers were trained on one cohort and evaluated on the other.
   %
   All of our classifiers outperform the state-of-the-art techniques
-  \mycroft and \sherrloc by a 10--15\% margin in Top-1 accuracy (with
-  the exception of \linear which is only slightly better than \sherrloc).
+  \mycroft and \sherrloc.%  by a 10--15\% margin in Top-1 accuracy (with
+%   the exception of \linear which is only slightly better than \sherrloc).
 %
 }
 \label{fig:accuracy-results}
