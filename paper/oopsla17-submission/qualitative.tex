@@ -248,8 +248,8 @@ ranks it below the correct blame assignment.
 Our next program, |padZero|, is given two |int list|s as input, and must
 left-pad the shorter one with enough zeros that the two output lists
 have equal length.
-
-The student first defines a helper function |clone|, as seen above.
+%
+The student first defines a helper |clone|.
 %
 \begin{ecode}
   let rec clone x n =
@@ -259,9 +259,8 @@ The student first defines a helper function |clone|, as seen above.
       x :: clone x (n - 1)
 \end{ecode}
 %
-Then she defines |padZero| with a simple branch that determines which
-list is shorter, followed by a |clone| for the appropriate number of
-zeros.
+Then she defines |padZero| with a branch to determine which
+list is shorter, followed by a |clone| to zero-pad it.
 %
 \lstset{firstnumber=last}
 \begin{ecode}
@@ -282,18 +281,18 @@ the |@| operator in the |else| branch.
 but they decide to blame the call to |clone|, while our
 \dectree correctly blames the |::| constructor.
 
-Examining the path induced by the |::| constructor, we can see that our
+Examining the path induced by the |::|, we can see that our
 \dectree is influenced by the fact that:
 %
-(1) the expression is a data constructor (not specifically |::|);
+(1) |::| is a constructor; %the expression is a constructor (not specifically |::|);
 %
-(2) the parent expression is a tuple; and
+(2) the parent is a tuple; and
 %
 (3) the leftmost child is an application.
 %
 We note that first fact appears to be particularly significant; an
-examination of the training samples that reach that decision node
-reveals that before observing the \textsc{Is-Constructor} feature, the
+examination of the training samples that reach that decision
+reveals that, before observing the \textsc{Is-Constructor} feature the
 classifier is slightly in favor of predicting ``blame'', but afterwards
 it is heavily in favor of predicting ``blame''.
 %
@@ -301,7 +300,7 @@ Many of the following decisions change the balance back towards ``no
 blame'' if the ``true'' path is taken, but the |::| constructor always
 takes the ``false'' path.
 %
-It would appear that our \dectree has learned that data constructors are
+It would appear that our \dectree has learned that constructors are
 particularly suspicious, and is looking for exceptions to this general
 rule.
 %

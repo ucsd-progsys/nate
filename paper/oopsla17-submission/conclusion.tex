@@ -55,10 +55,10 @@ the state of the art by 18 percentage points.
 
 
 As with other forms of machine learning,
-a key concern is that of \emph{data-set bias}: are
-the models learned by \toolname specific
-to our data set, and would they fail on
-\emph{other} \ocaml programs?
+a key concern is that of \emph{bias}: are
+\toolname's models specific
+to our data set, would they fail on
+\emph{other} programs?
 %
 We address this concern in two ways.
 %
@@ -73,11 +73,11 @@ this bias is a \emph{feature} (and not
 a bug): it allows \toolname to \emph{adapt}
 to the kinds of errors that programmers
 (specifically, novices who are in greatest
-need of precise feedback) actually make
+need of precise feedback) actually make,
 rather than hardwiring the biases of
-compiler authors who, by dint of their
-training and experience, may suffer from
-blind spots with regards to such problems.
+experts who % , by dint of their
+% training and experience,
+may suffer from blind spots. % with regards to such problems.
 %
 In this regard, we are particularly pleased
 that our classifiers can be trained on a
