@@ -61,18 +61,18 @@ There are a number of other features that could improve the model's
 ability to localize errors, that would be easier to add than
 user-defined types.
 %
-For example, each occurrence of a variable knows only its type and the
-immediate context in which it occurs, but it may be helpful to know
+For example, each occurrence of a variable knows only its type and its
+immediate neighbors, but it may be helpful to know
 about \emph{other} occurrences of the same variable.
 %
-If a variable is generally used in the context of a |float| but has a
-single occurrence in the context of an |int|, it seems likely that the
+If a variable is generally used as a |float| but has a
+single use as an |int|, it seems likely that the
 latter occurrence (or context) is to blame.
 %
 Similarly, arguments to a function application are not aware of the
-typing constraints imposed on them by the function (and vice versa),
-they only know that they are occurring in the context of an application
-and the type of the application itself.
+constraints imposed on them by the function (and vice versa),
+they only know that they are occurring in the context of an application.
+%and the type of the application itself.
 %
 Finally, \emph{n-grams} on the token stream have proven effective for
 probabilistic modeling of programming languages
@@ -192,7 +192,7 @@ differ significantly from the functional core of \haskell or SML, all of
 which are effectively lambda calculi with a Hindley-Milner-style type
 system.\footnote{\haskell's type classes are a notable exception, they
   are also known to cause confusing type errors and would be interesting
-  to study in future work.}
+  to study as well.}
 
 Finally, our use of student fixes as oracles for the source of type
 errors assumes that, on average, students are able to correctly identify
