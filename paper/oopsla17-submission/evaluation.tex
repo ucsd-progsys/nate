@@ -60,9 +60,11 @@ program, including:
 \item 44 local syntactic features. In addition to the syntax of \lang,
   we support the full range of arithmetic operators (integer and
   floating point), equality and comparison operators, character and
-  string literals, and a user-defined |expr| type of simple arithmetic
+  string literals, and a user-defined % |expr| type of simple
+  arithmetic
   expressions. We discuss the challenge of supporting other
-  user-defined types in \autoref{sec:discussion}.
+  % user-defined
+  types in \autoref{sec:discussion}.
 \item 176 contextual syntactic features. For each sub-expression we
   additionally extract the local syntactic features of its parent and
   first, second, and third (left-to-right) children. If an expression
@@ -73,7 +75,7 @@ program, including:
 \item 55 typing features. In addition to the types of \lang, we support
   |int|s, |float|s, |char|s, |string|s, and the user-defined |expr|
   mentioned above. These features are extracted for each sub-expression
-  and for the contextual sub-expressions.
+  and its context. % for the contextual sub-expressions.
 \item One feature denoting the size of each sub-expression.
 \item One feature denoting whether each sub-expression is part of the
   minimal type error slice. We use this feature as a ``hard''

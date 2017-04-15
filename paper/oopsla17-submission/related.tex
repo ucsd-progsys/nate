@@ -55,19 +55,19 @@ merged~\citep{McAdam1998-ub,Yang1999-yr}.
 
 \mypara{Slicing}
 Type error \emph{slicing}~\citep{Haack2003-vc,Tip2001-qp,Rahli2010-ps}
-overcomes the traversal bias by extracting a complete and minimal subset
-of program expressions that contribute to the type error, \ie all of the
-expressions that are required for the error to manifest and no more.
+overcomes this bias by extracting a complete and minimal subset
+of terms that contribute to the error, \ie all of the
+terms that are required for it to manifest and no more.
 %
-Slicing techniques typically require rewriting the type checker with a
+Slicing typically requires rewriting the type checker with a
 specialized constraint language and solver, though
-\citet{Schilling2011-yf} shows how to turn any type checker into an
-error slicer by treating it as a black-box.
-
+\citet{Schilling2011-yf} shows how to turn any type checker into a
+slicer by treating it as a black-box.
+%
 While slicing techniques guarantee enough information to diagnose the
 error, they can fall into the trap of providing \emph{too much}
-information, producing a slice that is not significantly smaller than
-the input program.
+information, producing a slice that is not much smaller than
+the input. %original. % input program.
 
 \mypara{Finding Likely Errors}
 Thus, recent work has focused on finding the \emph{most likely} source
@@ -79,19 +79,19 @@ relatively few satisfiable paths, based on the intuition that the
 program should be mostly correct.
 %
 \citet{Pavlinovic2014-mr} translate the localization problem into a
-MaxSMT problem, asking an off-the-shelf SMT solver to find the smallest
+MaxSMT problem, asking an off-the-shelf solver to find the smallest
 set of constraints that can be removed such that the resulting system is
 satisfiable.
 %
 \citet{Loncaric2016-uk} improve the scalability of
 \citeauthor{Pavlinovic2014-mr} by reusing the existing type checker as
-an optimized theory solver in the Nelson-Oppen~\citeyear{Nelson1979-td}
+a theory solver in the Nelson-Oppen~\citeyear{Nelson1979-td}
 style, and thus require only a MaxSAT solver.
 %
 All three of these techniques support \emph{weighted} constraints to
-incorporate knowledge about the relative frequency of different errors,
+incorporate knowledge about the frequency of different errors,
 but only \citeauthor{Pavlinovic2014-mr} use the weights, setting them to
-the size of the sub-expression that induced the constraint.
+the size of the term that induced the constraint.
 %
 In contrast, our classifiers learn a set of heuristics for predicting
 the source of type errors by observing a set of ill-typed programs and
@@ -108,15 +108,15 @@ error.
 %
 \citet{Wand1986-nw}, \citet{Beaven1993-hb}, and \citet{Duggan1996-by}
 attempt to explain type errors by collecting the chain of inferences
-made by the type checker --- essentially the typing derivation --- and
-presenting them to the user.
+made by the type checker %--- essentially the typing derivation ---
+and presenting them to the user.
 %
-Such explanations can be lengthy, as an attempt to compress the
-explanation \citet{Yang2000-kz} presents a visualization of the
-inference process.
+% Such explanations can be lengthy, as an attempt to compress the
+% explanation \citet{Yang2000-kz} presents a visualization of the
+% inference process.
 %
-\citet{Gast2004-zd} produces a type error slice enhanced by arrows
-showing the flow of data from sources with incompatible types to a
+\citet{Gast2004-zd} produces a slice enhanced by arrows
+showing the dataflow from sources with different types to a
 shared sink, borrowing the insight of dataflows-as-explanations from
 \textsc{MrSpidey}~\citep{Flanagan1996-bu}.
 
@@ -145,31 +145,32 @@ The best explanation of a type error, however, might be given by an
 expert, \eg the compiler or library author.
 %
 \citet{Hage2006-hc} catalog a set of heuristics for
-improving the quality of error messages by examining the errors made by
+improving the quality of error messages by examining errors made by
 novices.
 %
 \citet{Heeren2003-db}, \citet{Christiansen2014-qc}, and
 \citet{Serrano2016-oo} extend the ability to customize error messages to
-library authors, enabling \emph{domain-specific} type errors.
+library authors, enabling \emph{domain-specific} errors.
 %
 The 8.0 release of the
 Glasgow Haskell Compiler\footnote{\url{https://ghc.haskell.org/trac/ghc/wiki/Proposal/CustomTypeErrors}}
-incorporates some of these ideas, allowing library authors to supply
+incorporates these ideas, allowing library authors to supply
 custom errors when type-class resolution or type-family reduction fail,
 but not for ordinary unification failures.
 
 
 \mypara{Fixing Type Errors}
-Some techniques go beyond explaining a type error or locating its
-source, and actually attempt to \emph{fix} the error automatically.
+Some techniques go beyond explaining or locating a type error,
+and actually attempt to \emph{fix} the error automatically.
 %
-\citet{Lerner2007-dt} searches for fixes to type errors by enumerating a
+\citet{Lerner2007-dt} searches for fixes by enumerating a
 set of local mutations to the program and querying the type checker to
 see if the error remains.
 %
 \citet{Chen2014-gd} use a notion of \emph{variation-based} typing to
-track choices made by the type checker and enumerate potential type (and
-expression) changes that would fix the error.
+track choices made by the type checker and enumerate potential
+% type (and expression)
+changes that would fix the error.
 %
 They also extend the algorithmic debugging technique of
 \citeauthor{Chitil2001-td} by allowing the user to enter the expected
@@ -184,7 +185,7 @@ believe this is an exciting direction for future work.
 \mysubsection{Fault Localization}
 Given a defect, \emph{fault localization} is the task of identifying
 ``suspicious'' program elements (\eg lines, statements) that are likely
-implicated in the defect (\ie that should be changed to fix the defect)
+implicated in the defect %(\ie that should be changed to fix the defect)
 %
 --- thus, type error localization can be viewed as an instance of fault
 localization.

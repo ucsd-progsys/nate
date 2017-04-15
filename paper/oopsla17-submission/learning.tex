@@ -13,14 +13,15 @@ blamed.
 
 A $\Model$ is produced by the $\trainsym$ function, which performs
 supervised learning on a training set of feature vectors $\V$ and
-(boolean) labels $\B$.
+%(boolean)
+labels $\B$.
 %
-Once trained, a $\Model$ can be $\evalsym$uated on a new input vector,
-producing the probability $\Runit$ that the blame label should be
-applied.
+Once trained, we can $\evalsym$uate a $\Model$ on a new input vector,
+producing the confidence $\Runit$ that the blame label should apply. % be
+%applied.
 %
-We describe multiple types of $\Model$ and their instantiations of
-$\trainsym$ and $\evalsym$ in \autoref{sec:models}.
+We describe multiple $\Model$s and their instantiations of
+$\trainsym$ and $\evalsym$ (\autoref{sec:models}).
 
 Of course, the $\Model$ expects feature vectors $\V$ and blame labels
 $\B$, but we are given program pairs.
@@ -29,8 +30,8 @@ So our first step must be to define a suitable translation from program
 pairs to feature vectors and labels, \ie we must define the
 $\extractsym$ function in \autoref{fig:api}.
 %
-We accomplish this by modeling features as real-valued functions of
-expressions, and extract a feature vector for each \emph{subexpression}
+We model features as real-valued functions of
+terms, and extract a feature vector for each \emph{subterm}
 of the ill-typed program (\autoref{sec:features}).
 %
 Then we define the blame labels for the training set to be the
