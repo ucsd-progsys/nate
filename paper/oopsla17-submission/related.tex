@@ -1,5 +1,6 @@
 \mysection{Related Work}
 \label{sec:related-work}
+\label{sec:type-error-diagnosis}
 
 In this section we describe two relevant aspects of related work:
 %
@@ -8,9 +9,8 @@ programming languages approaches to diagnosing type errors, and
 software engineering approaches to fault localization.
 %
 % applying machine learning techniques to problems in programming languages.
-
-\mysubsection{Type Error Diagnosis}
-\label{sec:type-error-diagnosis}
+%
+% \mysubsection{Type Error Diagnosis}
 Languages with static type systems and type inference produce type
 errors that novices often perceive as difficult to
 interpret~\citep{Wand1986-nw}.
@@ -182,7 +182,8 @@ may be possible to do so by training a classifier to predict the
 syntactic class of each expression in the \emph{fixed} program --- we
 believe this is an exciting direction for future work.
 
-\mysubsection{Fault Localization}
+\mypara{Fault Localization}
+%
 Given a defect, \emph{fault localization} is the task of identifying
 ``suspicious'' program elements (\eg lines, statements) that are likely
 implicated in the defect %(\ie that should be changed to fix the defect)
