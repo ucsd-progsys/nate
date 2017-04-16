@@ -8,12 +8,11 @@ purely functional subset of \ocaml with polymorphic types and functions.
 We seek to answer three questions in our evaluation:
 %
 \begin{itemize}
-\item \textbf{How accurate is \toolname?}
+\item \textbf{Blame Accuracy}
   %
   How often does \toolname
   blame a \emph{correct}
-  location
-  for the type error?
+  location for the type error?
   (\autoref{sec:quantitative})
   %
   % We compare our technique with a variety of off-the-shelf classifiers
@@ -21,32 +20,120 @@ We seek to answer three questions in our evaluation:
   % 72\%, compared to a state-of-the-art 56\%.
   % For how many ill-typed programs can we accurately predict the source
   % of the error?
-\item \textbf{What features are used by \toolname?}
+\item \textbf{Feature Utility}
   %
-  Which program features are the most
-  \emph{most important} for
-  localizing errors?
+  Which program \emph{features are required}
+  to localize errors?
    (\autoref{sec:feature-utility})
   % How much do the features described in \autoref{sec:features}
   % contribute to our predictions?
-\item[Why does \toolname work? (\autoref{sec:qualitative})]
+\item \textbf{Interpretability}
   %
-  Do the models learned by \toolname
-  correspond to our intuition about
-  the real causes of errors? That is,
-  can we \emph{interpret} the individual
-  predictions (correct or not)?
+  %% Do the models learned by \toolname
+  %% correspond to our intuition about
+  %% the real causes of errors?
+  Are the models \emph{interpretable} using
+  our intuition about the causes of type errors?
+  (\autoref{sec:qualitative})
 \end{itemize}
-%\ES{may want to swap (1) and (2)..}
+%
+%\mypara{Summary of Results}
+%
+In the sequel we present our experimental
+methodology \autoref{sec:methodology} and
+then drill into how we evaluated each of
+the questions above.
+%
+However, for the impatient reader, we begin
+with a quick summary of our main results:
+%
+%
+%\begin{itemize}
+%
+%\item \textbf
 
+\mypara{1. Data beats Algorithms}
+Our main result is that for type error
+localization, data is indeed unreasonably
+effective~\citep{halevy09}.
+%
+\toolname's most sophisticated
+\emph{neural network}
+based classifier's top-1 error
+location blames the correct
+sub-term 74\% of the time
+which, a good 18 points
+higher than the state of
+the art \sherrloc's 56\%.
+%
+However, even \toolname's simple
+\emph{logistic regression} based
+classifier is correct 60\%,
+\ie 4 points better than \sherrloc.
+%
+When the top-3 locations are considered,
+\toolname is correct 91\% of the time.
 
-1. MLP-500 (fancy) is 72% vs Sherrloc 56% for top-1
-2. Logistic (simple) is 60% vs Sherrloc 56% for top-1
-3. MLP-500 reaches 91% for top-3
-4. InSlice is crucial, just InSlice + LocalSyntax gets Logistic 10pts higher than OCaml, on par with Sherrloc
-5. Typing features provide more bang/buck than contextual syntax
-6. Tree learns some simple and intuitive rules for predicting no-blame (e.g. defining a function is a fine thing to do, calling a function likewise)
-7.
+% \item \textbf
+\mypara{2. Slicing is Critical}
+%
+However, data is effective \emph{only}
+when irrelevant sub-terms have been
+sliced out of consideration.
+%
+In fact, perhaps our most surprising
+result is that type-error-slicing and
+local syntax alone yields
+a neural classifier that is 10 points
+better than \ocaml and on par with
+\sherrloc.
+%
+That is once we focus classifiers on
+slices, purely syntactic features
+alone perform as well as the
+state-of-the-art.
+
+%\item \textbf
+\mypara{3. Size doesn't matter, types do}
+%
+We find that (after slices)
+contextual typing features
+provide the biggest
+improvement in accuracy.
+%
+Furthermore we find contextual syntax
+features to be relatively unimportant,
+which would support the hypothesis that
+the context's \emph{type} nicely
+summarizes the properties of the
+surrounding expressions.
+%
+Finally, we found that the \emph{size}
+of the sub-expression was not a useful
+feature. This was unexpected as we thought
+smaller expressions would be simpler and
+hence, more likely causes.
+
+% \item \textbf
+\mypara{4. Models Learn Typing Rules}
+%
+Finally, by investigating a few of the
+predictions made by the \emph{decision tree}
+based models, we found that the models
+do indeed capture some simple and intuitive
+rules for predicting well-typededness.
+%
+For example, in an application, if the
+left argument is a function then the
+error is likely on the right sub-term;
+in a function definition \RJ{fixme: orig
+defining a function is a fine thing
+to do?}
+%
+%\end{itemize}
+
+\RJ{eric please check the numbers -- we say 71, 72, 74, 91, 92, 94?}
+
 
 \mysubsection{Methodology}
 \label{sec:methodology}

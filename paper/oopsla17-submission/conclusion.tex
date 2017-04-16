@@ -5,43 +5,46 @@ We have presented \toolname, which
 combines modern statistical methods
 with domain-specific feature engineering
 to open the door to a new data-driven
-path to precise error localization.
+path to precise error localization,
+that significantly outperforms the
+state of the art on a new benchmark
+suite comprising 4500 student programs.
 %
-\toolname
-translates pairs of
-blame-labeled ill-typed
-programs into bags-of-abstracted-terms,
-and then trains a classifier
-to predict whether a feature vector
-should get a blame label.
-% that
-% predicts the value of the
-% whether a feature vector gets
-% a blame label.
-%
-Given a new ill-typed program,
-we extract its bag-of-abstracted-terms
-to compute the blame label for each
-term and rank the predictions based
-on the model's confidence, to select
-the top 1--3 blame assignments to
-present to the user.
-
-We have evaluated our approach with
-five different classifiers on a suite
-of over 4,500 student programs.
-%
-We found that while machine learning
-over syntactic features of each term in isolation
-performs worse than existing
-purely constraint based approaches, % (\eg \ocaml, \sherrloc),
-augmenting the data with a single feature corresponding to
-the type error slice brings our
-classifiers up to par with the state of the art,
-and further augmenting the data with
-features of an expression's parent and children
-allows our classifiers to outperform
-the state of the art by 18 percentage points.
+%%% RJNUKEDME   \toolname
+%%% RJNUKEDME   translates pairs of
+%%% RJNUKEDME   blame-labeled ill-typed
+%%% RJNUKEDME   programs into bags-of-abstracted-terms,
+%%% RJNUKEDME   and then trains a classifier
+%%% RJNUKEDME   to predict whether a feature vector
+%%% RJNUKEDME   should get a blame label.
+%%% RJNUKEDME   % that
+%%% RJNUKEDME   % predicts the value of the
+%%% RJNUKEDME   % whether a feature vector gets
+%%% RJNUKEDME   % a blame label.
+%%% RJNUKEDME   %
+%%% RJNUKEDME   Given a new ill-typed program,
+%%% RJNUKEDME   we extract its bag-of-abstracted-terms
+%%% RJNUKEDME   to compute the blame label for each
+%%% RJNUKEDME   term and rank the predictions based
+%%% RJNUKEDME   on the model's confidence, to select
+%%% RJNUKEDME   the top 1--3 blame assignments to
+%%% RJNUKEDME   present to the user.
+%%% RJNUKEDME
+%%% RJNUKEDME   We have evaluated our approach with
+%%% RJNUKEDME   five different classifiers on a suite
+%%% RJNUKEDME   of over 4,500 student programs.
+%%% RJNUKEDME   %
+%%% RJNUKEDME   We found that while machine learning
+%%% RJNUKEDME   over syntactic features of each term in isolation
+%%% RJNUKEDME   performs worse than existing
+%%% RJNUKEDME   purely constraint based approaches, % (\eg \ocaml, \sherrloc),
+%%% RJNUKEDME   augmenting the data with a single feature corresponding to
+%%% RJNUKEDME   the type error slice brings our
+%%% RJNUKEDME   classifiers up to par with the state of the art,
+%%% RJNUKEDME   and further augmenting the data with
+%%% RJNUKEDME   features of an expression's parent and children
+%%% RJNUKEDME   allows our classifiers to outperform
+%%% RJNUKEDME   the state of the art by 18 percentage points.
 
 % We find that while machine
 % learning on its own performs slightly worse

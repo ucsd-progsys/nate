@@ -11,20 +11,20 @@ software engineering approaches to fault localization.
 % applying machine learning techniques to problems in programming languages.
 %
 % \mysubsection{Type Error Diagnosis}
-Languages with static type systems and type inference produce type
-errors that novices often perceive as difficult to
-interpret~\citep{Wand1986-nw}.
-%
-For example, approaches based on Hindley-Milner or other constraint
-systems typically have the issue that when the constraint $\alpha=\beta$
-is violated, the system cannot know whether the user should intend to
-fix $\alpha$ or $\beta$ and must thus report the discrepancy in a
-generic manner.
-%
-As a result, a number of approaches have been proposed to
-more precisely localize the type error,
-give clearer error messages, or
-fix the error automatically.
+%% Languages with static type systems and type inference produce type
+%% errors that novices often perceive as difficult to
+%% interpret~\citep{Wand1986-nw}.
+%% %
+%% For example, approaches based on Hindley-Milner or other constraint
+%% systems typically have the issue that when the constraint $\alpha=\beta$
+%% is violated, the system cannot know whether the user should intend to
+%% fix $\alpha$ or $\beta$ and must thus report the discrepancy in a
+%% generic manner.
+%% %
+%% As a result, a number of approaches have been proposed to
+%% more precisely localize the type error,
+%% give clearer error messages, or
+%% fix the error automatically.
 %
 % The technique most related to our work is \ES{TODO}.  It has been shown
 % to be quite good at \ES{TODO}. However, we choose to focus on \ES{TODO},
@@ -32,30 +32,35 @@ fix the error automatically.
 % work.
 
 \mypara{Localizing Type Errors}
-It is well-known that the original Damas-Milner algorithm $\mathcal{W}$
-produces poor error locations~\citep{Wand1986-nw}, often reported far
-from their source.
+It is well-known that the original Damas-Milner
+algorithm $\mathcal{W}$ produces errors far
+from their source, that novices percieve as
+difficult to interpret~\citep{Wand1986-nw}.
 %
-The type checker collects typing constraints as it traverses the
-program, and it crucially assumes that if a constraint can be safely
-added to the set of assumptions (\ie no type error has been found yet),
-then the constraint can be \emph{assumed} to be correct.
+%% The type checker collects typing constraints as it traverses the
+%% program, and it crucially assumes that if a constraint can be safely
+%% added to the set of assumptions (\ie no type error has been found yet),
+%% then the constraint can be \emph{assumed} to be correct.
 %
-The type checker reports an error the moment it finds a constraint that
-contradicts one of the assumptions, blaming the new inconsistent
-constraint, and thus it is extremely sensitive to the order in which it
-traverses the source program (the infamous ``left-to-right''
+The type checker reports an error the moment
+it finds a constraint that contradicts one
+of the assumptions, blaming the new inconsistent
+constraint, and thus it is extremely sensitive
+to the order in which it traverses the source
+program (the infamous ``left-to-right''
 bias~\citep{McAdam1998-ub}).
 %
-Several alternative traversal have been proposed, \eg
-top-down rather than bottom-up~\citep{Lee1998-ys}, or a \emph{symmetric}
-traversal that checks sub-expressions independently and only reports an
+Several alternative traversal have been proposed,
+\eg top-down rather than bottom-up~\citep{Lee1998-ys},
+or a \emph{symmetric} traversal that checks
+sub-expressions independently and only reports an
 error when two inconsistent sets of constraints are
 merged~\citep{McAdam1998-ub,Yang1999-yr}.
-
-\mypara{Slicing}
+%
+%\mypara{Slicing}
 Type error \emph{slicing}~\citep{Haack2003-vc,Tip2001-qp,Rahli2010-ps}
-overcomes this bias by extracting a complete and minimal subset
+overcomes the constraint-order bias by extracting a
+complete and minimal subset
 of terms that contribute to the error, \ie all of the
 terms that are required for it to manifest and no more.
 %
@@ -119,8 +124,16 @@ and presenting them to the user.
 showing the dataflow from sources with different types to a
 shared sink, borrowing the insight of dataflows-as-explanations from
 \textsc{MrSpidey}~\citep{Flanagan1996-bu}.
-
-\mypara{Interactive Explanations}
+%
+\citet{Hage2006-hc} catalog a set of heuristics for
+improving the quality of error messages by examining errors made by
+novices.
+%
+\citet{Heeren2003-db}, \citet{Christiansen2014-qc}, and
+\citet{Serrano2016-oo} extend the ability to customize error messages to
+library authors, enabling \emph{domain-specific} errors.
+%
+%\mypara{Interactive Explanations}
 Such \emph{static} explanations of type errors run the risk of
 overwhelming the user with too much information, it may be preferable to
 treat type error diagnosis as an \emph{interactive} debugging session.
@@ -139,18 +152,18 @@ expose the \emph{run-time} error that the type system prevented, and
 present users with an interactive visualization of the erroneous
 computation.
 
-\mypara{Programmatic Explanations}
-%
-The best explanation of a type error, however, might be given by an
-expert, \eg the compiler or library author.
-%
-\citet{Hage2006-hc} catalog a set of heuristics for
-improving the quality of error messages by examining errors made by
-novices.
-%
-\citet{Heeren2003-db}, \citet{Christiansen2014-qc}, and
-\citet{Serrano2016-oo} extend the ability to customize error messages to
-library authors, enabling \emph{domain-specific} errors.
+%% RJ-CUT-ME \mypara{Programmatic Explanations}
+%% RJ-CUT-ME %
+%% RJ-CUT-ME The best explanation of a type error, however, might be given by an
+%% RJ-CUT-ME expert, \eg the compiler or library author.
+%% RJ-CUT-ME %
+%% RJ-CUT-ME \citet{Hage2006-hc} catalog a set of heuristics for
+%% RJ-CUT-ME improving the quality of error messages by examining errors made by
+%% RJ-CUT-ME novices.
+%% RJ-CUT-ME %
+%% RJ-CUT-ME \citet{Heeren2003-db}, \citet{Christiansen2014-qc}, and
+%% RJ-CUT-ME \citet{Serrano2016-oo} extend the ability to customize error messages to
+%% RJ-CUT-ME library authors, enabling \emph{domain-specific} errors.
 %
 % The 8.0 release of the
 % Glasgow Haskell Compiler\footnote{\url{https://ghc.haskell.org/trac/ghc/wiki/Proposal/CustomTypeErrors}}
