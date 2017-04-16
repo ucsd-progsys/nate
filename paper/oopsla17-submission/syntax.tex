@@ -23,10 +23,12 @@ t & ::= & \alpha \spmid \tbool \spmid \tint \spmid \tfun{t}{t} \spmid \tprod{t}{
 \end{minipage}
 \hfill
 \begin{minipage}[c]{.45\textwidth}
+\lstDeleteShortInline{|} % sigh...
 \[
 \boxed{
 \begin{array}{lcl}
   \V          & \defeq & \List{\R}\\
+  \Runit      & \defeq & \{r \in \R\ |\ 0 \le r \le 1\} \\ % [0,1]\\
   \featuresym & : & \List{e \to \R} \\
   \labelsym   & : & e \times e \to \List{e} \\
   \extractsym & : & \List{e \to \R} \to e \times e \to \List{\V \times \B} \\
@@ -37,6 +39,7 @@ t & ::= & \alpha \spmid \tbool \spmid \tint \spmid \tfun{t}{t} \spmid \tprod{t}{
 \end{array}
 }
 \]
+\lstMakeShortInline{|}
 \captionof{figure}{
   %
   A high-level API for converting program pairs to
