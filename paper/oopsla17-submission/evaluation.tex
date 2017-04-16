@@ -1,4 +1,4 @@
-\mysection{Quantitative Evaluation}
+\mysection{Evaluation}
 \label{sec:evaluation}
 \input{data}
 
@@ -55,7 +55,7 @@ with a quick summary of our main results:
 \mypara{1. Data beats Algorithms}
 Our main result is that for type error
 localization, data is indeed unreasonably
-effective~\citep{halevy09}.
+effective \citep{halevy09}.
 %
 \toolname's most sophisticated
 \emph{neural network}
@@ -68,7 +68,7 @@ the art \sherrloc's 56\%.
 %
 However, even \toolname's simple
 \emph{logistic regression} based
-classifier is correct 60\%,
+classifier is correct 60\% of the time,
 \ie 4 points better than \sherrloc.
 %
 When the top-3 locations are considered,
@@ -89,7 +89,7 @@ better than \ocaml and on par with
 \sherrloc.
 %
 That is once we focus classifiers on
-slices, purely syntactic features
+slices, local syntactic features
 alone perform as well as the
 state-of-the-art.
 
@@ -102,37 +102,42 @@ provide the biggest
 improvement in accuracy.
 %
 Furthermore we find contextual syntax
-features to be relatively unimportant,
-which would support the hypothesis that
+features to be mostly (but not entirely)
+redundant with typing features,
+which supports the hypothesis that
 the context's \emph{type} nicely
 summarizes the properties of the
 surrounding expressions.
 %
 Finally, we found that the \emph{size}
-of the sub-expression was not a useful
-feature. This was unexpected as we thought
-smaller expressions would be simpler and
+of the sub-expression was not very useful.
+This was unexpected, as we thought
+smaller expressions would be simpler, and
 hence, more likely causes.
 
 % \item \textbf
 \mypara{4. Models Learn Typing Rules}
 %
 Finally, by investigating a few of the
-predictions made by the \emph{decision tree}
-based models, we found that the models
+predictions made by the \emph{decision tree}-based
+models, we found that the models
 do indeed capture some simple and intuitive
-rules for predicting well-typededness.
+rules for predicting well-typedness.
 %
-For example, in an application, if the
-left argument is a function then the
-error is likely on the right sub-term;
-in a function definition \RJ{fixme: orig
-defining a function is a fine thing
-to do?}
+For example, if the left child of an application
+is a function, then the application is likely
+correct.
+
+% in an application, if the
+% left argument is a function then the
+% error is likely on the right sub-term;
+% in a function definition
+% \RJ{fixme: orig
+% defining a function is a fine thing
+% to do?}
 %
 %\end{itemize}
-
-\RJ{eric please check the numbers -- we say 71, 72, 74, 91, 92, 94?}
+% \RJ{eric please check the numbers -- we say 71, 72, 74, 91, 92, 94?}
 
 
 \mysubsection{Methodology}
