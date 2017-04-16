@@ -11,17 +11,17 @@ ill-typed program $e$, and returns an ordered list of subexpressions
 from $e$ paired with the confidence score $\Runit$ that they should be
 blamed.
 
-A $\Model$ is produced by the $\trainsym$ function, which performs
+A $\Model$ is produced by $\trainsym$, which performs
 supervised learning on a training set of feature vectors $\V$ and
-%(boolean)
-labels $\B$.
+(boolean) labels $\B$.
 %
-Once trained, we can $\evalsym$uate a $\Model$ on a new input vector,
-producing the confidence $\Runit$ that the blame label should apply. % be
-%applied.
+Once trained, we can $\evalsym$uate a $\Model$ on a new input,
+producing the confidence $\Runit$ that the blame label should be
+applied.
 %
 We describe multiple $\Model$s and their instantiations of
-$\trainsym$ and $\evalsym$ (\autoref{sec:models}).
+$\trainsym$ and $\evalsym$
+(\autoref{sec:models}).
 
 Of course, the $\Model$ expects feature vectors $\V$ and blame labels
 $\B$, but we are given program pairs.
@@ -282,7 +282,9 @@ Recall that we formulate type error detection at a single expression as
 a supervised classification problem.
 %
 This means that we are given a training data set
-$S = \{ \langle v_i, b_i \rangle \}_{i=1}^n$ of labeled examples, and
+%$S = \{ \langle v_i, b_i \rangle \}_{i=1}^n$
+$S : \List{\V \times \B}$
+of labeled examples, and
 our goal is to use it to build a \emph{classifier}, \ie a rule
 that can predict a label $b$ for an input $v$.
 %
