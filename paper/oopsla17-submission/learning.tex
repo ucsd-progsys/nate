@@ -11,17 +11,17 @@ ill-typed program $e$, and returns an ordered list of subexpressions
 from $e$ paired with the confidence score $\Runit$ that they should be
 blamed.
 
-A $\Model$ is produced by the $\trainsym$ function, which performs
+A $\Model$ is produced by $\trainsym$, which performs
 supervised learning on a training set of feature vectors $\V$ and
-%(boolean)
-labels $\B$.
+(boolean) labels $\B$.
 %
-Once trained, we can $\evalsym$uate a $\Model$ on a new input vector,
-producing the confidence $\Runit$ that the blame label should apply. % be
-%applied.
+Once trained, we can $\evalsym$uate a $\Model$ on a new input,
+producing the confidence $\Runit$ that the blame label should be
+applied.
 %
 We describe multiple $\Model$s and their instantiations of
-$\trainsym$ and $\evalsym$ (\autoref{sec:models}).
+$\trainsym$ and $\evalsym$
+(\autoref{sec:models}).
 
 Of course, the $\Model$ expects feature vectors $\V$ and blame labels
 $\B$, but we are given program pairs.
@@ -235,7 +235,7 @@ classifier.
 Recall that we make predictions in two stages.
 %
 First, we use $\evalsym$ to predict for each subexpression whether it
-should be blamed, and extract a confidence score $\mathcal{P}$ from the
+should be blamed, and extract a confidence score $\Runit$ from the
 $\Model$.
 %
 Thus, we define the output of the $\Model$ to be a boolean label, where
@@ -246,7 +246,7 @@ This allows us to predict whether any individual expression should
 change, but we would actually like to predict the \emph{most likely}
 expressions to change.
 %
-Second, we \emph{rank} each subexpression by the confidence $\mathcal{P}$
+Second, we \emph{rank} each subexpression by the confidence $\Runit$
 that it should be blamed, and return to the user the top $k$
 most likely blame assignments (in practice $k=3$).
 
@@ -282,7 +282,9 @@ Recall that we formulate type error detection at a single expression as
 a supervised classification problem.
 %
 This means that we are given a training data set
-$S = \{ \langle v_i, b_i \rangle \}_{i=1}^n$ of labeled examples, and
+%$S = \{ \langle v_i, b_i \rangle \}_{i=1}^n$
+$S : \List{\V \times \B}$
+of labeled examples, and
 our goal is to use it to build a \emph{classifier}, \ie a rule
 that can predict a label $b$ for an input $v$.
 %
