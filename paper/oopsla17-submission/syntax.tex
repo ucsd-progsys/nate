@@ -1,7 +1,8 @@
 \begin{figure}
 \centering
 \begin{minipage}[c]{.4\textwidth}
-$$
+\[
+\boxed{
 \begin{array}{rcl}
 e & ::=    & x \spmid \efun{x}{e} \spmid \eapp{e}{e} \spmid \elet{x}{e}{e} \\
   & \spmid & n \spmid \eplus{e}{e}\\
@@ -15,16 +16,17 @@ b & ::= &  \etrue \spmid \efalse \\[0.05in]
 
 t & ::= & \alpha \spmid \tbool \spmid \tint \spmid \tfun{t}{t} \spmid \tprod{t}{t} \spmid \tlist{t} \\[0.05in]
 \end{array}
-$$
+}
+\]
 \captionof{figure}{Syntax of \lang}
 \label{fig:syntax}
 \end{minipage}
 \hfill
 \begin{minipage}[c]{.45\textwidth}
-$$
+\[
+\boxed{
 \begin{array}{lcl}
   \V          & \defeq & \List{\R}\\
-
   \featuresym & : & \List{e \to \R} \\
   \labelsym   & : & e \times e \to \List{e} \\
   \extractsym & : & \List{e \to \R} \to e \times e \to \List{\V \times \B} \\
@@ -33,7 +35,8 @@ $$
   \midrule
   \blamesym   & : & \Model \to e \to \List{e \times \Runit}
 \end{array}
-$$
+}
+\]
 \captionof{figure}{
   %
   A high-level API for converting program pairs to
