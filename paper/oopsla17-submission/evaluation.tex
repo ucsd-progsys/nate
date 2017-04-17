@@ -61,18 +61,18 @@ effective \citep{halevy09}.
 \emph{neural network}-based
 classifier's top-ranked
 prediction blames the correct
-sub-term 74\% of the time
-which, a good 18 points
+sub-term \HiddenFhTopOne\% of the time
+which, a good \ToolnameWinSherrloc points
 higher than the state of
-the art \sherrloc's 56\%.
+the art \sherrloc's \SherrlocTopOne\%.
 %
 However, even \toolname's simple
 \emph{logistic regression} based
-classifier is correct 60\% of the time,
-\ie 4 points better than \sherrloc.
+classifier is correct \LinearTopOne\% of the time,
+\ie \LinearWinSherrloc points better than \sherrloc.
 %
 When the top three predictions are considered,
-\toolname is correct 91\% of the time.
+\toolname is correct \HiddenFhTopThree\% of the time.
 
 % \item \textbf
 \mypara{2. Slicing Is Critical}
@@ -84,7 +84,7 @@ sliced out of consideration.
 In fact, perhaps our most surprising
 result is that type error slicing and
 local syntax alone yields
-a classifier that is 10 points
+a classifier that is \SlicingWinOcaml points
 better than \ocaml and on par with
 \sherrloc.
 %
