@@ -165,11 +165,11 @@ range of functional programming idioms, \eg higher-order functions and
 (polymorphic) algebraic data types.
 
 \mypara{Feature Selection}
-We extract a set of 277 features from each sub-expression in a student
+We extract a set of 282 features from each sub-expression in a student
 program, including:
 %
 \begin{enumerate}
-\item 44 local syntactic features. In addition to the syntax of \lang,
+\item 45 local syntactic features. In addition to the syntax of \lang,
   we support the full range of arithmetic operators (integer and
   floating point), equality and comparison operators, character and
   string literals, and a user-defined % |expr| type of simple
@@ -177,7 +177,7 @@ program, including:
   expressions. We discuss the challenge of supporting other
   % user-defined
   types in \autoref{sec:discussion}.
-\item 176 contextual syntactic features. For each sub-expression we
+\item 180 contextual syntactic features. For each sub-expression we
   additionally extract the local syntactic features of its parent and
   first, second, and third (left-to-right) children. If an expression
   does not have a parent or children, these features will simply be

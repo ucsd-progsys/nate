@@ -5,12 +5,12 @@ type errors, but which of the feature classes from
 \autoref{sec:features} are contributing the most to our accuracy?
 %
 We focus specifically on feature \emph{classes} rather than individual
-features as our 277 features are conceptually grouped into a much
+features as our 282 features are conceptually grouped into a much
 smaller number of \emph{categorical} features.
 %
 For example, the syntactic class of an expression is conceptually a
-feature but there are 44 possible values it could take; to encode this
-feature for learning we split it into 44 distinct binary features.
+feature but there are 45 possible values it could take; to encode this
+feature for learning we split it into 45 distinct binary features.
 %
 Analyses that focus on individual features, \eg \textsc{ANOVA},
 are difficult to interpret in our setting, as they will tell us the
@@ -235,7 +235,7 @@ As one might expect, the typing features are more beneficial than the
 contextual syntactic features.
 %
 They improve Top-1 accuracy by an additional 2\%, and are much more
-compact --- requiring only 55 typing features compared to 176
+compact --- requiring only 55 typing features compared to 180
 contextual syntactic features.
 %
 This aligns with our intuition that types should be a good summary of
