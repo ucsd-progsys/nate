@@ -106,7 +106,7 @@ be changed \HiddenFhTopOne\% of the time,
 %
 Furthermore, \toolname's accuracy surpasses
 \HiddenFhTopTwo\% when we consider the top \emph{two}
-locations and reaches \HiddenFhTopThree\% if consider
+locations and reaches \HiddenFhTopThree\% if we consider
 the top \emph{three}.
 %
 We achieve these advances by identifying
@@ -194,15 +194,16 @@ or multiset of (sub-)~terms that appears inside
 it; and further, each (sub-)~term is \emph{abstracted}
 as a feature vector comprising the numeric values
 returned by \emph{feature abstraction} functions
-that applied to the term.
+applied to the term.
 %
-We can model the blame labels with a simple feature
-abstraction (\eg is-changed-in-fix).
+% We can model the blame labels with a simple feature
+% abstraction (\eg is-changed-in-fix).
 %
-We can even account for \emph{contextual} information
-like the features of the parent- and child- terms by
+We can even recover \emph{contextual} information
+from the parent and child terms by
 \emph{concatenating} the feature vectors of each term
-with those of its parent and children.
+with those of its parent and children
+(within a fixed window).
 %
 We have found this representation to be particularly
 convenient as it gives us flexibility in modeling the
@@ -215,13 +216,14 @@ their results.
 \mypara{Challenge 3: Training Precise Classifiers}
 %
 Finally, the last and most important challenge is to
-use the labeled BOAT data to train classifiers that
+use our BOAT representation to train classifiers that
 are capable of \emph{precisely} pinpointing the errors
 in real programs.
 %
 The key here is to find the right set of feature
-abstractions and classification algorithms that
-lead to precise predictions.
+abstractions to model type errors,
+and classification algorithms that
+lead to precise blame assignments.
 %
 Fortunately, our BOAT model allows us a great deal of
 latitude in our choice of features.
@@ -229,11 +231,14 @@ latitude in our choice of features.
 We can use abstraction functions to capture different
 aspects of a term ranging from
 %
-syntactic features (\eg is-a-data constructor, is-a-literal,
+syntactic features (\eg is-a-data-constructor, is-a-literal,
 is-an-arithmetic-operation, is-a-function-application, \etc),
 %
 to semantic features captured by the type system (\eg is-a-list,
 is-an-integer, is-a-function, \etc).
+%
+We can similarly model the blame labels with a simple feature
+abstraction (\eg is-changed-in-fix).
 
 Our \emph{third contribution} (\autoref{sec:evaluation})
 is a systematic evaluation of our data-driven approach

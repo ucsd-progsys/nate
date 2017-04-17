@@ -248,7 +248,7 @@ We present a new representation of programs
 that draws inspiration from the theory of
 abstract interpretation \citep{CousotCousot77}.
 %
-Our representation as parameterized by a
+Our representation is parameterized by a
 set of \emph{feature abstraction} functions,
 (abbreviated to feature abstractions)
 $f_1, \ldots, f_n$, that map terms to a
@@ -352,9 +352,9 @@ expression forms.
 We model this by
 introducing feature
 abstractions of the form
-is-nil, is-plus, \etc for
+is-|[]|, is-|+|, \etc, for
 each of a fixed number of
-primitive literal terms.
+expression forms.
 %
 Modeling the syntactic class of an
 expression gives the classifier a
@@ -368,7 +368,7 @@ likely to be blamed than |+|.
 Similarly, we can model
 the \emph{type} of each
 sub-expression with features
-of the form is-int, is-bool, \etc.
+of the form is-|int|, is-|bool|, \etc.
 %
 We will discuss handling
 arbitrary, user-defined types
