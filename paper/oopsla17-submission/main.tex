@@ -58,6 +58,8 @@
 
 \lstMakeShortInline{|}
 
+\usepackage{tcolorbox}
+
 % colors from http://colorbrewer2.org/?type=qualitative&scheme=Set2&n=3
 % \definecolor{tree}{HTML}{66C2A5}
 % \definecolor{sherrloc}{HTML}{FC8D62}
@@ -67,9 +69,17 @@
 \definecolor{sherrloc}{HTML}{FFFFB3}
 \definecolor{fix}{HTML}{bebada}
 
-\newcommand\hlTree[1]{\fcolorbox{black}{tree}{#1}}
-\newcommand\hlSherrloc[1]{\fcolorbox{black}{sherrloc}{#1}}
-\newcommand\hlFix[1]{\fcolorbox{black}{fix!50}{#1}}
+\tcbset{every box/.style={on line,colframe=black,size=fbox,boxrule=1pt}}
+\newtcbox{\hlTree}{colback=tree,toprule=0pt,bottomrule=0pt}
+\newtcbox{\hlSherrloc}{colback=sherrloc,leftrule=0pt,rightrule=0pt}
+\newtcbox{\hlFix}{colback=fix!50}
+% \newtcbox{\hlTree}{on line,boxrule=1pt,arc=0pt,boxsep=0pt,left=1mm,right=1mm,top=1mm,bottom=1mm,colback=tree,colframe=black}
+% \newtcbox{\hlSherrloc}{on line,boxrule=1pt,arc=0pt,boxsep=0pt,left=1mm,right=1mm,top=1mm,bottom=1mm,colback=sherrloc,colframe=black}
+% \newtcbox{\hlFix}{on line,boxrule=1pt,arc=0pt,boxsep=0pt,left=1mm,right=1mm,top=1mm,bottom=1mm,colback=fix!50,colframe=black}
+
+% \newcommand\hlTree[1]{\fcolorbox{black}{tree}{#1}}
+% \newcommand\hlSherrloc[1]{\fcolorbox{black}{sherrloc}{#1}}
+% \newcommand\hlFix[1]{\fcolorbox{black}{fix!50}{#1}}
 
 \usepackage{commands}
 \def\sectionautorefname{\S}
@@ -129,7 +139,7 @@
 %                                         %% can be repeated if necessary;
 %                                         %% contents suppressed with 'anonymous'
 %% \subtitle is optional
-\subtitle{Localizing Type Errors with Data-Driven Diagnosis \hfill {\color{red}{(Best viewed in color)}}}
+\subtitle{Localizing Type Errors with Data-Driven Diagnosis}
 
 % \subtitlenote{with subtitle note}       %% \subtitlenote is optional;
 %                                         %% can be repeated if necessary;
