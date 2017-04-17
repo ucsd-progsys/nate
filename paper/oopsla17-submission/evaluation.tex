@@ -52,15 +52,15 @@ with a quick summary of our main results:
 %
 %\item \textbf
 
-\mypara{1. Data beats Algorithms}
+\mypara{1. Data Beats Algorithms}
 Our main result is that for type error
 localization, data is indeed unreasonably
 effective \citep{halevy09}.
 %
 \toolname's most sophisticated
-\emph{neural network}
-based classifier's top-1 error
-location blames the correct
+\emph{neural network}-based
+classifier's top-ranked
+prediction blames the correct
 sub-term 74\% of the time
 which, a good 18 points
 higher than the state of
@@ -71,37 +71,37 @@ However, even \toolname's simple
 classifier is correct 60\% of the time,
 \ie 4 points better than \sherrloc.
 %
-When the top-3 locations are considered,
+When the top three predictions are considered,
 \toolname is correct 91\% of the time.
 
 % \item \textbf
-\mypara{2. Slicing is Critical}
+\mypara{2. Slicing Is Critical}
 %
 However, data is effective \emph{only}
 when irrelevant sub-terms have been
 sliced out of consideration.
 %
 In fact, perhaps our most surprising
-result is that type-error-slicing and
+result is that type error slicing and
 local syntax alone yields
-a neural classifier that is 10 points
+a classifier that is 10 points
 better than \ocaml and on par with
 \sherrloc.
 %
-That is once we focus classifiers on
-slices, local syntactic features
-alone perform as well as the
+That is, once we focus our classifiers on
+slices, purely syntactic features
+perform as well as the
 state-of-the-art.
 
 %\item \textbf
-\mypara{3. Size doesn't matter, types do}
+\mypara{3. Size Doesn't Matter, Types Do}
 %
 We find that (after slices)
-contextual typing features
+typing features
 provide the biggest
 improvement in accuracy.
 %
-Furthermore we find contextual syntax
+Furthermore, we find contextual syntax
 features to be mostly (but not entirely)
 redundant with typing features,
 which supports the hypothesis that
