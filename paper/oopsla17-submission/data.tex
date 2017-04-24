@@ -45,3 +45,35 @@
 \pgfplotstablevertcat{\FallBench}{../../data/fa15/op+context+type+size/random-forest/results.csv}
 \pgfplotstablevertcat{\FallBench}{../../data/fa15/op+context+type+size/hidden-10/results.csv}
 \pgfplotstablevertcat{\FallBench}{../../data/fa15/op+context+type+size/hidden-500/results.csv}
+
+\pgfplotstableread{../../models/linear-op+slice-no-slice.cross.csv}{\SliceLinearBench}
+\pgfplotstablevertcat{\SliceLinearBench}{../../models/linear-op+slice.cross.csv}
+\pgfplotstablevertcat{\SliceLinearBench}{../../models/linear-op+slice-only-slice.cross.csv}
+\pgfplotstableread{../../models/hidden-500-op+slice-no-slice.cross.csv}{\SliceHiddenBench}
+\pgfplotstablevertcat{\SliceHiddenBench}{../../models/hidden-500-op+slice.cross.csv}
+\pgfplotstablevertcat{\SliceHiddenBench}{../../models/hidden-500-op+slice-only-slice.cross.csv}
+% \pgfplotstablecreatecol[create col/assign/.code={%
+%     \edef\entry{\thisrow{features}/\thisrow{model}}
+%     \pgfkeyslet{/pgfplots/table/create col/next content}\entry
+%   }]{tool}{\SliceBench}
+
+\pgfplotstableread{../../models/linear-op.cross.csv}{\FeatureLinearBench}
+\pgfplotstablevertcat{\FeatureLinearBench}{../../models/linear-op+size.cross.csv}
+\pgfplotstablevertcat{\FeatureLinearBench}{../../models/linear-op+context.cross.csv}
+\pgfplotstablevertcat{\FeatureLinearBench}{../../models/linear-op+type.cross.csv}
+\pgfplotstablevertcat{\FeatureLinearBench}{../../models/linear-op+context+size.cross.csv}
+\pgfplotstablevertcat{\FeatureLinearBench}{../../models/linear-op+type+size.cross.csv}
+\pgfplotstablevertcat{\FeatureLinearBench}{../../models/linear-op+context+type.cross.csv}
+\pgfplotstablevertcat{\FeatureLinearBench}{../../models/linear-op+context+type+size.cross.csv}
+\pgfplotstableread{../../models/linear-op.cross.csv}{\FeatureHiddenBench}
+\pgfplotstablevertcat{\FeatureHiddenBench}{../../models/hidden-500-op+size.cross.csv}
+\pgfplotstablevertcat{\FeatureHiddenBench}{../../models/hidden-500-op+context.cross.csv}
+\pgfplotstablevertcat{\FeatureHiddenBench}{../../models/hidden-500-op+type.cross.csv}
+\pgfplotstablevertcat{\FeatureHiddenBench}{../../models/hidden-500-op+context+size.cross.csv}
+\pgfplotstablevertcat{\FeatureHiddenBench}{../../models/hidden-500-op+type+size.cross.csv}
+\pgfplotstablevertcat{\FeatureHiddenBench}{../../models/hidden-500-op+context+type.cross.csv}
+\pgfplotstablevertcat{\FeatureHiddenBench}{../../models/hidden-500-op+context+type+size.cross.csv}
+% \pgfplotstablecreatecol[create col/assign/.code={%
+%     \edef\entry{\thisrow{features}/\thisrow{model}}
+%     \pgfkeyslet{/pgfplots/table/create col/next content}\entry
+%   }]{tool}{\FeatureBench}

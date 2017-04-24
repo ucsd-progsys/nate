@@ -17,8 +17,10 @@
                         %% http://ctan.org/pkg/subcaption
 
 
+\usepackage{tikz}
+\usetikzlibrary{positioning}
 \usepackage{pgfplots}
-\pgfplotsset{compat=1.9}
+\pgfplotsset{compat=1.12}
 \usepackage{pgfplotstable}
 
 \usepackage{amsmath}
@@ -56,6 +58,29 @@
 
 \lstMakeShortInline{|}
 
+\usepackage{tcolorbox}
+
+% colors from http://colorbrewer2.org/?type=qualitative&scheme=Set2&n=3
+% \definecolor{tree}{HTML}{66C2A5}
+% \definecolor{sherrloc}{HTML}{FC8D62}
+% \definecolor{fix}{HTML}{8DA0CB}
+% \definecolor{sherrloc}{HTML}{FC8D62}
+\definecolor{tree}{HTML}{8dd3c7}
+\definecolor{sherrloc}{HTML}{FFFFB3}
+\definecolor{fix}{HTML}{bebada}
+
+\tcbset{every box/.style={on line,colframe=black,size=fbox,boxrule=1pt}}
+\newtcbox{\hlTree}{colback=tree,toprule=0pt,bottomrule=0pt}
+\newtcbox{\hlSherrloc}{colback=sherrloc,leftrule=0pt,rightrule=0pt}
+\newtcbox{\hlFix}{colback=fix!50}
+% \newtcbox{\hlTree}{on line,boxrule=1pt,arc=0pt,boxsep=0pt,left=1mm,right=1mm,top=1mm,bottom=1mm,colback=tree,colframe=black}
+% \newtcbox{\hlSherrloc}{on line,boxrule=1pt,arc=0pt,boxsep=0pt,left=1mm,right=1mm,top=1mm,bottom=1mm,colback=sherrloc,colframe=black}
+% \newtcbox{\hlFix}{on line,boxrule=1pt,arc=0pt,boxsep=0pt,left=1mm,right=1mm,top=1mm,bottom=1mm,colback=fix!50,colframe=black}
+
+% \newcommand\hlTree[1]{\fcolorbox{black}{tree}{#1}}
+% \newcommand\hlSherrloc[1]{\fcolorbox{black}{sherrloc}{#1}}
+% \newcommand\hlFix[1]{\fcolorbox{black}{fix!50}{#1}}
+
 \usepackage{commands}
 \def\sectionautorefname{\S}
 \def\subsectionautorefname{\S}
@@ -65,23 +90,23 @@
 \makeatletter\if@ACM@journal\makeatother
 %% Journal information (used by PACMPL format)
 %% Supplied to authors by publisher for camera-ready submission
-\acmJournal{PACMPL}
-\acmVolume{1}
-\acmNumber{1}
-\acmArticle{1}
-\acmYear{2017}
-\acmMonth{1}
-\acmDOI{10.1145/nnnnnnn.nnnnnnn}
-\startPage{1}
-\else\makeatother
-%% Conference information (used by SIGPLAN proceedings format)
-%% Supplied to authors by publisher for camera-ready submission
-\acmConference[PL'17]{ACM SIGPLAN Conference on Programming Languages}{January 01--03, 2017}{New York, NY, USA}
-\acmYear{2017}
-\acmISBN{978-x-xxxx-xxxx-x/YY/MM}
-\acmDOI{10.1145/nnnnnnn.nnnnnnn}
-\startPage{1}
-\fi
+%%% RJDELETED THIS TOO   \acmJournal{PACMPL}
+%%% RJDELETED THIS TOO   \acmVolume{1}
+%%% RJDELETED THIS TOO   \acmNumber{1}
+%%% RJDELETED THIS TOO   \acmArticle{1}
+%%% RJDELETED THIS TOO   \acmYear{2017}
+%%% RJDELETED THIS TOO   \acmMonth{1}
+%%% RJDELETED THIS TOO   \acmDOI{10.1145/nnnnnnn.nnnnnnn}
+%%% RJDELETED THIS TOO   \startPage{1}
+%%% RJDELETED THIS TOO   \else\makeatother
+%%% RJDELETED THIS TOO   %% Conference information (used by SIGPLAN proceedings format)
+%%% RJDELETED THIS TOO   %% Supplied to authors by publisher for camera-ready submission
+%%% RJDELETED THIS TOO   \acmConference[PL'17]{ACM SIGPLAN Conference on Programming Languages}{January 01--03, 2017}{New York, NY, USA}
+%%% RJDELETED THIS TOO   \acmYear{2017}
+%%% RJDELETED THIS TOO   \acmISBN{978-x-xxxx-xxxx-x/YY/MM}
+%%% RJDELETED THIS TOO   \acmDOI{10.1145/nnnnnnn.nnnnnnn}
+%%% RJDELETED THIS TOO   \startPage{1}
+%%% RJDELETED THIS TOO   \fi
 
 
 %% Copyright information
@@ -115,6 +140,7 @@
 %                                         %% contents suppressed with 'anonymous'
 %% \subtitle is optional
 \subtitle{Localizing Type Errors with Data-Driven Diagnosis}
+
 % \subtitlenote{with subtitle note}       %% \subtitlenote is optional;
 %                                         %% can be repeated if necessary;
 %                                         %% contents suppressed with 'anonymous'
@@ -134,7 +160,7 @@
 \author{Eric L. Seidel}
 % \authornote{with author1 note}          %% \authornote is optional;
 %                                         %% can be repeated if necessary
-\orcid{0000-0002-2529-7790}             %% \orcid is optional
+\orcid{0000-0002-2529-7790}               %% \orcid is optional
 \affiliation{
   \department{Department of Computer Science}              %% \department is recommended
   \institution{UC San Diego}            %% \institution is required
@@ -170,19 +196,6 @@
 }
 \email{kamalika@cs.ucsd.edu}          %% \email is recommended
 
-\author{Ranjit Jhala}
-% \authornote{with author1 note}          %% \authornote is optional;
-%                                         %% can be repeated if necessary
-% \orcid{nnnn-nnnn-nnnn-nnnn}             %% \orcid is optional
-\affiliation{
-  \department{Department of Computer Science}              %% \department is recommended
-  \institution{UC San Diego}            %% \institution is required
-  \city{La Jolla}
-  \state{CA}
-  \country{USA}
-}
-\email{jhala@cs.ucsd.edu}          %% \email is recommended
-
 \author{Westley Weimer}
 % \authornote{with author1 note}          %% \authornote is optional;
 %                                         %% can be repeated if necessary
@@ -196,78 +209,66 @@
 }
 \email{weimer@cs.virginia.edu}          %% \email is recommended
 
+\author{Ranjit Jhala}
+% \authornote{with author1 note}          %% \authornote is optional;
+%                                         %% can be repeated if necessary
+% \orcid{nnnn-nnnn-nnnn-nnnn}             %% \orcid is optional
+\affiliation{
+  \department{Department of Computer Science}              %% \department is recommended
+  \institution{UC San Diego}            %% \institution is required
+  \city{La Jolla}
+  \state{CA}
+  \country{USA}
+}
+\email{jhala@cs.ucsd.edu}          %% \email is recommended
 
 %% Paper note
 %% The \thanks command may be used to create a "paper note" ---
 %% similar to a title note or an author note, but not explicitly
 %% associated with a particular element.  It will appear immediately
 %% above the permission/copyright statement.
-\thanks{with paper note}                %% \thanks is optional
-                                        %% can be repeated if necesary
-                                        %% contents suppressed with 'anonymous'
+% \thanks{with paper note}                %% \thanks is optional
+%                                         %% can be repeated if necesary
+%                                         %% contents suppressed with 'anonymous'
 
 
 %% Abstract
 %% Note: \begin{abstract}...\end{abstract} environment must come
 %% before \maketitle command
-\begin{abstract}
-  Localizing type errors is challenging in languages with global type
-  inference, as the type checker must make assumptions about what the
-  programmer intended to do.
-  %
-  We present a data-driven approach to type error localization that uses
-  machine learning to assign blame based on previous
-  ill-typed programs and their fixes.
-  %
-  First, we gather a large set of over 4,500 ill-typed student programs
-  and their subsequent fixes.
-  %
-  Second, we frame type error localization as a supervised learning
-  problem: to predict, for each expression in the
-  program, whether it should be blamed.
-  %
-  We represent each expression by its syntactic class and type and those
-  of its parent and children, associating blame with expressions that
-  were changed in the human-fixed program.
-  %
-  Finally, we train and evaluate a series of off-the-shelf classifiers
-  on our suite of programs, and find that they are 15--30\% more
-  accurate in locating the source of a type error than the state of the
-  art.
-\end{abstract}
 
+\input{abstract}
 
-%% 2012 ACM Computing Classification System (CSS) concepts
-%% Generate at 'http://dl.acm.org/ccs/ccs.cfm'.
-\begin{CCSXML}
-<ccs2012>
-<concept>
-<concept_id>10011007.10011006.10011008</concept_id>
-<concept_desc>Software and its engineering~General programming languages</concept_desc>
-<concept_significance>500</concept_significance>
-</concept>
-<concept>
-<concept_id>10003752.10003790.10011740</concept_id>
-<concept_desc>Theory of computation~Type theory</concept_desc>
-<concept_significance>500</concept_significance>
-</concept>
-<concept>
-<concept_id>10010147.10010257</concept_id>
-<concept_desc>Computing methodologies~Machine learning</concept_desc>
-<concept_significance>300</concept_significance>
-</concept>
-</ccs2012>
-\end{CCSXML}
-
-\ccsdesc[500]{Software and its engineering~General programming languages}
-\ccsdesc[500]{Theory of computation~Type theory}
-\ccsdesc[300]{Computing methodologies~Machine learning}
-%% End of generated code
-
-
-%% Keywords
-%% comma separated list
-\keywords{type errors}  %% \keywords is optional
+%%% RJDELETED THIS %% 2012 ACM Computing Classification System (CSS) concepts
+%%% RJDELETED THIS %% Generate at 'http://dl.acm.org/ccs/ccs.cfm'.
+%%% RJDELETED THIS \begin{CCSXML}
+%%% RJDELETED THIS <ccs2012>
+%%% RJDELETED THIS <concept>
+%%% RJDELETED THIS <concept_id>10011007.10011006.10011008</concept_id>
+%%% RJDELETED THIS <concept_desc>Software and its engineering~General programming languages</concept_desc>
+%%% RJDELETED THIS <concept_significance>500</concept_significance>
+%%% RJDELETED THIS </concept>
+%%% RJDELETED THIS <concept>
+%%% RJDELETED THIS <concept_id>10003752.10003790.10011740</concept_id>
+%%% RJDELETED THIS <concept_desc>Theory of computation~Type theory</concept_desc>
+%%% RJDELETED THIS <concept_significance>500</concept_significance>
+%%% RJDELETED THIS </concept>
+%%% RJDELETED THIS <concept>
+%%% RJDELETED THIS <concept_id>10010147.10010257</concept_id>
+%%% RJDELETED THIS <concept_desc>Computing methodologies~Machine learning</concept_desc>
+%%% RJDELETED THIS <concept_significance>300</concept_significance>
+%%% RJDELETED THIS </concept>
+%%% RJDELETED THIS </ccs2012>
+%%% RJDELETED THIS \end{CCSXML}
+%%% RJDELETED THIS
+%%% RJDELETED THIS \ccsdesc[500]{Software and its engineering~General programming languages}
+%%% RJDELETED THIS \ccsdesc[500]{Theory of computation~Type theory}
+%%% RJDELETED THIS \ccsdesc[300]{Computing methodologies~Machine learning}
+%%% RJDELETED THIS %% End of generated code
+%%% RJDELETED THIS
+%%% RJDELETED THIS
+%%% RJDELETED THIS %% Keywords
+%%% RJDELETED THIS %% comma separated list
+%%% RJDELETED THIS \keywords{type errors, fault localization}  %% \keywords is optional
 
 
 %% \maketitle
@@ -277,12 +278,17 @@
 \maketitle
 
 
-\input{introduction}
+
+% \input{introduction}
+\input{intro2}
 \input{overview}
 \input{learning}
 \input{evaluation}
+\input{qualitative}
+\input{threats}
 \input{discussion}
 \input{related}
+\input{conclusion}
 
 
 %% Acknowledgments

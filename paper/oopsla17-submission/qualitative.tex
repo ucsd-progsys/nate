@@ -1,22 +1,28 @@
-\subsection{Explaining Predictions}
+%\mysubsection{Qualitative Evaluation}
+\mysubsection{Interpreting Specific Predictions}
 \label{sec:qualitative}
 
-Next, we present a \emph{qualitative} evaluation that compares the
-predictions made by our classifiers with those of \sherrloc.
+Next, we present a \emph{qualitative} evaluation
+that compares the predictions made by our classifiers
+with those of \sherrloc.
 %
 In particular, we demonstrate, with a series of example programs from
 our student dataset, how our classifiers are able to use past student
 mistakes to make more accurate predictions of future fixes.
 %
+We also take this opportunity to examine some of the specific features
+our classifiers use to assign blame.
+%
 For each example, we provide
 %
-(1) the code,
+(1) the code;
 %
-(2) \sherrloc's prediction (in \textbf{bold}),
+(2) \hlSherrloc{\sherrloc's} prediction;
 %
-(3) the prediction of our \dectree classifier (\underline{underlined}), and
+(3) our \hlTree{\dectree's} prediction; and
 %
-(4) an \emph{explanation} of why our classifier made its prediction.
+(4) an \emph{explanation} of why our classifier made its prediction, in
+terms of the features used and their values.
 %
 We choose the \dectree classifier for this section as its model is more
 easily interpreted than the MLP.\@
@@ -25,35 +31,65 @@ We also exclude the \ExprSize feature from the model used in this
 section, as it makes the predictions harder to motivate, and as we saw
 in \autoref{sec:feature-utility} it does not appear to contribute
 significantly to the model's accuracy.
-%
+
 We explain the predictions by analyzing the paths induced in
-the decision tree by the features of the input programs.
+the decision tree by the features of the input expressions.
+%
+Recall that each node in a decision tree contains a simple predicate of
+the features, \eg ``is feature $v_j$ enabled?'', which determines
+whether a sample will continue down the left or right subtree.
+%
+Thus, we can examine the predicates used and the values of the
+corresponding features to explain \emph{why} our \dectree made its
+prediction.
+%
+We will focus particularly on the enabled features, as they generally
+provide more information than the disabled features.
+%
+Furthermore, each node is additionally labeled with the ratio of
+``blamed'' vs ``not-blamed'' training expressions that passed through
+it.
+%
+We can use this information to identify particularly important
+decisions, \ie we consider a decision that changes the ratio to be more
+interesting than a decision that does not.
+
 %
 % We will also attempt, for each program, to explain \emph{why} the
 % Decision Tree made its prediction, by analyzing the paths induced
 % by the programs.
 
-\subsubsection{Failed Predictions}
+\mysubsubsection{Failed Predictions}
 \label{sec:failed-predictions}
+
 We begin with a few programs where our classifier fails to
 make the correct prediction.
 %
-For these programs we will additionally \colorbox{red!50}{highlight} the
+For these programs we will additionally \hlFix{highlight} the
 correct blame location.
 
-\paragraph{Constructing a List of Duplicates}
+\mypara{Constructing a List of Duplicates}
 % data/sp14/0219.ml
 Our first program is a simple recursive function |clone| that takes an
 item |x| and a count |n|, and produces a list containing |n| copies of
 |x|.
 %
+% \begin{ecode}
+%   let rec clone x n =
+%     let loop acc n =
+%       if n <= 0 then
+%         acc
+%       else
+%         (*@\colorbox{red!50}{clone}@*) ==([==_=x=_==] @ acc)== (n - 1) in
+%     loop [] n
+% \end{ecode}
 \begin{ecode}
   let rec clone x n =
     let loop acc n =
       if n <= 0 then
         acc
       else
-        (*@\colorbox{red!50}{clone}@*) ==([==_=x=_==] @ acc)== (n - 1) in
+        (*@\hlFix{clone} \hlSherrloc{([\hlTree{x}] @\ acc)}@*) (n - 1) in
     loop [] n
 \end{ecode}
 % \ES{TODO: our 2nd prediction matches \sherrloc and \ocaml (occurs check), correct fix is to replace recursive call to clone with loop}
@@ -79,8 +115,8 @@ perhaps she has called the wrong \emph{function}.
 We confess that both of these predictions are difficult to explain by
 examining the induced paths.
 %
-In particular, neither prediction references a property of the current
-expression, only its context, which is surprising.
+In particular, both predictions only reference the expression's context,
+which is surprising.
 %
 Much clearer is why we fail to blame the occurrence of |clone|, the two
 enabled features on the path are:
@@ -89,22 +125,23 @@ enabled features on the path are:
 %
 (2) |clone| has a function type.
 %
-The model appears to have learned that programmers typically call the
+The model seems to have learned that programmers typically call the
 correct function.
 
-\paragraph{Currying Considered Harmful?}
+\mypara{Currying Considered Harmful?}
 % data/sp14/1204.ml
 Our next example is another ill-fated attempt at |clone|.
 %
 \begin{ecode}
   let rec clone x n =
-    let rec loop (*@\colorbox{red!50}{x n acc}@*) =
+    let rec loop (*@\hlFix{x n acc}@*) =
       if n < 0 then
         acc
       else
-        ==loop== __(x, (n - 1), (x :: acc))__ in
+        (*@\hlSherrloc{loop} \hlTree{(x, (n - 1), (x :: acc))}@*) in
     loop (x, n, [])
 \end{ecode}
+%
 The issue here is that \ocaml functions are \emph{curried} by default
 --- \ie they take their arguments one at a time --- but our student has
 called the inner |loop| with all three arguments in a tuple.
@@ -114,8 +151,8 @@ curried and rewrite the calls, however our student decides instead to
 \emph{uncurry} |loop|, making it take a tuple of arguments.
 %
 \sherrloc blames the recursive call to |loop| while our classifier
-blames the tuple of arguments --- a reasonable suggestion, but alas not
-the answer the student was looking for.
+blames the tuple of arguments --- a reasonable suggestion, but not
+the answer the student expected.
 
 We fail to blame the definition of |loop| because it is defining a
 function.
@@ -136,7 +173,7 @@ With this in mind, we can explain our failure to blame the definition of
 Thus it appears to the model that the outer |fun| is simply part of a
 function definition, a common and innocuous phenomenon.
 
-% \paragraph{Composing Functions}
+% \mypara{Composing Functions}
 % % data/sp14/3041.ml
 % Next, let us consider the |pipe| function that composes a list of
 % functions, \ie given a list of functions |[f;g;h]|, |pipe| produces the
@@ -158,13 +195,14 @@ function definition, a common and innocuous phenomenon.
 % %
 % \ES{this has the same explanation as the 1st clone above}
 
-\subsubsection{Correct Predictions}
+\mysubsubsection{Correct Predictions}
 \label{sec:correct-predictions}
+
 Next, we present a few indicative programs where our first prediction is
 correct, and all of the other tools' top three predictions are
 incorrect.
 
-\paragraph{Extracting the Digits of an Integer}
+\mypara{Extracting the Digits of an Integer}
 % data/sp14/2176.ml
 Consider first a simple recursive function |digitsOfInt| that extracts
 the digits of an |int|.
@@ -174,7 +212,7 @@ the digits of an |int|.
     if n <= 0 then
       []
     else
-      [n mod 10] @ __[ ___=digitsOfInt (n / 10)=___ ]__
+      [n mod 10] @ (*@\hlTree{[ \hlSherrloc{digitsOfInt (n / 10)} ]}@*)
 \end{ecode}
 %
 Unfortunately, the student has decided to wrap the recursive call to
@@ -187,7 +225,7 @@ operator.
 %
 Both \sherrloc and the \ocaml compiler blame the recursive call for
 returning a |int list| rather than |int|, but the recursive call is
-actually correct!
+correct!
 
 As our \dectree correctly points out (with high confidence), the fault
 lies with the list literal \emph{surrounding} the recursive call, remove
@@ -206,13 +244,13 @@ Interestingly, \dectree incorrectly predicts that the child application
 should change as well, but it is less confident of this prediction and
 ranks it below the correct blame assignment.
 
-\paragraph{Padding a list}
+\mypara{Padding a list}
 % data/sp14/0442.ml
 Our next program, |padZero|, is given two |int list|s as input, and must
 left-pad the shorter one with enough zeros that the two output lists
 have equal length.
-
-The student first defines a helper function |clone|, as seen above.
+%
+The student first defines a helper |clone|.
 %
 \begin{ecode}
   let rec clone x n =
@@ -222,9 +260,8 @@ The student first defines a helper function |clone|, as seen above.
       x :: clone x (n - 1)
 \end{ecode}
 %
-Then she defines |padZero| with a simple branch that determines which
-list is shorter, followed by a |clone| for the appropriate number of
-zeros.
+Then she defines |padZero| with a branch to determine which
+list is shorter, followed by a |clone| to zero-pad it.
 %
 \lstset{firstnumber=last}
 \begin{ecode}
@@ -233,7 +270,7 @@ zeros.
     if n < 0 then
       (clone 0 ((-1) * n) @ l2, l2)
     else
-      (l1, _=clone 0 n=___ :: l2__)
+      (l1, (*@\hlTree{\hlSherrloc{clone 0 n} :: l2}@*))
 \end{ecode}
 \lstset{firstnumber=1}
 %
@@ -245,18 +282,18 @@ the |@| operator in the |else| branch.
 but they decide to blame the call to |clone|, while our
 \dectree correctly blames the |::| constructor.
 
-Examining the path induced by the |::| constructor, we can see that our
+Examining the path induced by the |::|, we can see that our
 \dectree is influenced by the fact that:
 %
-(1) the expression is a data constructor (not specifically |::|);
+(1) |::| is a constructor; %the expression is a constructor (not specifically |::|);
 %
-(2) the parent expression is a tuple; and
+(2) the parent is a tuple; and
 %
 (3) the leftmost child is an application.
 %
 We note that first fact appears to be particularly significant; an
-examination of the training samples that reach that decision node
-reveals that before observing the \textsc{Is-Constructor} feature, the
+examination of the training samples that reach that decision
+reveals that, before observing the \textsc{Is-Constructor} feature the
 classifier is slightly in favor of predicting ``blame'', but afterwards
 it is heavily in favor of predicting ``blame''.
 %
@@ -264,7 +301,7 @@ Many of the following decisions change the balance back towards ``no
 blame'' if the ``true'' path is taken, but the |::| constructor always
 takes the ``false'' path.
 %
-It would appear that our \dectree has learned that data constructors are
+It would appear that our \dectree has learned that constructors are
 particularly suspicious, and is looking for exceptions to this general
 rule.
 %
@@ -273,7 +310,7 @@ rule.
 
 Our \dectree correctly predicts that the recursive call blamed by
 \sherrloc should not be blamed; a similar examination suggests that the
-crucial observation is that the parent of the recursive call is a data
+crucial observation is that the recursive call's parent is a data
 constructor application.
 %
 
@@ -292,7 +329,7 @@ constructor application.
 % \end{ecode}
 
 % \ES{I don't much like this example anymore..}
-% \paragraph{Computing the Fixed Point of a Function}
+% \mypara{Computing the Fixed Point of a Function}
 % % data/sp14/1266.ml
 % Finally, our students must write a |fixpoint| function that computes the
 % fixed point of a given function |f|, starting from an initial value |b|.

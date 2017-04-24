@@ -1,4 +1,4 @@
-\section{Discussion}
+\mysection{Limitations}
 \label{sec:discussion}
 
 We have shown that we can outperform the state of the art in type error
@@ -6,12 +6,15 @@ localization by learning a model of the errors that programmers make,
 using a set of features that closely resemble the information the type
 checker sees.
 %
-However, there is certainly room for improvement.
+% However, there is certainly room for improvement.
 %
 In this section we highlight some limitations of our approach and
 potential avenues for future work.
 
-\paragraph{User-Defined Types}
+% \mysubsection{Limitations}
+% \label{sec:limitations}
+
+\mypara{User-Defined Types}
 Probably the single biggest limitation of our technique is that we have
 (a finite set of) features for specific data and type constructors.
 %
@@ -21,14 +24,14 @@ datatypes the model has never encountered.
 %
 We can mitigate this, to some extent, by adding generic
 syntactic features for data constructors and match expressions, but it
-remains to be seen how much these help \ES{TODO: UW data!}.
+remains to be seen how much these help. % \ES{TODO: UW data!}.
 %
 Furthermore, there is no obvious analog for transferring knowledge to
 new type constructors, which we have seen are both more compact and
 helpful.
 
 As an alternative to encoding information about \emph{specific}
-constructors, we might investigate a more abstract representation.
+constructors, we might use a more abstract representation.
 %
 For example, instead of modeling |x :: 2| as a |::| constructor with a
 right child of type |int|, we might model it as some (unknown) constructor
@@ -52,23 +55,23 @@ to be a challenging task.
 %   ``is-match'' feature, unclear how much it will help
 % \end{itemize}
 
-\paragraph{Additional Features}
+\mypara{Additional Features}
 There are a number of other features that could improve the model's
 ability to localize errors, that would be easier to add than
 user-defined types.
 %
-For example, each occurrence of a variable knows only its type and the
-immediate context in which it occurs, but it may be helpful to know
+For example, each occurrence of a variable knows only its type and its
+immediate neighbors, but it may be helpful to know
 about \emph{other} occurrences of the same variable.
 %
-If a variable is generally used in the context of a |float| but has a
-single occurrence in the context of an |int|, it seems likely that the
+If a variable is generally used as a |float| but has a
+single use as an |int|, it seems likely that the
 latter occurrence (or context) is to blame.
 %
 Similarly, arguments to a function application are not aware of the
-typing constraints imposed on them by the function (and vice versa),
-they only know that they are occurring in the context of an application
-and the type of the application itself.
+constraints imposed on them by the function (and vice versa),
+they only know that they are occurring in the context of an application.
+%and the type of the application itself.
 %
 Finally, \emph{n-grams} on the token stream have proven effective for
 probabilistic modeling of programming languages
@@ -85,7 +88,7 @@ unusual about the program at that point, and it may signal an error.
 % \item ??
 % \end{itemize}
 
-\paragraph{Independent vs Joint Predictions}
+\mypara{Independent vs Joint Predictions}
 We treat each sub-expression as if it exists in a vacuum, but in reality
 the program has a rich \emph{graphical} structure, particularly if one adds
 edges connecting different occurrences of the same variable.
@@ -108,8 +111,6 @@ We compensate somewhat for our lack of structure by adding contextual
 features and by ranking our predictions by ``confidence'', but it would
 be interesting to see how structured learning over graphical models
 would perform.
-
-
 
 
 %%% Local Variables:

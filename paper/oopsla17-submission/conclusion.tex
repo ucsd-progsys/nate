@@ -1,0 +1,97 @@
+\mysection{Conclusion}
+\label{sec:conclusion}
+
+We have presented \toolname, which
+combines modern statistical methods
+with domain-specific feature engineering
+to open the door to a new data-driven
+path towards precise error localization,
+significantly outperforming the
+state of the art on a new benchmark
+suite comprising 4,500 student programs.
+%
+%%% RJNUKEDME   \toolname
+%%% RJNUKEDME   translates pairs of
+%%% RJNUKEDME   blame-labeled ill-typed
+%%% RJNUKEDME   programs into bags-of-abstracted-terms,
+%%% RJNUKEDME   and then trains a classifier
+%%% RJNUKEDME   to predict whether a feature vector
+%%% RJNUKEDME   should get a blame label.
+%%% RJNUKEDME   % that
+%%% RJNUKEDME   % predicts the value of the
+%%% RJNUKEDME   % whether a feature vector gets
+%%% RJNUKEDME   % a blame label.
+%%% RJNUKEDME   %
+%%% RJNUKEDME   Given a new ill-typed program,
+%%% RJNUKEDME   we extract its bag-of-abstracted-terms
+%%% RJNUKEDME   to compute the blame label for each
+%%% RJNUKEDME   term and rank the predictions based
+%%% RJNUKEDME   on the model's confidence, to select
+%%% RJNUKEDME   the top 1--3 blame assignments to
+%%% RJNUKEDME   present to the user.
+%%% RJNUKEDME
+%%% RJNUKEDME   We have evaluated our approach with
+%%% RJNUKEDME   five different classifiers on a suite
+%%% RJNUKEDME   of over 4,500 student programs.
+%
+We found that while machine learning
+over syntactic features of each term in isolation
+performs worse than existing
+purely constraint-based approaches, % (\eg \ocaml, \sherrloc),
+augmenting the data with a single feature corresponding to
+the type error slice brings our
+classifiers up to par with the state of the art,
+and further augmenting the data with
+features of an expression's parent and children
+allows our classifiers to outperform
+the state of the art by \ToolnameWinSherrloc
+percentage points.
+
+% We find that while machine
+% learning on its own performs slightly worse
+% than existing purely constraint based
+% approaches (\eg \ocaml, \sherrloc), once
+% we augment the data with feature abstraction
+% corresponding to the \emph{type error slice}~\cite{Tip2001-qp},
+% the resulting models models outperform
+% the state of the art by up to 18
+% percentage points.
+
+
+As with other forms of machine learning,
+a key concern is that of \emph{data-set bias}: are
+\toolname's models specific
+to our data set, would they fail on
+\emph{other} programs?
+%
+We address this concern in two ways.
+%
+First, we partition the data by year,
+and show that models learned from one
+year generalize to, \ie perform nearly
+as well on, the programs from the other
+year.
+%
+Second, we argue that in our setting
+this bias is a \emph{feature} (and not
+a bug): it allows \toolname to \emph{adapt}
+to the kinds of errors that programmers
+(specifically novices, who are in greatest
+need of precise feedback) actually make,
+rather than hardwiring the biases of
+experts who % , by dint of their
+% training and experience,
+may suffer from blind spots. % with regards to such problems.
+%
+In this regard, we are particularly pleased
+that our classifiers can be trained on a
+modest amount of data, \ie a single course's
+worth, and envision a future where each course
+comes equipped with a model of its students' errors.
+
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

@@ -3,9 +3,10 @@
 \definecolor{blue1}{HTML}{DEEBF7}
 \definecolor{blue2}{HTML}{9ECAE1}
 \definecolor{blue3}{HTML}{3182BD}
-\definecolor{green1}{HTML}{E5F5E0}
-\definecolor{green2}{HTML}{A1D99B}
-\definecolor{green3}{HTML}{31A354}
+
+\definecolor{green1}{HTML}{e5f5e0}
+\definecolor{green2}{HTML}{a1d99b}
+\definecolor{green3}{HTML}{31a354}
 
 % \begin{figure}[ht]
 % \centering
@@ -109,7 +110,7 @@
 \begin{axis}[
   ybar stacked,
   width=\linewidth,
-  height=6cm,
+  height=8cm,
   title={Accuracy of Type Error Localization Techniques},
   ylabel={Accuracy},
   bar width=0.5cm,
@@ -119,7 +120,7 @@
   yticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\,\%},
   ytick style={draw=none},
   ymajorgrids = true,
-  symbolic x coords={baseline, ocaml, mycroft, sherrloc,
+  symbolic x coords={baseline, ocaml, spacer1, mycroft, sherrloc, spacer2,
                      op+context+type+size/linear,
                      op+context+type+size/decision-tree,
                      op+context+type+size/random-forest,
@@ -130,15 +131,15 @@
   xtick style={draw=none},
   xticklabels={\random, \ocaml, \mycroft, \sherrloc,
                \linear, \dectree, \forest, \hiddenT, \hiddenFH},
-  %x tick label style={rotate=45, anchor=north east},
-  x tick label style={font=\small},
+  x tick label style={rotate=45, anchor=north east},
   reverse legend,
   transpose legend,
-  legend style={legend pos = north west, legend columns=4},
+  legend style={legend pos = north west, legend columns=5},
 ]
 
 % ES: NOTE: ORDER OF PLOTS/LEGEND ENTRIES MATTERS
-
+\addplot+[stack plots=false, draw=black, fill=none, thick, bar shift=.25cm] table[x=tool, y=recall] {\FallBench};
+\addlegendentry{Recall}
 \addplot[draw=black, fill=green1, bar shift=.25cm] table[x=tool, y=top-1] {\FallBench};
 \addlegendentry{Top-1}
 \addplot[draw=black, fill=green2, bar shift=.25cm] table[x=tool, y expr=\thisrow{top-2} - \thisrow{top-1}] {\FallBench};
@@ -150,6 +151,8 @@
 
 \resetstackedplots
 
+\addplot+[stack plots=false, draw=black, fill=none, thick, bar shift=-.25cm] table[x=tool, y=recall] {\SpringBench};
+\addlegendentry{Recall}
 \addplot[draw=black, fill=blue1, bar shift=-.25cm] table[x=tool, y=top-1] {\SpringBench};
 \addlegendentry{Top-1}
 \addplot[draw=black, fill=blue2, bar shift=-.25cm] table[x=tool, y expr=\thisrow{top-2} - \thisrow{top-1}] {\SpringBench};
@@ -175,8 +178,8 @@
   Our classifiers were trained on one cohort and evaluated on the other.
   %
   All of our classifiers outperform the state-of-the-art techniques
-  \mycroft and \sherrloc.%  by a 10--15\% margin in Top-1 accuracy (with
-%   the exception of \linear which is only slightly better than \sherrloc).
+  \mycroft and \sherrloc by a 10--15\% margin in Top-1 accuracy (with
+  the exception of \linear which is only slightly better than \sherrloc).
 %
 }
 \label{fig:accuracy-results}

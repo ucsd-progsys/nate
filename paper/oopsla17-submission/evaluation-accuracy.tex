@@ -1,14 +1,14 @@
-\subsection{Blame Accuracy}
+\mysubsection{Blame Accuracy}
 \label{sec:quantitative}
 
 In this experiment we compare the accuracy of our predictions to the
 state of the art in type error localization.
 
-\paragraph{Baseline}
+\mypara{Baseline}
 We provide two baselines for the comparison: a random choice of location
 from the minimized type error slice, and the standard \ocaml compiler.
 
-\paragraph{State of the Art}
+\mypara{State of the Art}
 \mycroft~\citep{Loncaric2016-uk} localizes type errors by searching for
 a minimal subset of typing constraints that can be removed, such that
 the resulting system is satisfiable.
@@ -27,19 +27,22 @@ likelihood.
 Comparing source locations from multiple tools with their own parsers is
 not trivial.
 %
-To ensure a fair comparison when evaluating \mycroft and
-\sherrloc, we removed from the dataset programs where they predicted
-locations that our oracle could not match with a program expression ---
-6--8\% of programs for \mycroft and 3--4\% for \sherrloc.
+Our experimental design gives the state of the art tools the ``benefit
+of the doubt'' in two ways.
+% To ensure a fair comparison when evaluating \mycroft and
+% \sherrloc,
+First, when evaluating \mycroft and \sherrloc, we did not consider
+programs where they predicted locations that our oracle could not match
+with a program expression: 6--8\% of programs for \mycroft and 3--4\%
+for \sherrloc.
 %
-We also do not consider programs where \mycroft or \sherrloc timed out
-(after one minute) or where they encountered an unsupported language
-feature --- another 5\% for \mycroft and 12--13\% for \sherrloc. This
-experimental design gives the state of the art tools the ``benefit of the
-doubt''.
+Second, we similarly ignored programs where \mycroft or \sherrloc timed
+out (after one minute) or where they encountered an unsupported language
+feature: another 5\% for \mycroft and 12--13\% for \sherrloc.
+%
 
 
-\paragraph{Our Classifiers}
+\mypara{Our Classifiers}
 We evaluate five classifiers, each trained on the full set of features.
 % features: 44 local syntactic features, 176 contextual syntactic
 % features, 55 typing features, and a single expression size feature.
@@ -53,20 +56,31 @@ We evaluate five classifiers, each trained on the full set of features.
 %
 Our classifiers are:
 %
-\begin{enumerate}
-\item A logistic regression trained with a learning rate
+\begin{description}
+\item[\linear] A logistic regression trained with a learning rate
   $\eta = 0.001$, an $L_2$ regularization rate $\lambda = 0.001$, and a
   mini-batch size of 200.
-\item A decision tree trained with the \ES{HUMA?} algorithm and \ES{HUMA: hyperparams?}.
-\item A random forest trained with the \ES{HUMA?} algorithm and 30 estimators \ES{HUMA: hyperparams?}.
-\item Two multi-layer perceptron neural networks, both trained with $\eta = 0.001$,
-  $\lambda = 0.001$, and a mini-batch size of 200. The first MLP
-  contains a single hidden layer of 10 neurons, and the second contains
-  a hidden layer of 500 neurons. This allows us to investigate how well
-  the MLP can \emph{compress} its model (cf.~\cite{FIXME}). The neurons
-  use rectified linear units (ReLU) as their activation function, a
-  common practice in modern neural networks.
-\end{enumerate}
+\item[\dectree] A decision tree trained with the CART algorithm
+  \citep{Breiman1984-qy} and an impurity threshold of $10^{-7}$ (used to
+  avoid overfitting via early stopping).
+\item[\forest] A random forest \citep{Breiman2001-wo} of 30
+  estimators, trained with an impurity threshold of $10^{-7}$.
+\item[\hiddenT and \hiddenFH] Two multi-layer perceptron neural
+  networks, both trained with $\eta = 0.001$, $\lambda = 0.001$, and a
+  mini-batch size of 200.
+  %
+  The first MLP contains a single hidden layer of 10 neurons, and the
+  second contains a hidden layer of 500 neurons.
+  %
+  This gives us a measure of the complexity of the MLP's model, \ie
+  if the model requires many compound features, one would expect \hiddenFH
+  to outperform \hiddenT.
+  % This allows us to investigate how well the MLP can \emph{compress} its
+  % model (cf.~\cite{FIXME}).
+  %
+  The neurons use rectified linear units (ReLU) as their activation
+  function, a common practice in modern neural networks.
+\end{description}
 %
 All classifiers were trained for 20 epochs on one dataset
 --- \ie they were shown each program 20 times ---
@@ -78,34 +92,43 @@ descent that has been found to converge faster.
 
 \input{evaluation-accuracy-graph}
 
-\paragraph{Results}
+\mypara{Results}
 \autoref{fig:accuracy-results} shows the results of our experiment.
 %
 Localizing the type errors in our benchmarks amounted, on average, to
 selecting one of 3 correct locations out of a slice of 10.
 %
-Our baseline of selecting at random achieves 30\% Top-1
-accuracy (58\% Top-3), while \ocaml achieves a Top-1 accuracy of 45\%.
+Our classifiers consistently outperform the competition, ranging from
+\LinearTopOne\% Top-1 accuracy (\LinearTopThree\% Top-3)
+for the \linear classifier to
+\HiddenFhTopOne\% Top-1 accuracy (\HiddenFhTopThree\% Top-3)
+for the \hiddenFH.\@
+%
+Our baseline of selecting at random achieves \BaselineTopOne\% Top-1
+accuracy (\BaselineTopThree\% Top-3),
+while \ocaml achieves a Top-1 accuracy of \OcamlTopOne\%.
 %
 Interestingly, one only needs two \emph{random} guesses to outperform
-\ocaml, with 47\% accuracy.
+\ocaml, with \BaselineTopTwo\% accuracy.
 %
-\sherrloc outperforms both baselines with 56\% Top-1 accuracy (84\% Top
-3), while \mycroft actually underperforms \ocaml with 38--41\% Top-1
-accuracy.
+\sherrloc outperforms both baselines, and comes close to our \linear classifier,
+with \SherrlocTopOne\% Top-1 accuracy (\SherrlocTopThree\% Top 3),
+while \mycroft underperforms \ocaml at \MycroftTopOne\% Top-1 accuracy.
 %
-Finally, we find that \emph{all} of our classifiers outperform \sherrloc,
-ranging from 59--63\% Top-1 accuracy (86--88\% Top-3) for the \linear
-classifier to 70--74\% Top-1 accuracy (91--92\% Top-3) for the \hiddenFH.
+% Finally, we find that \emph{all} of our classifiers outperform \sherrloc,
+% ranging from 58--62\% Top-1 accuracy (86--88\% Top-3) for the \linear
+% classifier to 71--74\% Top-1 accuracy (91\% Top-3) for the \hiddenFH.
 
-Surprisingly, there is little variation in accuracy between classifiers.
+Surprisingly, there is little variation in accuracy between our
+classifiers.
+%
 With the exception of the \linear model, they all achieve around 70\%
 Top-1 accuracy and around 90\% Top-3 accuracy.
 %
 This suggests that the model they learn is relatively simple.
 %
 In particular, notice that although the \hiddenT has $50\times$ \emph{fewer}
-hidden neurons than the \hiddenFH, it only loses around 2\% accuracy.
+hidden neurons than the \hiddenFH, it only loses around 4\% accuracy.
 % In particular, notice that the \hiddenT only loses around 2\% accuracy
 % compared to the \hiddenFH,
 %

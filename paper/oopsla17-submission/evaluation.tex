@@ -1,4 +1,4 @@
-\section{Evaluation}
+\mysection{Evaluation}
 \label{sec:evaluation}
 \input{data}
 
@@ -7,24 +7,140 @@ purely functional subset of \ocaml with polymorphic types and functions.
 %
 We seek to answer three questions in our evaluation:
 %
-\begin{description}
-\item[1. Blame Accuracy (\autoref{sec:quantitative})]
+\begin{itemize}
+\item \textbf{Blame Accuracy}
   %
-  How often are our predictions \emph{correct}?
+  How often does \toolname
+  blame a \emph{correct}
+  location for the type error?
+  (\autoref{sec:quantitative})
+  %
+  % We compare our technique with a variety of off-the-shelf classifiers
+  % and find that our top-ranked blame assignments have an accuracy of
+  % 72\%, compared to a state-of-the-art 56\%.
   % For how many ill-typed programs can we accurately predict the source
   % of the error?
-\item[2. Feature Utility (\autoref{sec:feature-utility})]
+\item \textbf{Feature Utility}
   %
-  Which feature sets are \emph{most important} in general?
+  Which program \emph{features are required}
+  to localize errors?
+   (\autoref{sec:feature-utility})
   % How much do the features described in \autoref{sec:features}
   % contribute to our predictions?
-\item[3. Explaining Predictions (\autoref{sec:qualitative})]
+\item \textbf{Interpretability}
   %
-  Can we \emph{explain} individual predictions (correct or not)?
-\end{description}
-%\ES{may want to swap (1) and (2)..}
+  %% Do the models learned by \toolname
+  %% correspond to our intuition about
+  %% the real causes of errors?
+  Are the models \emph{interpretable} using
+  our intuition about the causes of type errors?
+  (\autoref{sec:qualitative})
+\end{itemize}
+%
+%\mypara{Summary of Results}
+%
+In the sequel we present our experimental
+methodology \autoref{sec:methodology} and
+then drill into how we evaluated each of
+the questions above.
+%
+However, for the impatient reader, we begin
+with a quick summary of our main results:
+%
+%
+%\begin{itemize}
+%
+%\item \textbf
 
-\subsection{Methodology}
+\mypara{1. Data Beats Algorithms}
+Our main result is that for type error
+localization, data is indeed unreasonably
+effective \citep{halevy09}.
+%
+\toolname's most sophisticated
+\emph{neural network}-based
+classifier's top-ranked
+prediction blames the correct
+sub-term \HiddenFhTopOne\% of the time
+which, a good \ToolnameWinSherrloc points
+higher than the state of
+the art \sherrloc's \SherrlocTopOne\%.
+%
+However, even \toolname's simple
+\emph{logistic regression} based
+classifier is correct \LinearTopOne\% of the time,
+\ie \LinearWinSherrloc points better than \sherrloc.
+%
+When the top three predictions are considered,
+\toolname is correct \HiddenFhTopThree\% of the time.
+
+% \item \textbf
+\mypara{2. Slicing Is Critical}
+%
+However, data is effective \emph{only}
+when irrelevant sub-terms have been
+sliced out of consideration.
+%
+In fact, perhaps our most surprising
+result is that type error slicing and
+local syntax alone yields
+a classifier that is \SlicingWinOcaml points
+better than \ocaml and on par with
+\sherrloc.
+%
+That is, once we focus our classifiers on
+slices, purely syntactic features
+perform as well as the
+state-of-the-art.
+
+%\item \textbf
+\mypara{3. Size Doesn't Matter, Types Do}
+%
+We find that (after slices)
+typing features
+provide the biggest
+improvement in accuracy.
+%
+Furthermore, we find contextual syntax
+features to be mostly (but not entirely)
+redundant with typing features,
+which supports the hypothesis that
+the context's \emph{type} nicely
+summarizes the properties of the
+surrounding expressions.
+%
+Finally, we found that the \emph{size}
+of the sub-expression was not very useful.
+This was unexpected, as we thought
+smaller expressions would be simpler, and
+hence, more likely causes.
+
+% \item \textbf
+\mypara{4. Models Learn Typing Rules}
+%
+Finally, by investigating a few of the
+predictions made by the \emph{decision tree}-based
+models, we found that the models
+do indeed capture some simple and intuitive
+rules for predicting well-typedness.
+%
+For example, if the left child of an application
+is a function, then the application is likely
+correct.
+
+% in an application, if the
+% left argument is a function then the
+% error is likely on the right sub-term;
+% in a function definition
+% \RJ{fixme: orig
+% defining a function is a fine thing
+% to do?}
+%
+%\end{itemize}
+% \RJ{eric please check the numbers -- we say 71, 72, 74, 91, 92, 94?}
+
+
+\mysubsection{Methodology}
 \label{sec:methodology}
 
 We answer our questions on two sets of data gathered from the
@@ -48,18 +164,20 @@ The extracted programs are relatively small, but they demonstrate a
 range of functional programming idioms, \eg higher-order functions and
 (polymorphic) algebraic data types.
 
-\paragraph{Feature Selection}
-We extract a set of 277 features from each sub-expression in a student
+\mypara{Feature Selection}
+We extract a set of 282 features from each sub-expression in a student
 program, including:
 %
 \begin{enumerate}
-\item 44 local syntactic features. In addition to the syntax of \lang,
+\item 45 local syntactic features. In addition to the syntax of \lang,
   we support the full range of arithmetic operators (integer and
   floating point), equality and comparison operators, character and
-  string literals, and a user-defined |expr| type of simple arithmetic
+  string literals, and a user-defined % |expr| type of simple
+  arithmetic
   expressions. We discuss the challenge of supporting other
-  user-defined types in \autoref{sec:discussion}.
-\item 176 contextual syntactic features. For each sub-expression we
+  % user-defined
+  types in \autoref{sec:discussion}.
+\item 180 contextual syntactic features. For each sub-expression we
   additionally extract the local syntactic features of its parent and
   first, second, and third (left-to-right) children. If an expression
   does not have a parent or children, these features will simply be
@@ -69,38 +187,28 @@ program, including:
 \item 55 typing features. In addition to the types of \lang, we support
   |int|s, |float|s, |char|s, |string|s, and the user-defined |expr|
   mentioned above. These features are extracted for each sub-expression
-  and for the contextual sub-expressions.
-\item one feature denoting the size of each sub-expression.
-\item one feature denoting whether each sub-expression is part of the
+  and its context. % for the contextual sub-expressions.
+\item One feature denoting the size of each sub-expression.
+\item One feature denoting whether each sub-expression is part of the
   minimal type error slice. We use this feature as a ``hard''
   constraint, sub-expressions that are not part of the minimal slice
-  will be preemptively discarded, we justify this decision in
+  will be preemptively discarded. We justify this decision in
   \autoref{sec:feature-utility}.
 \end{enumerate}
 
-\paragraph{Blame Oracle}
-We identified the fixes for each ill-typed program with an
-expression-level diff~\citep{Lempsink2009-xf}.
+\mypara{Blame Oracle}
+Recall from \autoref{sec:labels} that we automatically extract a blame
+oracle for each ill-typed program from the (AST) diff between it and the
+student's eventual fix.
 %
-We consider two sources of changes:
-%
-\begin{enumerate}
-\item If an expression has been removed wholesale, \eg if $\eapp{f}{x}$
-  is rewritten to $\eapp{g}{x}$, we will mark the expression $f$ as
-  changed, as it has been replaced by $g$.
-\item If a new expression has been inserted \emph{around} an existing
-  expression, \eg if $\eapp{f}{x}$ is rewritten to
-  $\eplus{\eapp{f}{x}}{1}$, we will mark the application expression
-  $\eapp{f}{x}$ (but not $f$ or $x$) as changed, as the $+$ operator now
-  occupies the original location of the application.
-\end{enumerate}
-
-Students may have made many, potentially unrelated, changes between
-compilations, but at some point the ``fix'' becomes a ``rewrite''.
+A disadvantage of using diffs in this manner is that students may have
+made many, potentially unrelated, changes between compilations; at some
+point the ``fix'' becomes a ``rewrite''.
 %
 We do not wish to consider the ``rewrites'' in our evaluation, so we
 discard outliers where the fraction of expressions that have changed is
-more than one standard deviation above the mean, or 44\%.
+more than one standard deviation above the mean, establishing a diff
+threshold of 45\%.
 %
 This accounts for roughly 14\% of each dataset, leaving us with
 2,425 program pairs for \SPRING and 2,325 pairs for \FALL.
@@ -115,9 +223,9 @@ This accounts for roughly 14\% of each dataset, leaving us with
 % % here would take some of the pressure off.
 
 
-\paragraph{Accuracy Metric}
+\mypara{Accuracy Metric}
 All of the tools we compare (with the exception of the standard \ocaml
-compiler) can produce a list of potential error locations. 
+compiler) can produce a list of potential error locations.
 %
 However, in a study of fault localization techniques,
 \citet{Kochhar2016-oc} show that most developers will not consider more
@@ -133,84 +241,6 @@ top one, top two, or top three predictions.
 
 \input{evaluation-accuracy}
 \input{evaluation-utility}
-\input{gallery}
-
-\subsection{Threats to Validity} 
-
-Although our experiments demonstrate that our technique can pinpoint type
-errors more accurately than the state of the art and that our features are
-relevant to blame assignment, our results may not generalize. 
-
-One threat to validity associated with supervised machine learning is
-overfitting (\ie learning a model that is too complex with respect to
-the data).
-%
-We mitigate this threat by having separate training and testing datasets
-(\autoref{sec:quantitative}) and via cross-validation
-(\autoref{sec:feature-utility})~\cite{FIXME}.
-
-Our benchmarks were drawn from students in an undergraduate course and
-may not be representative of other student populations.
-%
-We mitigate this threat by including the largest empirical evaluation of
-type error localization that we are aware of: over 4,500 pairs of
-ill-typed programs and fixes from two instances of the course, with
-programs from 102 different students.
-%
-We acknowledge, of course, that students are not industrial programmers
-and our results may not translate to large-scale software development;
-however, we are particularly interested in aiding novice programmers
-as they learn to work inside the type system.
-
-Our removal of program pairs that changed too much, where our oracle
-could not identify the blame of the other tools, or where the other
-tools timed out or encountered unsupported language features is another
-threat to validity.
-%
-It is possible that including the programs that changed excessively
-would hurt our models, or that the other tools would perform
-better on the programs with unsupported language features.
-%
-We note however that
-%
-(1) outlier removal is a standard technique in machine learning
-\ES{CITE?}; and
-%
-(2) our Top-1 accuracy margin is large enough that even if we assumed
-that \sherrloc were perfect on all of the excluded programs, it would
-only tie our \hiddenFH in Top-1 accuracy.
-%
-\ES{I think this is accurate, but should double check..}
-
-Examining programs written in \ocaml as opposed to \haskell or any other
-language poses another threat to validity, common type errors may differ
-in different languages.
-%
-\ocaml is, however, a standard target for research in type error
-localization and thus our choice admits a direct comparison with prior
-work.
-%
-Furthermore, the functional core of \ocaml that we support does not
-differ significantly from the functional core of \haskell or SML, all of
-which are effectively lambda calculi with a Hindley-Milner-style type
-system.\footnote{\haskell's type classes are a notable exception, they
-  are also known to cause confusing type errors and would be interesting
-  to study in future work.}
-
-Finally, our use of student fixes as oracles for the source of type
-errors assumes that, on average, students are able to correctly identify
-the source of an error.
-%
-As the students are in the process of learning the language and type
-system, this assumption may be faulty.
-%
-It may be that \emph{expert} users would disagree with many of the
-student fixes, and that it is harder to learn a model of expert fixes,
-or that the state of the art would be better at predicting expert fixes.
-%
-As we have noted before, we believe it is reasonable to use student
-fixes as oracles because the student is the best judge of what she
-\emph{meant} to do.
 
 
 %%% Local Variables:

@@ -1,5 +1,8 @@
 20 pages total (weird!!)
 
+
+
+
 * Intro [2p]
 
 ** Motivation
@@ -136,3 +139,46 @@
 - only enabled features on path are =F-Is-App-P= and =F-Is-Type-List-C3=
 - VERY confident, all training samples were true positive, but only ~20 in total
 - perhaps need more training data? prediction seems totally bogus...
+
+** FROM KAMALIKA
+*** OVERVIEW
+   - [X] point (2) in "key tech challenges": phrasing in CHALLENGE 2 is much
+     clearer
+   - [X] challenge 1: make it clear that we're specifically interested in
+     representations for LOCALIZING TYPE ERRORS
+     - [X] and tie in from SOLUTION
+   - [ ] challenge 2: want blame assignment that is USEFUL and PREDICTABLE
+   - [X] may want to tone down "prior work has often used expert users
+     to judge blame", have also used student fixes
+     - actually unclear: seminal, mycroft, minerrloc all claim expert oracle,
+     - sherrloc seems to claim user oracle
+   - [X] challenge 3: phrase challenge in terms of INTUITIVE PRESENTATION
+*** LEARNING > LABELS
+   - [X] make it clearer that we have a two-stage process
+     1. per-expression labels (good/bad)
+     2. per-program labels (ranked list of blame)
+   - [ ] perhaps an algorithm-style box
+*** EVALUATION
+   - [X] maybe make headlining questions more precise
+     - highlight results too?
+   - [X] add a sentence in 4.3 explaining why we don't use ANOVA/RELIEF
+     - hard to make sense of results when you have a few categorical
+       features expanded into many binary features
+   - [X] "oracle" is the student fixes
+   - [X] "utility": what *classes* of features are contributing most to accuracy
+   - [ ] should threats come earlier?
+   - [X] explain that dropping programs where oracle doesnt recognize
+     sherrloc predcition favors sherlroc, NOT us
+   - [X] crispen the "results" paragraphs, highlight our results (eg put
+     them first?)
+**** qualitative
+     - [X] what is goal of analysis?
+       - qualitiative
+       - featuers used
+     - [X] at beginning: high-level description of examining decision
+       paths to help explain predictions
+**** threat mitigation
+     - [X] make a bigger deal of train/test split
+     - [ ] explaining predictions
+     - [X] point out that we are also doing cross-validation across
+           joint dataset, model appears relatively stable

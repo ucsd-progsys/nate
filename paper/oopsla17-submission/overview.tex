@@ -1,176 +1,500 @@
-\section{Overview}
-\label{sec:overview}
+\mysection{Overview}\label{sec:overview}
 
-We start with an overview of our approach to localizing type errors by
-learning a model of the mistakes programmers actually make.
-%
-We formulate the problem of type error localization as a
-\emph{supervised classification} problem (see \citealt{Kotsiantis2007-pj}
-for a survey).
-%
-A \emph{classification} problem entails learning a function that maps
-inputs to a discrete set of output \emph{labels}, in contrast to
-\emph{regression}, where the output is typically a real number.
-%
-In a \emph{supervised} learning problem one is given a \emph{training}
-set where the inputs and labels are known, and the task is to learn a
-function that accurately maps the inputs to outputs and
-\emph{generalizes} to new, yet-unseen inputs.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The key technical challenges we address are:
-%
-(1) formulating type error localization as a classification problem;
-%
-(2) generating correct labels for supervised learning; and
-%
-(3) presenting the predictions of the classifier in an intuitive manner.
+\begin{figure}[t!]
+\begin{minipage}{0.45\linewidth}
+\begin{ecode}
+  let rec sumList xs =
+    match xs with
+    | []   -> (*@\hlTree{\hlSherrloc{[]}}@*)
+    | h::t -> h (*@\hlTree{+}@*) (*@\hlFix{sumList t}@*)
+\end{ecode}
+\end{minipage}
+\begin{minipage}{0.49\linewidth}
+\begin{verbatim}
+File "sumList.ml", line 4, characters 16-25:
+  This expression has type 'a list
+  but an expression was expected of type int
+\end{verbatim}
+\end{minipage}
+\caption{(left) An ill-typed \ocaml program that should sum the elements of a
+  list, with highlights indicating three possible blame assignments based on:
+  %
+  (1) the \hlFix{\ocaml} compiler;
+  %
+  (2) the \hlSherrloc{fix} made by the programmer; and
+  %
+  (3) \hlTree{minimizing} the number of edits required.
+  % The \underline{underlined} expressions are equally valid
+  % locations to blame. The expression blamed by the \ocaml compiler
+  % is in \textbf{bold}.
+  %
+  % FIXME: This bolding is ambiguous, because ``let rec'', ``match'' and
+  % ``with'' are also bolded (by \\ecode)! You need to find another way to
+  % highlight what ocaml is yelling about.
+  %
+  (right) The error reported by \ocaml.}
+\label{fig:sumList}
+\end{figure}
 
-\paragraph{\textbf{Challenge (1): How to represent programs?}}
-The first and prime challenge we address is how to translate programs
-into a format favorable to machine learning. 
-%
-Programs can be represented in many ways, from the raw text to 
-richly-structured abstract syntax trees and control-flow graphs, but 
-representations are not directly amenable to machine learning.
-%
-Machine learning techniques typically take as input \emph{feature
-vectors}, fixed-length vectors of real numbers where each element
-represents some property of the input.
-%
-Thus, to apply machine learning to our problem we must
-determine:
-%
-(1) what are interesting features of a program; and
-%
-(2) how can we represent a variable-size program as a fixed-length vector?
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\paragraph{\textbf{Solution: Vectorized Abstract Syntax Trees}}
-\ES{name up for grabs...}
-We propose to extract features from the program's
-abstract syntax tree (AST), a natural choice since the type checker
-operates on ASTs.
-%
-Our features are \emph{queries} over the AST. Our initial set of
-interesting features includes the syntactic class of each expression.
-%
-That is, the classifier should be able to distinguish between the |[]|
-and |+| expressions in \autoref{fig:sumList} because they represent
-different syntactic expression forms.
-%
-A programming language has a fixed set of AST elements,\footnote{We will
-  discuss handling arbitrary, user-defined types in
-  \autoref{sec:discussion}.} which suggests a natural way to obtain
-fixed-size feature vectors. Rather than translating a program into a
-single feature vector, we translate it into a \emph{set} of feature
-vectors, one for each expression in the program.
-%
-Thus, the |[]| and |+| expressions will each be given their own feature
-vector, and we will ask the classifier to predict for each
-\emph{independently} whether it should be blamed.
+Let us start with an overview of \toolname's
+approach to localizing type errors by
+collectively learning from the mistakes
+programmers actually make.
 
-Of course, each expression occurs in some \emph{context}, and we would
-like the classifier to be able make decisions based on the context as
-well.
+\mypara{The Problem}
 %
-For example, we might expect that the recursive call |sumList t| is
-unlikely to be at fault because |sumList| has a function type --- the
-user may have called the wrong function or supplied the wrong argument,
-but the application itself is probably correct.
+Consider the |sumList| program in
+\autoref{fig:sumList}, written by
+a student in an undergraduate
+Programming Languages course.
 %
-Conversely, if the student wrote |h sumList t| (\ie forgot the |+|), we
-might wish to blame the application rather than |h| because |h|
+The program is meant to add up the
+integers in a list, but the student
+has accidentally given the empty
+list as the base case, rather than |0|.
+%
+The \ocaml compiler collects typing
+constraints as it traverses the program,
+and reports an error the moment it finds
+an inconsistent constraint.
+%
+In this case it blames the recursive call
+to |sumList|, complaining that |sumList|
+returns a |list| where an |int| was
+expected by the |+| operator.
+%
+This \emph{blame} assignment is inconsistent
+with the programmer's intention and may
+not be helpful debugging information to
+a novice.
+
+It may appear obvious to the reader that
+|[]| is the correct expression to blame,
+but how is a type checker to know that?
+%
+Indeed, % both the venerable
+% \ocaml compiler as well as
+recent techniques like
+\sherrloc and \mycroft
+\citep{Zhang2014-lv,Loncaric2016-uk,Pavlinovic2014-mr}
+fail to distinguish between
+the |[]| and |+| expressions
+in \autoref{fig:sumList};
+it would be equally valid
+to blame \emph{either}
+of them alone.
+%
+The |[]| on line 3 could be changed to |0|,
+or the |+| on line 4 could be changed to
+either |@| (list append) or |::|, all of
+which would give type-correct programs.
+%
+Thus, these state-of-the-art techniques
+are forced to either blame \emph{both}
+locations, or choose one \emph{arbitrarily}.
+
+\mypara{Solution: Localization via Supervised Classification}
+%
+Our approach is to view error localization as a
+\emph{supervised classification}
+problem~\citep{Kotsiantis2007-pj}.
+%
+A \emph{classification} problem entails learning
+a function that maps \emph{inputs} to a discrete
+set of output \emph{labels} (in contrast to %, say,
+\emph{regression}, where the output is typically
+a real number).
+%
+A \emph{supervised} learning problem is one where
+we are given a \emph{training set} where the
+inputs and labels are known, and the task is to
+learn a function that accurately maps the inputs
+to output labels and \emph{generalizes} to new,
+yet-unseen inputs.
+%
+To realize the above approach for error localization
+as a practical tool, we have to solve four sub-problems.
+%
+\begin{enumerate}
+  \item How can we acquire a \emph{training set} of
+        blame-labeled ill-typed programs?
+
+  \item How can we \emph{represent} blame-labeled programs
+        as numeric vectors amenable to machine learning?
+
+  \item How can we find \emph{features} that yield predictive
+        models?
+
+  \item How can we use the models to give localized
+        \emph{feedback} to the programmer?
+\end{enumerate}
+
+\mysubsection{Step 1: Acquiring a Blame-Labeled Training Set}
+
+The first step is to gather a training
+set of ill-typed programs, where each
+erroneous sub-term is explicitly labeled.
+%
+Prior work has often enlisted
+expert users to curate a set of
+ill-typed programs and then
+\emph{manually} determine the
+correct fix~\citep[\eg][]{Lerner2007-dt,Loncaric2016-uk}.
+%
+This method is suitable for
+\emph{evaluating} the quality
+of a localization (or repair)
+algorithm on a small number
+(\eg 10s--100s) of programs.
+%
+However, in general it requires
+a great deal of effort for the
+expert to divine the original
+programmer's intentions.
+%
+Consequently, is difficult to
+scale the expert-labeling to
+yield a dataset large enough
+(\eg 1000s of programs) needed
+to facilitate machine learning.
+%
+More importantly, this approach
+fails to capture the \emph{frequency}
+with which errors occur in practice.
+
+\mypara{Solution: Interaction Traces}
+%
+We solve both the scale and
+frequency problems by instead
+extracting blame-labeled data sets
+from \emph{interaction traces}.
+%
+Software development is an iterative process.
+Programmers, perhaps after a lengthy (and
+sometimes frustrating) back-and-forth with
+the type checker, eventually end up fixing
+their own programs.
+%
+Thus, we instrumented
+the \ocaml compiler to record
+this conversation, \ie record the sequence
+of programs submitted by each programmer and
+whether or not it was deemed type-correct.
+%
+For each ill-typed program in
+a particular programmer's trace,
+we find the \emph{first subsequent}
+program in the trace that type checks
+and declare it to be the fixed version.
+%
+From this pair of an ill-typed program
+and its fix, we can extract a \emph{diff}
+of the abstract syntax trees, and then assign
+the blame labels to the \emph{smallest}
+sub-tree in the diff.
+
+% \ES{FIXME: this feels a bit redundant with CHALLENGE 1. the main thing i
+%  get is that we use student fixes to extract AST-diffs, which is
+%  already said in CHALLENGE 1}
+
+\mypara{Example}
+Suppose our student
+fixed the |sumList| program in
+\autoref{fig:sumList} by replacing
+|[]| with |0|, the diff would
+include only the |[]| expression.
+%
+Thus we would determine that the
+|[]| expression (and \emph{not} the
+|+| or the recursive call |sumList t|)
+is to blame.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\mysubsection{Step 2: Representing Programs as Vectors}
+
+Next, we must find a way to translate
+highly structured and variable sized
+\emph{programs} into fixed size
+$n$-dimensional numeric \emph{vectors}
+that are needed for supervised
+classification.
+%
+While the PL literature is full
+of different program
+representations, from raw
+sequences of tokens, to
+richly-structured
+abstract syntax trees (AST) or
+control-flow graphs, it is
+unclear how to embed the
+above into a vector space.
+%
+Furthermore, it is unclear whether
+recent program representations that
+are amenable to one learning task,
+\eg code completion \citep{Devanbu:2012,Raychev:2014}
+or decompilation \citep{Raychev2015-jg,Bielik2016-br}
+are suitable for our problem of
+assigning blame for type errors.
+
+\mypara{Solution: Bags-of-Abstracted-Terms}
+%
+We present a new representation of programs
+that draws inspiration from the theory of
+abstract interpretation \citep{CousotCousot77}.
+%
+Our representation is parameterized by a
+set of \emph{feature abstraction} functions,
+(abbreviated to feature abstractions)
+$f_1, \ldots, f_n$, that map terms to a
+numeric value (or just $\{0, 1\}$ to
+encode a boolean property).
+%
+Given a set of feature abstractions, we
+can represent a single program's AST as
+a \emph{bag-of-abstracted-terms} (BOAT)
+by:
+%
+(1)~decomposing the AST (term) $t$ into
+    a \emph{bag} of its constituent sub-trees
+    (terms) $\{t_1,\ldots,t_m\}$; and then
+%
+(2)~representing each sub-term $t_i$
+    with the $n$-dimensional
+    vector $[f_1(t_i),\ldots, f_n(t_i)]$.
+%
+Our choice of working with ASTs is natural
+as that is the representation over which the
+type-checker operates.
+
+
+
+\mypara{Modeling Contexts}
+%
+Each expression occurs in some surrounding
+\emph{context}, and we would like the
+classifier to be able make decisions based
+on the context as well.
+%
+The context is particularly important
+for our task as each expression
+imposes typing constraints on its
+neighbors.
+%
+For example, a |+| operator tells
+the type checker that both \emph{children}
+must have type |int| and that the \emph{parent}
+must accept an |int|.
+%
+Similarly, if the student wrote
+|h sumList t| \ie forgot the |+|,
+we might wish to blame the application
+rather than |h| because |h|
 \emph{does not} have a function type.
 %
-Thus we extend each expression's feature vector with
-\emph{contextual features} of its parent and children.
-%
-These contextual features include the syntactic class of the neighboring
-expressions, their inferred types (when available), and, crucially, whether
-the expression occurs in a minimal type error \emph{slice}.
-%
-A minimal type error slice \citep{Haack2003-vc} includes all expressions that
-are necessary for the error to manifest and no more.
-%
-We propose to use type error slices to communicate to the classifier
-which expressions could potentially be blamed --- a change to an
-expression outside of the minimal slice cannot possibly fix the type
-error.
-%
-We will show that the type error slice is so important
-(\autoref{sec:feature-utility}) that it is actually beneficial to
-automatically discard expressions that are not part of the slice, rather
-than letting the classifier learn to do so.
-%
-Our use of type error slices is conceptually related to the use of fault
-localization in other program analysis and transformation techniques
-(see \autoref{sec:related-work}).
+The BOAT representation makes it
+easy to incorporate contexts: we
+simply \emph{concatenate} each
+term's feature vector with the
+\emph{contextual features} of
+its parent and children.
 
-\paragraph{\textbf{Challenge (2): What is the ``correct'' expression to blame?}}
-As we saw in \autoref{fig:sumList}, type errors admit many different
-fixes to different expressions, each resulting in a different program.
-%
-How is the type checker to judge which expressions are more likely to be
-incorrect than others?
-%
-Prior work has often enlisted expert users to manually judge ill-typed
-programs and determine the ``correct'' fix \citep[e.g.][]{Loncaric2016-uk}, but
-this approach does not scale well to a dataset large enough to support
-machine learning.
-%
-Furthermore, while expert users have intimate knowledge of the type system,
-they cannot know in general what novice users \emph{intended} to do.
+%% \ES{FIXME: this feels a bit redundant with CHALLENGE 2. the main things
+  %% i get here are that we use sets of feature vectors, and that we can
+  %% concatenate vectors to add context. but this is all said in CHALLENGE
+  %% 2 already.}
 
-\paragraph{\textbf{Solution: Use the students' subsequent fixes}}
+%% \RJ{confusing -- delete}
+%% We might expect that the recursive
+%% call |sumList t| is unlikely to be
+%% at fault because |sumList| has a
+%% function type --- the user may have
+%% called the wrong function or
+%% supplied the wrong argument, but the
+%% application itself is probably correct.
+
+\mysubsection{Step 3: Feature Discovery}
+
+Next, we must find a \emph{good}
+set of features, that is, a set
+of features that yields predictive
+models. Our BOAT representation
+lets us iteratively solve this
+problem by just starting with
+a simple set of features, and
+then repeatedly adding more
+and more to capture important
+aspects needed to improve precision.
 %
-Rather than relying on expert users, we allow our students to do the
-work of assigning blame themselves.
+Our set of feature abstractions
+%includes those that capture the
+captures the
+\emph{syntax}, \emph{types}, and
+\emph{context} of each expression.
+
+\mypara{Syntax and Type Features}
 %
-Software development is an iterative process and our students 
-eventually fix their own programs, perhaps after multiple ill-fated
-attempts.
+We start by observing that
+at the very least, the
+classifier should be able
+to distinguish between the
+|[]| and |+| expressions
+in \autoref{fig:sumList}
+because they represent
+different \emph{syntactic}
+expression forms.
 %
-For each ill-typed program in our dataset, we find the first
-\emph{subsequent} program that type checks and declare that to be the
-fix.
+We model this by
+introducing feature
+abstractions of the form
+is-|[]|, is-|+|, \etc, for
+each of a fixed number of
+expression forms.
 %
-From this pair of an ill-typed program and its fix, we can extract a
-\emph{diff} of the abstract syntax trees.
+Modeling the syntactic class of an
+expression gives the classifier a
+basic notion of the relative
+frequency of blame assignment
+for the various program elements,
+\ie perhaps |[]| is
+\emph{empirically} more
+likely to be blamed than |+|.
 %
-For example, suppose our student fixed the |sumList| program in
-\autoref{fig:sumList} by replacing |[]| with |0|, the diff would include
-only the |[]| expression.
+Similarly, we can model
+the \emph{type} of each
+sub-expression with features
+of the form is-|int|, is-|bool|, \etc.
 %
-Thus we would determine that the |[]| expression (and \emph{not} the
-|+| or the recursive call |sumList t|) is to blame for the error.
+We will discuss handling
+arbitrary, user-defined types
+in~\autoref{sec:discussion}.
+
+\mypara{Contextual Features: Error Slices}
+%
+Our contextual features include the
+syntactic class of the neighboring
+expressions and their inferred types
+(when available).
+%
+However, we have found that
+the most important contextual
+signal is whether or not the
+expression occurs in
+a minimal type error slice
+\citep{Tip2001-qp,Haack2003-vc}
+which includes \emph{a minimal subset}
+of all expressions that are
+necessary for the error to manifest.
+%
+(That is, replacing any subterm
+with |undefined| or |assert false|
+would yield a well-typed program.)
+%
+We propose to use type error slices
+to communicate to the classifier
+which expressions could
+\emph{potentially} be blamed --- a
+change to an expression outside of
+the minimal slice cannot possibly
+fix the type error.
+%
+We empirically demonstrate that
+the type error slice is so
+important (\autoref{sec:feature-utility})
+that it is actually beneficial to
+automatically discard expressions
+that are not part of the slice,
+rather than letting the classifier
+learn to do so.
+%
+Indeed, this domain-specific
+insight is crucial for learning
+classifiers that significantly
+outperform the state-of-the-art.
+
+\mypara{Example}
+%
+When \toolname is tasked with localizing
+the error in the example program of \autoref{fig:sumList},
+the |[]| and |+| sub-terms will each be given
+their own feature vector, and we will ask the
+classifier to predict for each \emph{independently}
+whether it should be blamed.
+%
+\autoref{tab:sumList} lists some
+of the sub-expressions of the example
+from \autoref{fig:sumList}, and their
+corresponding feature vectors.
+
+\input{feature-table}
+
+% Our use of type error slices is
+% conceptually related to the use
+% of fault localization in other
+% program analysis and transformation
+% techniques (see \autoref{sec:related-work}).
 
 
-\paragraph{\textbf{Challenge (3): What should be presented to the user?}}
-We now have the features and labels needed to train a classifier to
-predict, for each expression in an ill-typed program, whether it should
-be blamed.
+\mysubsection{Step 4: Generating Feedback}
+
+Finally, having trained a classifier
+using the labeled data set, we need to use
+it to help users localize type errors in
+their programs.
 %
-But this is not yet particularly suitable as \emph{user feedback}.
+The classifier tells us whether or not
+a sub-term \emph{should be}
+blamed (\ie has the blame label) but this
+is not yet particularly suitable as
+\emph{user feedback}.
 %
-A recent survey of developers by \citet{Kochhar2016-oc} found that
-developers are unlikely to examine more than around five potentially
-erroneous locations before falling back to manual debugging.
+A recent survey of developers by
+\citet{Kochhar2016-oc} found that
+developers are unlikely to examine
+more than around five potentially
+erroneous locations before falling
+back to manual debugging.
 %
-Thus, we should limit our predictions to a select few to be presented to
+Thus, we should limit our predictions
+to a select few to be presented to
 the user.
 
-\paragraph{\textbf{Solution: Rank blame locations by ``confidence''}}
-Luckily, many machine learning classifiers produce not only a predicted
-label, but also a metric that can be interpreted as the classifier's
+\mypara{Solution: Rank Locations by Confidence}
+%
+Fortunately, many machine learning
+classifiers produce not only a predicted
+label, but also a metric that can be
+interpreted as the classifier's
 \emph{confidence} in its prediction.
 %
-Thus, we \emph{rank} each expression by the classifier's confidence that
-it should be blamed, and present only the top-$k$ predictions to the
-user (in practice $k=3$). This use of ranking to report
-the results of a program analysis is popular in other problem domains
-\citep[see, \eg][]{Kremenek2003-ck}; we focus
-explicitly on the use of data-driven machine learning confidence as a
-ranking source.
+Thus, we \emph{rank} each expression
+by the classifier's confidence that
+it should be blamed, and present only
+the top-$k$ predictions to the
+user (in practice $k=3$).
+%
+This use of ranking to report the
+results of a program analysis is
+popular in other problem domains
+\citep[see, \eg][]{Kremenek2003-ck};
+we focus explicitly on the use of
+data-driven machine learning
+confidence as a ranking source.
+%
+In \autoref{sec:evaluation} we show
+that \toolname's ranking approach
+yields a high-precision localizer:
+when the top three locations are considered,
+at least one matches an actual student fix
+\HiddenFhTopThree\% of the time.
 
+
+%%% HOOK TO EVALUATION: Evaluation
 
 
 %%% Local Variables:

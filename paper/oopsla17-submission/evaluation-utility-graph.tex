@@ -1,0 +1,195 @@
+\begin{figure}[t]
+\centering
+\begin{subfigure}[t]{\linewidth}
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  name=slice,
+  % scale only axis,
+  %at=(feature.above north), anchor=below south east,
+  ybar stacked,
+  width=0.5\linewidth,
+  height=4cm,
+  %title={Impact of Type Error Slice},
+  ylabel={Accuracy},
+  bar width=0.5cm,
+  ymin=0.2,
+  ymax=1,
+  ytick={0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0},
+  yticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\,\%},
+  ytick style={draw=none},
+  ymajorgrids = true,
+  symbolic x coords={op+slice-no-slice, op+slice, op+slice-only-slice},
+  enlarge x limits=0.25,
+  xtick=data,
+  xtick style={draw=none},
+  xticklabels={\textsc{Local Syntax}, +\InSlice, \textsc{Filter \InSlice}},
+  %x tick label style={rotate=45, anchor=north east},
+  reverse legend,
+  transpose legend,
+  legend style={
+    %legend pos = outer north east,
+    at={(1.75,0.5)},
+    anchor=center,
+    legend columns=5
+  },
+]
+
+% ES: NOTE: ORDER OF PLOTS/LEGEND ENTRIES MATTERS
+
+\addplot+[stack plots=false, draw=black, fill=none, thick, bar shift=.25cm] table[x=features, y=recall] {\SliceHiddenBench};
+\addlegendentry{Recall}
+\addplot[draw=black, fill=green1, bar shift=.25cm] table[x=features, y=top-1] {\SliceHiddenBench};
+\addlegendentry{Top-1}
+\addplot[draw=black, fill=green2, bar shift=.25cm] table[x=features, y expr=\thisrow{top-2} - \thisrow{top-1}] {\SliceHiddenBench};
+\addlegendentry{Top-2}
+\addplot[draw=black, fill=green3, bar shift=.25cm] table[x=features, y expr=\thisrow{top-3} - \thisrow{top-2}] {\SliceHiddenBench};
+\addlegendentry{Top-3}
+\addlegendimage{empty legend}
+\addlegendentry{\hiddenFH}
+
+\resetstackedplots
+
+\addplot+[stack plots=false, draw=black, fill=none, thick, bar shift=-.25cm] table[x=features, y=recall] {\SliceLinearBench};
+\addlegendentry{Recall}
+\addplot[draw=black, fill=blue1, bar shift=-.25cm] table[x=features, y=top-1] {\SliceLinearBench};
+\addlegendentry{Top-1}
+\addplot[draw=black, fill=blue2, bar shift=-.25cm] table[x=features, y expr=\thisrow{top-2} - \thisrow{top-1}] {\SliceLinearBench};
+\addlegendentry{Top-2}
+\addplot[draw=black, fill=blue3, bar shift=-.25cm] table[x=features, y expr=\thisrow{top-3} - \thisrow{top-2}] {\SliceLinearBench};
+\addlegendentry{Top-3}
+\addlegendimage{empty legend}
+\addlegendentry{\linear}
+\end{axis}
+\begin{axis}[
+  ybar stacked,
+  width=0.5\linewidth,
+  height=4cm,
+  ylabel={Recall},
+  axis y line*=right,
+  ymin=0.2,
+  ymax=1,
+  ytick={0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0},
+  yticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\,\%},
+  ytick style={draw=none},
+  ymajorgrids = false,
+  xmin=0, xmax=1,
+  hide x axis,
+]
+\end{axis}
+\end{tikzpicture}
+\caption{Impact of type error slice on blame accuracy.}\label{fig:slice-utility}
+\end{subfigure}
+
+%\hfill\mbox{}
+
+\vspace{1\baselineskip}
+
+
+\begin{subfigure}[t]{\linewidth}
+\begin{tikzpicture}
+\begin{axis}[
+  % name=feature,
+  % scale only axis,
+  ybar stacked,
+  width=0.9\linewidth,
+  height=5cm,
+  %title={Impact of Contextual Feature Classes},
+  ylabel={Accuracy},
+  bar width=0.5cm,
+  ymin=0.5,
+  ymax=1,
+  ytick={0.5, 0.6, 0.7, 0.8, 0.9, 1.0},
+  yticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\,\%},
+  ytick style={draw=none},
+  ymajorgrids = true,
+  symbolic x coords={op, op+size, op+context, op+type, op+context+size, op+type+size, op+context+type, op+context+type+size},
+  % enlarge x limits=0.5,
+  xtick=data,
+  xtick style={draw=none},
+  xticklabel style={align=center},
+  xticklabels={
+    \textsc{Local Syntax}\\(45),
+    \textsc{+Size}\\(46), \textsc{+Context}\\(225), \textsc{+Type}\\(100),
+    +C+S\\(226), +T+S\\(101), +C+T\\(281),
+    +C+T+S\\(282)
+    % + Size, + Context, + Type,
+    % + Context + Size, + Type + Size, + Context + Type,
+    % + Context + Type + Size
+  },
+  %x tick label style={rotate=45, anchor=north east},
+  % reverse legend,
+  % transpose legend,
+  % legend style={
+  %   anchor = south east,
+  %   at = {(1,1)},
+  %   %legend pos = outer north east,
+  %   legend columns=4},
+]
+
+% ES: NOTE: ORDER OF PLOTS/LEGEND ENTRIES MATTERS
+
+\addplot+[stack plots=false, draw=black, fill=none, thick, bar shift=.25cm] table[x=features, y=recall] {\FeatureHiddenBench};
+%\addlegendentry{Recall}
+\addplot[draw=black, fill=green1, bar shift=.25cm] table[x=features, y=top-1] {\FeatureHiddenBench};
+% \addlegendentry{Top-1}
+\addplot[draw=black, fill=green2, bar shift=.25cm] table[x=features, y expr=\thisrow{top-2} - \thisrow{top-1}] {\FeatureHiddenBench};
+% \addlegendentry{Top-2}
+\addplot[draw=black, fill=green3, bar shift=.25cm] table[x=features, y expr=\thisrow{top-3} - \thisrow{top-2}] {\FeatureHiddenBench};
+% \addlegendentry{Top-3}
+% \addlegendimage{empty legend}
+% \addlegendentry{\hiddenFH}
+
+\resetstackedplots
+
+\addplot+[stack plots=false, draw=black, fill=none, thick, bar shift=-.25cm] table[x=features, y=recall] {\FeatureLinearBench};
+\addplot[draw=black, fill=blue1, bar shift=-.25cm] table[x=features, y=top-1] {\FeatureLinearBench};
+% \addlegendentry{Top-1}
+\addplot[draw=black, fill=blue2, bar shift=-.25cm] table[x=features, y expr=\thisrow{top-2} - \thisrow{top-1}] {\FeatureLinearBench};
+% \addlegendentry{Top-2}
+\addplot[draw=black, fill=blue3, bar shift=-.25cm] table[x=features, y expr=\thisrow{top-3} - \thisrow{top-2}] {\FeatureLinearBench};
+% \addlegendentry{Top-3}
+% \addlegendimage{empty legend}
+% \addlegendentry{\linear}
+
+
+%\legend{Top-1, Top-2, Top-3}
+\end{axis}
+\begin{axis}[
+  ybar stacked,
+  width=0.9\linewidth,
+  height=5cm,
+  ylabel={Recall},
+  axis y line*=right,
+  ymin=0.5,
+  ymax=1,
+  ytick={0.5, 0.6, 0.7, 0.8, 0.9, 1.0},
+  yticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\,\%},
+  ytick style={draw=none},
+  ymajorgrids = false,
+  xmin=0, xmax=1,
+  hide x axis,
+]
+\end{axis}
+
+\end{tikzpicture}
+\caption{
+  %
+  Impact of contextual features on blame accuracy.
+  %
+  % Starting from a baseline of local syntactic features,
+  % we add each combination of
+  % expression size, contextual syntactic, and typing features.
+  %
+  The total number of features for each set is given in parentheses.
+}
+\label{fig:context-utility}
+\end{subfigure}
+
+\caption{
+  %
+  Results of our experiments on feature utility.
+%
+}
+\label{fig:slice-utility-results}
+\end{figure}

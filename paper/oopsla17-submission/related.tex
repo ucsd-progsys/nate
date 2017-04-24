@@ -1,5 +1,6 @@
-\section{Related Work}
+\mysection{Related Work}
 \label{sec:related-work}
+\label{sec:type-error-diagnosis}
 
 In this section we describe two relevant aspects of related work:
 %
@@ -8,66 +9,72 @@ programming languages approaches to diagnosing type errors, and
 software engineering approaches to fault localization.
 %
 % applying machine learning techniques to problems in programming languages.
-
-\subsection{Type Error Diagnosis}
-\label{sec:type-error-diagnosis}
-Languages with static type systems and type inference produce type
-errors that novices often perceive as difficult to
-interpret~\citep{Wand1986-nw}.
 %
-For example, approaches based on Hindley-Milner or other constraint
-systems typically have the issue that when the constraint $\alpha=\beta$
-is violated, the system cannot know whether the user should intend to
-fix $\alpha$ or $\beta$ and must thus report the discrepancy in a
-generic manner.
-%
-As a result, a number of approaches have been proposed to
-more precisely localize the type error,
-give clearer error messages, or
-fix the error automatically.
+% \mysubsection{Type Error Diagnosis}
+%% Languages with static type systems and type inference produce type
+%% errors that novices often perceive as difficult to
+%% interpret~\citep{Wand1986-nw}.
+%% %
+%% For example, approaches based on Hindley-Milner or other constraint
+%% systems typically have the issue that when the constraint $\alpha=\beta$
+%% is violated, the system cannot know whether the user should intend to
+%% fix $\alpha$ or $\beta$ and must thus report the discrepancy in a
+%% generic manner.
+%% %
+%% As a result, a number of approaches have been proposed to
+%% more precisely localize the type error,
+%% give clearer error messages, or
+%% fix the error automatically.
 %
 % The technique most related to our work is \ES{TODO}.  It has been shown
 % to be quite good at \ES{TODO}. However, we choose to focus on \ES{TODO},
 % and our approach contains \ES{TODO}, which is not present in previous
 % work.
 
-\paragraph{Localizing Type Errors}
-It is well-known that the original Damas-Milner algorithm $\mathcal{W}$
-produces poor error locations~\citep{Wand1986-nw}, often reported far
-from their source.
+\mypara{Localizing Type Errors}
+It is well-known that the original Damas-Milner
+algorithm $\mathcal{W}$ produces errors far
+from their source, that novices percieve as
+difficult to interpret~\citep{Wand1986-nw}.
 %
-The type checker collects typing constraints as it traverses the
-program, and it crucially assumes that if a constraint can be safely
-added to the set of assumptions (\ie no type error has been found yet),
-then the constraint can be \emph{assumed} to be correct.
+%% The type checker collects typing constraints as it traverses the
+%% program, and it crucially assumes that if a constraint can be safely
+%% added to the set of assumptions (\ie no type error has been found yet),
+%% then the constraint can be \emph{assumed} to be correct.
 %
-The type checker reports an error the moment it finds a constraint that
-contradicts one of the assumptions, blaming the new inconsistent
-constraint, and thus it is extremely sensitive to the order in which it
-traverses the source program (the infamous ``left-to-right''
+The type checker reports an error the moment
+it finds a constraint that contradicts one
+of the assumptions, blaming the new inconsistent
+constraint, and thus it is extremely sensitive
+to the order in which it traverses the source
+program (the infamous ``left-to-right''
 bias~\citep{McAdam1998-ub}).
 %
-Several alternative traversal have been proposed, \eg
-top-down rather than bottom-up~\citep{Lee1998-ys}, or a \emph{symmetric}
-traversal that checks sub-expressions independently and only reports an
+Several alternative traversal have been proposed,
+\eg top-down rather than bottom-up~\citep{Lee1998-ys},
+or a \emph{symmetric} traversal that checks
+sub-expressions independently and only reports an
 error when two inconsistent sets of constraints are
 merged~\citep{McAdam1998-ub,Yang1999-yr}.
-
-Type error \emph{slicing}~\citep{Haack2003-vc,Tip2001-qp,Rahli2010-ps}
-overcomes the traversal bias by extracting a complete and minimal subset
-of program expressions that contribute to the type error, \ie all of the
-expressions that are required for the error to manifest and no more.
 %
-Slicing techniques typically require rewriting the type checker with a
+%\mypara{Slicing}
+Type error \emph{slicing}~\citep{Haack2003-vc,Tip2001-qp,Rahli2010-ps}
+overcomes the constraint-order bias by extracting a
+complete and minimal subset
+of terms that contribute to the error, \ie all of the
+terms that are required for it to manifest and no more.
+%
+Slicing typically requires rewriting the type checker with a
 specialized constraint language and solver, though
-\citet{Schilling2011-yf} shows how to turn any type checker into an
-error slicer by treating it as a black-box.
-
+\citet{Schilling2011-yf} shows how to turn any type checker into a
+slicer by treating it as a black-box.
+%
 While slicing techniques guarantee enough information to diagnose the
 error, they can fall into the trap of providing \emph{too much}
-information, producing a slice that is not significantly smaller than
-the input program.
-%
+information, producing a slice that is not much smaller than
+the input. %original. % input program.
+
+\mypara{Finding Likely Errors}
 Thus, recent work has focused on finding the \emph{most likely} source
 of a type error.
 %
@@ -77,19 +84,19 @@ relatively few satisfiable paths, based on the intuition that the
 program should be mostly correct.
 %
 \citet{Pavlinovic2014-mr} translate the localization problem into a
-MaxSMT problem, asking an off-the-shelf SMT solver to find the smallest
+MaxSMT problem, asking an off-the-shelf solver to find the smallest
 set of constraints that can be removed such that the resulting system is
 satisfiable.
 %
 \citet{Loncaric2016-uk} improve the scalability of
 \citeauthor{Pavlinovic2014-mr} by reusing the existing type checker as
-an optimized theory solver in the Nelson-Oppen~\citeyear{Nelson1979-td}
+a theory solver in the Nelson-Oppen~\citeyear{Nelson1979-td}
 style, and thus require only a MaxSAT solver.
 %
 All three of these techniques support \emph{weighted} constraints to
-incorporate knowledge about the relative frequency of different errors,
+incorporate knowledge about the frequency of different errors,
 but only \citeauthor{Pavlinovic2014-mr} use the weights, setting them to
-the size of the sub-expression that induced the constraint.
+the size of the term that induced the constraint.
 %
 In contrast, our classifiers learn a set of heuristics for predicting
 the source of type errors by observing a set of ill-typed programs and
@@ -99,25 +106,34 @@ constraint solver.
 It may be profitable to combine both approaches, \ie learn a set of good
 weights for one of the above techniques from our training data.
 
-\paragraph{Explaining Type Errors}
+\mypara{Explaining Type Errors}
 In this paper we have focused solely on the task of \emph{localizing} a
 type error, but a good error report should also \emph{explain} the
 error.
 %
 \citet{Wand1986-nw}, \citet{Beaven1993-hb}, and \citet{Duggan1996-by}
 attempt to explain type errors by collecting the chain of inferences
-made by the type checker --- essentially the typing derivation --- and
-presenting them to the user.
+made by the type checker %--- essentially the typing derivation ---
+and presenting them to the user.
 %
-Such explanations can be lengthy, as an attempt to compress the
-explanation \citet{Yang2000-kz} presents a visualization of the
-inference process.
+% Such explanations can be lengthy, as an attempt to compress the
+% explanation \citet{Yang2000-kz} presents a visualization of the
+% inference process.
 %
-\citet{Gast2004-zd} produces a type error slice enhanced by arrows
-showing the flow of data from sources with incompatible types to a
+\citet{Gast2004-zd} produces a slice enhanced by arrows
+showing the dataflow from sources with different types to a
 shared sink, borrowing the insight of dataflows-as-explanations from
 \textsc{MrSpidey}~\citep{Flanagan1996-bu}.
-
+%
+\citet{Hage2006-hc} catalog a set of heuristics for
+improving the quality of error messages by examining errors made by
+novices.
+%
+\citet{Heeren2003-db}, \citet{Christiansen2014-qc}, and
+\citet{Serrano2016-oo} extend the ability to customize error messages to
+library authors, enabling \emph{domain-specific} errors.
+%
+%\mypara{Interactive Explanations}
 Such \emph{static} explanations of type errors run the risk of
 overwhelming the user with too much information, it may be preferable to
 treat type error diagnosis as an \emph{interactive} debugging session.
@@ -129,42 +145,45 @@ interactively query the type checker for the types of sub-expressions.
 \citet{Chitil2001-td} proposes \emph{algorithmic debugging} of type
 errors, presenting the user with a sequence of yes-or-no questions about
 the inferred types of sub-expressions that guide the user to a specific
-explanation for the error.
+explanation.
 %
 \citet{Seidel2016-ul} explain type errors by searching for inputs that
 expose the \emph{run-time} error that the type system prevented, and
 present users with an interactive visualization of the erroneous
 computation.
 
-The best explanation of a type error, however, might be given by an
-expert, \eg the compiler or library author.
+%% RJ-CUT-ME \mypara{Programmatic Explanations}
+%% RJ-CUT-ME %
+%% RJ-CUT-ME The best explanation of a type error, however, might be given by an
+%% RJ-CUT-ME expert, \eg the compiler or library author.
+%% RJ-CUT-ME %
+%% RJ-CUT-ME \citet{Hage2006-hc} catalog a set of heuristics for
+%% RJ-CUT-ME improving the quality of error messages by examining errors made by
+%% RJ-CUT-ME novices.
+%% RJ-CUT-ME %
+%% RJ-CUT-ME \citet{Heeren2003-db}, \citet{Christiansen2014-qc}, and
+%% RJ-CUT-ME \citet{Serrano2016-oo} extend the ability to customize error messages to
+%% RJ-CUT-ME library authors, enabling \emph{domain-specific} errors.
 %
-\citet{Hage2006-hc} catalog a set of heuristics for
-improving the quality of error messages by examining the errors made by
-novices.
-%
-\citet{Heeren2003-db}, \citet{Christiansen2014-qc}, and
-\citet{Serrano2016-oo} extend the ability to customize error messages to
-library authors, enabling \emph{domain-specific} type errors.
-%
-The 8.0 release of the
-Glasgow Haskell Compiler\footnote{\url{https://ghc.haskell.org/trac/ghc/wiki/Proposal/CustomTypeErrors}}
-incorporates some of these ideas, allowing library authors to supply
-custom errors when type-class resolution or type-family reduction fail,
-but not for ordinary unification failures.
+% The 8.0 release of the
+% Glasgow Haskell Compiler\footnote{\url{https://ghc.haskell.org/trac/ghc/wiki/Proposal/CustomTypeErrors}}
+% incorporates these ideas, allowing library authors to supply
+% custom errors when type-class resolution or type-family reduction fail,
+% but not for ordinary unification failures.
 
 
-\paragraph{Fixing Type Errors}
-Some techniques go beyond explaining a type error or locating its
-source, and actually attempt to \emph{fix} the error automatically.
+\mypara{Fixing Type Errors}
+Some techniques go beyond explaining or locating a type error,
+and actually attempt to \emph{fix} the error automatically.
 %
-\citet{Lerner2007-dt} searches for fixes to type errors by enumerating a
+\citet{Lerner2007-dt} searches for fixes by enumerating a
 set of local mutations to the program and querying the type checker to
 see if the error remains.
 %
 \citet{Chen2014-gd} use a notion of \emph{variation-based} typing to
-track choices made by the type checker and enumerate potential type (and
-expression) changes that would fix the error.
+track choices made by the type checker and enumerate potential
+% type (and expression)
+changes that would fix the error.
 %
 They also extend the algorithmic debugging technique of
 \citeauthor{Chitil2001-td} by allowing the user to enter the expected
@@ -176,10 +195,11 @@ may be possible to do so by training a classifier to predict the
 syntactic class of each expression in the \emph{fixed} program --- we
 believe this is an exciting direction for future work.
 
-\subsection{Fault Localization}
+\mypara{Fault Localization}
+%
 Given a defect, \emph{fault localization} is the task of identifying
 ``suspicious'' program elements (\eg lines, statements) that are likely
-implicated in the defect (\ie that should be changed to fix the defect)
+implicated in the defect %(\ie that should be changed to fix the defect)
 %
 --- thus, type error localization can be viewed as an instance of fault
 localization.
@@ -214,8 +234,8 @@ attacks, which follow the same control flow path on normal and buggy
 runs (differing only in the user-supplied data).
 %
 Our feature set is comprised entirely of syntactic and typing features,
-a natural choice for modeling type errors, but it would likely not
-generalize to other types of defects.
+a natural choice for type errors, but it would likely not
+generalize to other defects.
 
 
 % \subsection{Machine Learning for Programming Languages}

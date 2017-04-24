@@ -1,0 +1,43 @@
+
+\begin{abstract}
+Localizing type errors is challenging in
+languages with global type inference, as
+the type checker must make assumptions
+about what the programmer intended to do.
+%
+We introduce \toolname, a \emph{data-driven}
+approach to error localization based on
+supervised learning.
+%
+\toolname analyzes a large corpus
+of training data --- pairs of ill-typed
+programs and their ``fixed'' versions ---
+to automatically \emph{learn a model}
+of where the error is most likely
+to be found.
+%
+Given a new ill-typed program,
+\toolname executes the model to
+generate a list of potential blame
+assignments ranked by likelihood.
+%
+We evaluate \toolname by comparing its
+precision to the state of the art
+on a set of over 4,500 ill-typed \ocaml
+programs drawn from introductory
+programming classes.
+%
+We show that when the top-ranked blame assignment
+is considered, \toolname's data-driven
+model is able to correctly predict
+the exact sub-expression that should
+be changed \HiddenFhTopOne\% of the time, %which is
+\ToolnameWinOcaml points higher than \ocaml and
+\ToolnameWinSherrloc points higher than the state-of-the-art
+\sherrloc tool.
+%
+Furthermore, \toolname's accuracy surpasses
+\HiddenFhTopTwo\% when we consider the top \emph{two}
+locations and reaches \HiddenFhTopThree\% if we consider
+the top \emph{three}.
+\end{abstract}

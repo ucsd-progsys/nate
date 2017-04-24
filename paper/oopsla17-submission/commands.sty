@@ -6,6 +6,12 @@
 \definecolor{dvcolor}{rgb}{1,0.5,0.5}
 \def\mynote#1{{\sf $\clubsuit$ #1$\clubsuit$}}
 
+\def\mysection#1{\section{\textbf{#1}}}
+\def\mysubsection#1{\subsection{\textbf{#1}}}
+\def\mysubsubsection#1{\subsubsection{\textbf{#1}}}
+
+\def\mypara#1{\paragraph{\textbf{#1}}}
+% \def\mypara#1{\medskip\noindent{\emph{\textbf{#1.}}}}
 
 \def\RJ#1{\textcolor{red}{\sf RJ:$\clubsuit$ #1$\clubsuit$}}
 \def\ES#1{\textcolor{blue}{\sf ES:$\clubsuit$ #1$\clubsuit$}}
@@ -77,7 +83,7 @@
 % \newcommand\tref[4]{\ensuremath{\{ \tbind{#1}{#2^{#3}} \mid #4 \}}}
 % \newcommand\tttref[4]{\ensuremath{{\{ \ttbind{#1}{#2^{#3}} \mid \mathtt{#4} \}}}}
 \newcommand\tfun[2]{\ensuremath{#1 \to #2}\xspace}
-\newcommand\tlist[1]{\ensuremath{\mathtt{list}\ #1}\xspace}
+\newcommand\tlist[1]{\ensuremath{[#1]}\xspace}
 \newcommand\tprod[2]{\ensuremath{#1 \times #2}\xspace}
 % \newcommand\tfun[3]{\ensuremath{\tbind{#1}{#2} \rightarrow #3}}
 % \newcommand\tabs[2]{\ensuremath{\forall #1 . #2}}
@@ -105,7 +111,8 @@
 
 \newcommand\nanomaly{\textsc{NanoMaLy}\xspace}
 
-\newcommand\toolname{\nanomaly}
+%\newcommand\toolname{\nanomaly}
+\newcommand\toolname{\textsc{Nate}\xspace}
 
 \newcommand\mc[1]{\ensuremath{\mathsf{#1}}}
 
@@ -120,3 +127,44 @@
 
 \newcommand\SPRING{\textsc{SP14}\xspace}
 \newcommand\FALL{\textsc{FA15}\xspace}
+
+\newcommand\HiddenFhTopOne{73}
+\newcommand\HiddenFhTopTwo{86}
+\newcommand\HiddenFhTopThree{91}
+\newcommand\ToolnameWinOcaml{28\xspace}
+\newcommand\ToolnameWinSherrloc{17\xspace}
+\newcommand\OcamlTopOne{45}
+\newcommand\MycroftTopOne{40}
+\newcommand\SherrlocTopOne{56}
+\newcommand\SherrlocTopThree{85}
+\newcommand\LinearTopOne{60}
+\newcommand\LinearTopThree{87}
+\newcommand\LinearWinSherrloc{4\xspace}
+\newcommand\SlicingWinOcaml{10\xspace}
+\newcommand\BaselineTopOne{30}
+\newcommand\BaselineTopTwo{47}
+\newcommand\BaselineTopThree{59}
+
+
+\newcommand\labelsym{\mathsf{label}}
+\newcommand\featuresym{\mathsf{features}}
+\newcommand\extractsym{\mathsf{extract}}
+\newcommand\trainsym{\mathsf{train}}
+\newcommand\evalsym{\mathsf{eval}}
+\newcommand\blamesym{\mathsf{blame}}
+\newcommand\Model{\mathsf{Model}}
+\newcommand\V{\mathcal{V}}
+\newcommand\R{\mathcal{R}}
+%\newcommand\Runit{\R_0^1}
+\newcommand\Runit{\mathcal{C}}
+\newcommand\B{\mathcal{B}}
+\newcommand\List[1]{[#1]}
+
+
+\makeatletter
+\newcommand\resetstackedplots{
+\makeatletter
+\pgfplots@stacked@isfirstplottrue
+\makeatother
+}
+\makeatother
