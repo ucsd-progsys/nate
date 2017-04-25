@@ -1,0 +1,163 @@
+\documentclass{article}
+
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily,
+  keywordstyle=\ttfamily,
+  escapeinside={(*@}{@*)},
+}
+
+\usepackage{xcolor}
+\newcommand\hlBlame[1]{\colorbox{red!25}{#1}}
+
+\begin{document}
+
+
+\section{Debugging and Functional Programming}
+
+You will be shown OCaml programs that \emph{do not type-check}, the code
+implicated by the type checker will be \hlBlame{highlighted}. You will
+also be given English comments explaining what the program \emph{should}
+do, as well as assertions that \emph{should} type check \emph{and} succeed.
+
+
+\subsection{Concatenating Strings}
+
+\subsubsection{Control}
+\begin{lstlisting}
+  (* "sepConcat sep [s1;s2;s3]" should insert "sep"
+     between "s1", "s2", and "s3", and concatentate
+     the result. *)
+
+  let rec sepConcat sep sl =
+    match sl with
+    | [] -> ""
+    | h::t ->
+        let f a x = a ^ (sep ^ x) in
+        let base = [] in
+        (*@\hlBlame{List.fold\_left f base sl}@*)
+
+  assert( sepConcat "," ["foo"; "bar"; "baz"] = "foo,bar,baz" )
+\end{lstlisting}
+
+\begin{enumerate}
+\item Why is \verb!sepConcat! not well-typed?
+\item Fix the \verb!sepConcat! program.
+\end{enumerate}
+
+\subsubsection{Treatment}
+\begin{lstlisting}
+  (* "sepConcat sep [s1;s2;s3]" should insert "sep"
+     between "s1", "s2", and "s3", and concatentate
+     the result. *)
+
+  let rec sepConcat sep sl =
+    match sl with
+    | [] -> ""
+    | h::t ->
+        let f a x = a ^ (sep ^ x) in
+        let base = (*@\hlBlame{[]}@*) in
+        List.fold_left f base sl
+
+  assert( sepConcat "," ["foo"; "bar"; "baz"] = "foo,bar,baz" )
+\end{lstlisting}
+
+\begin{enumerate}
+\item Why is \verb!sepConcat! not well-typed?
+\item Fix the \verb!sepConcat! program.
+\end{enumerate}
+
+\subsection{Padding Lists}
+
+\subsubsection{Control}
+\begin{lstlisting}
+  (* "padZero xs ys" returns a pair "(xs', ys')"
+     where the shorter of "xs" and "ys" has been
+     left-padded by zeros until both lists have
+     equal length. *)
+
+  let rec clone x n =
+    if n <= 0 then
+      []
+    else
+      x :: clone x (n - 1)
+
+  let padZero l1 l2 =
+    let n = List.length l1 - List.length l2 in
+    if n < 0 then
+      (clone 0 ((-1) * n) @ l2, l2)
+    else
+      (l1, (*@\hlBlame{clone 0 n}@*) :: l2)
+
+  assert( padZero [1;2] [1] = ([1;2], [0;1]) )
+\end{lstlisting}
+
+\subsubsection{Treatment}
+\begin{lstlisting}
+  (* "padZero xs ys" returns a pair "(xs', ys')"
+     where the shorter of "xs" and "ys" has been
+     left-padded by zeros until both lists have
+     equal length. *)
+
+  let rec clone x n =
+    if n <= 0 then
+      []
+    else
+      x :: clone x (n - 1)
+
+  let padZero l1 l2 =
+    let n = List.length l1 - List.length l2 in
+    if n < 0 then
+      (clone 0 ((-1) * n) @ l2, l2)
+    else
+      (l1, clone 0 n (*@\hlBlame{::}@*) l2)
+
+  assert( padZero [1;2] [1] = ([1;2], [0;1]) )
+\end{lstlisting}
+
+\begin{enumerate}
+\item Why is \verb!padZero! not well-typed?
+\item Fix the \verb!padZero! program.
+\end{enumerate}
+
+\subsection{Big-Integer Arithmetic}
+
+\subsubsection{Control}
+\begin{lstlisting}
+  (* "mulByDigit d [n1;n2;n3]" should multiply the
+     "big integer" "[n1;n2;n3]"
+     by the single digit "d". *)
+
+  let rec mulByDigit d n =
+    match List.rev n with
+    | []   -> []
+    | h::t -> [(*@\hlBlame{mulByDigit d t}@*); (h * d) mod 10]
+
+  assert( mulByDigit 4 [2;5] = [1;0;0] )
+\end{lstlisting}
+
+\begin{enumerate}
+\item Why is \verb!mulByDigit! not well-typed?
+\item Fix the \verb!mulByDigit! program.
+\end{enumerate}
+
+\subsubsection{Treatment}
+\begin{lstlisting}
+  (* "mulByDigit d [n1;n2;n3]" should multiply the
+     "big integer" "[n1;n2;n3]"
+     by the single digit "d". *)
+
+  let rec mulByDigit d n =
+    match List.rev n with
+    | []   -> []
+    | h::t -> (*@\hlBlame{[mulByDigit d t; (h * d) mod 10]}@*)
+
+  assert( mulByDigit 4 [2;5] = [1;0;0] )
+\end{lstlisting}
+
+\begin{enumerate}
+\item Why is \verb!mulByDigit! not well-typed?
+\item Fix the \verb!mulByDigit! program.
+\end{enumerate}
+
+\end{document}

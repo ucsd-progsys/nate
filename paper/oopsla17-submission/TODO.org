@@ -182,3 +182,68 @@
      - [ ] explaining predictions
      - [X] point out that we are also doing cross-validation across
            joint dataset, model appears relatively stable
+* Samples for user-study
+** padZero (data/sp14/0442.ml)
+#+BEGIN_SRC ocaml
+let rec clone x n = if n <= 0 then [] else x :: (clone x (n - 1))
+
+let padZero l1 l2 =
+  let l = (List.length l1) - (List.length l2) in
+  if l < 0
+  then (((clone 0 ((-1) * l)) @ l2), l2)
+  else (l1, ((clone 0 l) :: l2))
+#+END_SRC
+
+NATE: (8,12)-(8,31)
+SHER: (8,13)-(8,24)
+
+** sepConcat (data/sp14/0451.ml)
+#+BEGIN_SRC ocaml
+let rec sepConcat sep sl =
+  match sl with
+  | [] -> ""
+  | h::t ->
+      let f a x = a ^ (sep ^ x) in
+      let base = [] in let l = sl in List.fold_left f base l
+#+END_SRC
+
+NATE: (7,17)-(7,19)
+SHER: (7,37)-(7,60)
+
+
+** mulByDigit (data/sp14/0055.ml)
+#+BEGIN_SRC ocaml
+let rec mulByDigit i l =
+  match List.rev l with | [] -> [] | h::t -> [mulByDigit i t; (h * i) mod 10];;
+#+END_SRC
+
+NATE: (3,45)-(3,77)
+SHER: (3,46)-(3,60)
+
+** sqsum (data/sp14/2428.ml)
+#+BEGIN_SRC ocaml
+let sqsum xs =
+  let f a x = (a * a) + x in let base = [] in List.fold_left f base xs
+#+END_SRC
+
+NATE: (3,40)-(3,42)
+SHER: (3,63)-(3,67)
+
+
+** palindrome (data/sp14/1888.ml)
+#+BEGIN_SRC ocaml
+let explode s =
+  let rec go i =
+    if i >= (String.length s) then [] else (s.[i]) :: (go (i + 1)) in
+  go 0;;
+
+let rec listReverse l =
+  match l with | [] -> [] | a::b -> (listReverse b) @ [a];;
+
+let palindrome w =
+  let wList = explode w in
+  let wReverse = listReverse (explode w) in if true then wList;;
+#+END_SRC
+
+NATE: (12,44)-(12,62)
+SHER: (12,57)-(12,62)
