@@ -69,7 +69,7 @@ For these programs we will additionally \hlFix{highlight} the
 correct blame location.
 
 \mypara{Constructing a List of Duplicates}
-% data/sp14/0219.ml
+% data/sp14/0969.ml
 Our first program is a simple recursive function |clone| that takes an
 item |x| and a count |n|, and produces a list containing |n| copies of
 |x|.
@@ -129,7 +129,7 @@ The model seems to have learned that programmers typically call the
 correct function.
 
 \mypara{Currying Considered Harmful?}
-% data/sp14/1204.ml
+% data/sp14/1082.ml
 Our next example is another ill-fated attempt at |clone|.
 %
 \begin{ecode}
@@ -174,7 +174,7 @@ Thus it appears to the model that the outer |fun| is simply part of a
 function definition, a common and innocuous phenomenon.
 
 % \mypara{Composing Functions}
-% % data/sp14/3041.ml
+% % data/sp14/3203.ml
 % Next, let us consider the |pipe| function that composes a list of
 % functions, \ie given a list of functions |[f;g;h]|, |pipe| produces the
 % function |fun x -> h (g (f x))|.
@@ -203,7 +203,7 @@ correct, and all of the other tools' top three predictions are
 incorrect.
 
 \mypara{Extracting the Digits of an Integer}
-% data/sp14/2176.ml
+% data/sp14/1737.ml
 Consider first a simple recursive function |digitsOfInt| that extracts
 the digits of an |int|.
 %
@@ -245,7 +245,7 @@ should change as well, but it is less confident of this prediction and
 ranks it below the correct blame assignment.
 
 \mypara{Padding a list}
-% data/sp14/0442.ml
+% data/sp14/1394.ml
 Our next program, |padZero|, is given two |int list|s as input, and must
 left-pad the shorter one with enough zeros that the two output lists
 have equal length.
