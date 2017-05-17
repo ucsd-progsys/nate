@@ -89,7 +89,7 @@ item |x| and a count |n|, and produces a list containing |n| copies of
       if n <= 0 then
         acc
       else
-        (*@\hlFix{clone} \hlSherrloc{([\hlTree{x}] @\ acc)}@*) (n - 1) in
+        (*@\hlFix{clone} \hlSherrloc{\hlTree{([x] @\ acc)}}@*) (n - 1) in
     loop [] n
 \end{ecode}
 % \ES{TODO: our 2nd prediction matches \sherrloc and \ocaml (occurs check), correct fix is to replace recursive call to clone with loop}
@@ -101,6 +101,7 @@ Unfortunately, she has called the top-level function |clone| rather than
 |loop| in the |else| branch, this induces a cyclic constraint |'a = 'a list|
 for the |x| argument to |clone|.
 
+\ES{FIX: our first/second predictions are now swapped}
 Our classifier incorrectly predicts that the use of |x| in the recursive
 call is the most likely source of the error.
 %
