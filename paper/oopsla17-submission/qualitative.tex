@@ -69,7 +69,7 @@ For these programs we will additionally \hlFix{highlight} the
 correct blame location.
 
 \mypara{Constructing a List of Duplicates}
-% data/sp14/0969.ml
+% data/sp14/0967.ml
 Our first program is a simple recursive function |clone| that takes an
 item |x| and a count |n|, and produces a list containing |n| copies of
 |x|.
@@ -130,7 +130,7 @@ The model seems to have learned that programmers typically call the
 correct function.
 
 \mypara{Currying Considered Harmful?}
-% data/sp14/1082.ml
+% data/sp14/1080.ml
 Our next example is another ill-fated attempt at |clone|.
 %
 \begin{ecode}
@@ -204,7 +204,7 @@ correct, and all of the other tools' top three predictions are
 incorrect.
 
 \mypara{Extracting the Digits of an Integer}
-% data/sp14/1737.ml
+% data/sp14/1732.ml
 Consider first a simple recursive function |digitsOfInt| that extracts
 the digits of an |int|.
 %
@@ -246,7 +246,7 @@ should change as well, but it is less confident of this prediction and
 ranks it below the correct blame assignment.
 
 \mypara{Padding a list}
-% data/sp14/1394.ml
+% data/sp14/1389.ml
 Our next program, |padZero|, is given two |int list|s as input, and must
 left-pad the shorter one with enough zeros that the two output lists
 have equal length.
