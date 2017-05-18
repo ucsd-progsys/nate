@@ -1,2 +1,2 @@
 model,features,top-1,top-2,top-3,recall
-linear,op+slice-no-slice,0.256,0.451,0.560,0.368
+linear,op+slice-no-slice,0.257,0.454,0.567,0.374
