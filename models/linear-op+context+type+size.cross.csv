@@ -1,2 +1,2 @@
 model,features,top-1,top-2,top-3,recall
-linear,op+context+type+size,0.620,0.797,0.870,0.646
+linear,op+context+type+size,0.619,0.795,0.868,0.645
