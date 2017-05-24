@@ -1,2 +1,2 @@
 model,features,top-1,top-2,top-3,recall
-hidden-500,op,0.553,0.711,0.814,0.571
+hidden-500,op,0.548,0.707,0.816,0.575
