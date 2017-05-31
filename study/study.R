@@ -46,10 +46,6 @@ significance <- function(x,y) {
   print(x)
   print(y)
   wilcox.test(x, y, alternative="g")
-  R1=sum(rank(c(x,y))[seq_along(x)])
-  m=length(x)
-  n=length(y)
-  A12 = (R1/m - (m+1)/2)/n
 }
 
 print("sepconcat reason")
