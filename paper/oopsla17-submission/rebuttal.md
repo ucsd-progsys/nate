@@ -77,11 +77,8 @@ type-correct program as the fix, or perhaps using a (set of)
 known-correct solution(s) as the fix, both of these choices could lead
 to different results.
 
-We have made the full corpus available at
-
-https://github.com/ucsd-progsys/yunounderstand-data
-
-and will advertise this in the text. The corpus contains the full series
-of student interactions with OCaml and would admit Reviewer B's proposed
-analysis of how different the initial and final solutions are, though we
-have not attempted it.
+We have made the full corpus available at http://tinyurl.com/y9pzvcp7
+(WARNING: will reveal author identity) and will advertise this in the
+text. The corpus contains the full series of student interactions with
+OCaml and would admit Reviewer B's proposed analysis of how different
+the initial and final solutions are, though we have not attempted it.
