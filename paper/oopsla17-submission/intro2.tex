@@ -92,8 +92,8 @@ blame assignments ranked by likelihood.
 We evaluate \toolname by comparing its
 precision against the state-of-the-art
 on a set of over 4,500 ill-typed \ocaml
-programs drawn from introductory
-programming classes.
+programs drawn from two instances of an
+introductory programming course.
 %
 We show that, when restricted to a
 \emph{single} prediction, \toolname's data-driven
@@ -153,14 +153,13 @@ To exploit this observation we instrumented
 the \ocaml compiler to collect fine-grained
 traces of student interactions over two instances
 of an undergraduate Programming Languages
-course.\footnote{
-% \begin{anonsuppress}
-% UC San Diego (IRB \#140608).
-% \end{anonsuppress}
-% \begin{noanonsuppress}
+course
+\begin{anonsuppress}
+at UC San Diego (IRB \#140608).
+\end{anonsuppress}
+\begin{noanonsuppress}
 at AUTHOR's INSTITUTION (IRB HIDDEN).
-% \end{noanonsuppress}
-}
+\end{noanonsuppress}
 %
 We then post-process the resulting time-series
 of programs submitted to the \ocaml compiler into
@@ -188,7 +187,7 @@ programs.
 
 Our \emph{second contribution} (\autoref{sec:learning})
 solves this problem with a simple, yet expressive, representation called
-a \emph{Bag-of-Abstracted-Terms (BOAT)} wherein
+a \emph{Bag-of-Abstracted-Terms} (BOAT) wherein
 each program is represented by the \emph{bag}
 or multiset of (sub-)~terms that appears inside
 it; and further, each (sub-)~term is \emph{abstracted}
@@ -246,9 +245,18 @@ using different classes of features like the above, and
 with three different classification algorithms: logistic
 regression, decision trees, and neural networks.
 %
-Our evaluation lets us identify the best features and
-classifier and empirically characterize the importance
-of different features for error localization.
+We find that \toolname's models \emph{generalize} well
+between instances of the same undergraduate course, outperforming
+the state of the art by at least \ToolnameWinSherrloc
+percentage points at predicting the source of a type error.
+%
+We also investigate which features and classifiers
+are most effective at localizing type errors, and
+empirically characterize the importance of different
+feature sets.
+% Our evaluation lets us identify the best features and
+% classifier and empirically characterize the importance
+% of different features for error localization.
 %
 In particular, we find that while machine learning
 over syntactic features of each term in isolation
@@ -256,10 +264,10 @@ performs worse than existing
 purely constraint-based approaches (\eg \ocaml, \sherrloc),
 augmenting the data with a single feature corresponding to
 the \emph{type error slice} \citep{Tip2001-qp} brings our
-classifiers up to par with the state of the art,
+classifiers up to par with the state-of-the-art,
 and further augmenting the data with \emph{contextual}
 features allows our classifiers to outperform
-the state of the art by \ToolnameWinSherrloc percentage points.
+the state-of-the-art by \ToolnameWinSherrloc percentage points.
 % In particular, we find that while machine learning
 % on its own performs slightly worse than existing
 % purely constraint based approaches (\eg \ocaml, \sherrloc),

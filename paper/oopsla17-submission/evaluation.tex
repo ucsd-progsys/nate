@@ -57,14 +57,17 @@ Our main result is that for type error
 localization, data is indeed unreasonably
 effective \citep{halevy09}.
 %
+When trained on student errors from one
+instance of an undergraduate course and
+tested on another instance,
 \toolname's most sophisticated
 \emph{neural network}-based
 classifier's top-ranked
 prediction blames the correct
 sub-term \HiddenFhTopOne\% of the time
-which is a good \ToolnameWinSherrloc points
-higher than the state of
-the art \sherrloc's \SherrlocTopOne\%.
+--- a good \ToolnameWinSherrloc points
+higher than the state-of-the-art
+\sherrloc's \SherrlocTopOne\%.
 %
 However, even \toolname's simple
 \emph{logistic regression} based
@@ -89,7 +92,7 @@ better than \ocaml and on par with
 \sherrloc.
 %
 That is, once we focus our classifiers on
-slices, purely syntactic features
+slices, purely local syntactic features
 perform as well as the
 state-of-the-art.
 
@@ -101,7 +104,7 @@ typing features
 provide the biggest
 improvement in accuracy.
 %
-Furthermore, we find contextual syntax
+Furthermore, we find contextual syntactic
 features to be mostly (but not entirely)
 redundant with typing features,
 which supports the hypothesis that
@@ -121,7 +124,7 @@ hence, more likely causes.
 Finally, by investigating a few of the
 predictions made by the \emph{decision tree}-based
 models, we found that the models
-do indeed capture some simple and intuitive
+appear to capture some simple and intuitive
 rules for predicting well-typedness.
 %
 For example, if the left child of an application
@@ -152,9 +155,10 @@ UC San Diego (IRB \#140608).
 AUTHOR's INSTITUTION.
 \end{noanonsuppress}
 %
-We recorded each interaction with the \ocaml top-level system over the
-course of the first three assignments, capturing
-ill-typed programs and, crucially, their subsequent fixes.
+We recorded each interaction with the \ocaml top-level system while the
+students worked on 23 programs from the first three homework
+assignments, capturing ill-typed programs and, crucially, their
+subsequent fixes.
 %
 The first dataset comes from the Spring 2014 class (\SPRING), with a
 cohort of 46 students. The second comes from the Fall 2015 class
