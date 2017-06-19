@@ -44,7 +44,9 @@ fixes0 = c(a0$X2..sepConcat.fix..1.0.pts.,
 
 significance <- function(x,y) {
   print(x)
+  print(mean(x))
   print(y)
+  print(mean(y))
   wilcox.test(x, y, alternative="g")
 }
 

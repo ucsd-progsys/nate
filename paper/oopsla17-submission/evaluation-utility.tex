@@ -120,21 +120,21 @@ never changes.
 \mypara{Results}
 \autoref{fig:slice-utility} shows the results of our experiment.
 %
-As expected, the baseline performs the worst, with a mere 28\% \linear
+As expected, the baseline performs the worst, with a mere 25\% \linear
 Top-1 accuracy.
 %
 Adding \InSlice improves the results substantially with a 46\% \linear Top-1
 accuracy, demonstrating the importance of a minimal error slice.
 %
 However, filtering out expressions that are not part of the slice
-\emph{further} improves the results to 56\% \linear Top-1 accuracy.
+\emph{further} improves the results to 53\% \linear Top-1 accuracy.
 %
 Interestingly, while the \hiddenFH performs similarly poor with no error
 slice features, it recovers nearly all of its accuracy after being given
 the error slice features.
 %
-Top-1 accuracy jumps from 33\% to 55\% when we add \InSlice, and only
-improves by 3\% when we filter out expressions that are not part of the
+Top-1 accuracy jumps from 30\% to 54\% when we add \InSlice, and only
+improves by 1\% when we filter out expressions that are not part of the
 error slice.
 %
 Still, the accuracy gain comes at zero cost, and given the other benefits
@@ -217,11 +217,11 @@ competitive when given only local syntactic features, but the \hiddenFH
 quickly outperforms as we add features.
 
 \ExprSize is the weakest feature, improving \linear Top-1
-accuracy by less than 1\% and \hiddenFH by only 3\%.
+accuracy by only 1\% and \hiddenFH by only 4\%.
 %
 In contrast, the contextual syntactic features improve \linear Top-1
-accuracy by 4\% (\resp 14\%), and the typing features improve
-Top-1 accuracy by 6\% (\resp 16\%).
+accuracy by 6\% (\resp 16\%), and the typing features improve
+Top-1 accuracy by 7\% (\resp 19\%).
 %
 Furthermore, while \ExprSize does provide some benefit when it is the
 only additional feature, it does not appear to provide any real increase
@@ -234,7 +234,7 @@ about the size of the subtree.
 As one might expect, the typing features are more beneficial than the
 contextual syntactic features.
 %
-They improve Top-1 accuracy by an additional 2\%, and are much more
+They improve Top-1 accuracy by an additional 1\% (\resp 3\%), and are much more
 compact --- requiring only 55 typing features compared to 180
 contextual syntactic features.
 %
