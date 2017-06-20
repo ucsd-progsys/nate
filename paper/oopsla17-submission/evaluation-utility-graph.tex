@@ -24,7 +24,8 @@
   xtick=data,
   xtick style={draw=none},
   xticklabels={\textsc{Local Syntax}, +\InSlice, \textsc{Filter \InSlice}},
-  %x tick label style={rotate=45, anchor=north east},
+  x tick label style={font=\small},
+  y tick label style={font=\small},
   reverse legend,
   transpose legend,
   legend style={
@@ -109,7 +110,7 @@
   xtick style={draw=none},
   xticklabel style={align=center},
   xticklabels={
-    \textsc{Local Syntax}\\(45),
+    \textsc{Local Syn}\\(45),
     \textsc{+Size}\\(46), \textsc{+Context}\\(225), \textsc{+Type}\\(100),
     +C+S\\(226), +T+S\\(101), +C+T\\(281),
     +C+T+S\\(282)
@@ -117,6 +118,8 @@
     % + Context + Size, + Type + Size, + Context + Type,
     % + Context + Type + Size
   },
+  x tick label style={font=\small},
+  y tick label style={font=\small},
   %x tick label style={rotate=45, anchor=north east},
   % reverse legend,
   % transpose legend,
@@ -181,7 +184,7 @@
   % we add each combination of
   % expression size, contextual syntactic, and typing features.
   %
-  The total number of features for each set is given in parentheses.
+  The total number of features is given in parentheses.
 }
 \label{fig:context-utility}
 \end{subfigure}
