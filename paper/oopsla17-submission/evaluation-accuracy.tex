@@ -1,7 +1,7 @@
 \mysubsection{Blame Accuracy}
 \label{sec:quantitative}
 
-In this experiment we compare the accuracy of our predictions to the
+First, we compare the accuracy of our predictions to the
 state of the art in type error localization.
 
 \mypara{Baseline}
@@ -19,7 +19,7 @@ the order is arbitrary.
 %
 \sherrloc~\citep{Zhang2014-lv} localizes errors by searching the typing
 constraint graph for constraints that participate in many unsatisfiable
-paths and few satisfiable paths.
+paths and comparatively few satisfiable paths.
 %
 It can also enumerate multiple predictions, in descending order of
 likelihood.
@@ -33,17 +33,16 @@ of the doubt'' in two ways.
 % \sherrloc,
 First, when evaluating \mycroft and \sherrloc, we did not consider
 programs where they predicted locations that our oracle could not match
-with a program expression: 6--8\% of programs for \mycroft and 3--4\%
+with a program expression: around 6\% of programs for \mycroft and 4\%
 for \sherrloc.
 %
 Second, we similarly ignored programs where \mycroft or \sherrloc timed
 out (after one minute) or where they encountered an unsupported language
-feature: another 5\% for \mycroft and 12--13\% for \sherrloc.
+feature: another 5\% for \mycroft and 12\% for \sherrloc.
 %
 
-
 \mypara{Our Classifiers}
-We evaluate five classifiers, each trained on the full set of features.
+We evaluate five classifiers, each trained on the full feature set.
 % features: 44 local syntactic features, 176 contextual syntactic
 % features, 55 typing features, and a single expression size feature.
 % %
@@ -54,7 +53,8 @@ We evaluate five classifiers, each trained on the full set of features.
 % \autoref{sec:feature-utility} --- and thus the final feature count is
 % 276.
 %
-Our classifiers are:
+These include:
+%Our classifiers are:
 %
 \begin{description}
 \item[\linear] A logistic regression trained with a learning rate
@@ -64,7 +64,7 @@ Our classifiers are:
   \citep{Breiman1984-qy} and an impurity threshold of $10^{-7}$ (used to
   avoid overfitting via early stopping).
 \item[\forest] A random forest \citep{Breiman2001-wo} of 30
-  estimators, trained with an impurity threshold of $10^{-7}$.
+  estimators, with an impurity threshold of $10^{-7}$.
 \item[\hiddenT and \hiddenFH] Two multi-layer perceptron neural
   networks, both trained with $\eta = 0.001$, $\lambda = 0.001$, and a
   mini-batch size of 200.

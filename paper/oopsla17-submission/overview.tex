@@ -3,6 +3,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{figure}[t!]
+\small
 \begin{minipage}{0.45\linewidth}
 \begin{ecode}
   let rec sumList xs =
@@ -64,13 +65,12 @@ an inconsistent constraint.
 %
 In this case it blames the recursive call
 to |sumList|, complaining that |sumList|
-returns a |list| where an |int| was
+returns a |list| while an |int| was
 expected by the |+| operator.
 %
 This \emph{blame} assignment is inconsistent
 with the programmer's intention and may
-not be helpful debugging information to
-a novice.
+not help the novice understand the error.
 
 It may appear obvious to the reader that
 |[]| is the correct expression to blame,
@@ -124,7 +124,7 @@ as a practical tool, we have to solve four sub-problems.
         blame-labeled ill-typed programs?
 
   \item How can we \emph{represent} blame-labeled programs
-        as numeric vectors amenable to machine learning?
+        in a format amenable to machine learning?
 
   \item How can we find \emph{features} that yield predictive
         models?
@@ -227,8 +227,8 @@ classification.
 While the PL literature is full
 of different program
 representations, from raw
-sequences of tokens, to
-richly-structured
+token streams to
+rich % richly-structured
 abstract syntax trees (AST) or
 control-flow graphs, it is
 unclear how to embed the
@@ -268,9 +268,8 @@ by:
     with the $n$-dimensional
     vector $[f_1(t_i),\ldots, f_n(t_i)]$.
 %
-Our choice of working with ASTs is natural
-as that is the representation over which the
-type-checker operates.
+Working with ASTs is a natural choice
+as type-checkers operate on the same representation.
 
 
 
@@ -324,8 +323,8 @@ Next, we must find a \emph{good}
 set of features, that is, a set
 of features that yields predictive
 models. Our BOAT representation
-lets us iteratively solve this
-problem by just starting with
+enables an iterative solution
+by starting with
 a simple set of features, and
 then repeatedly adding more
 and more to capture important
@@ -478,8 +477,8 @@ it should be blamed, and present only
 the top-$k$ predictions to the
 user (in practice $k=3$).
 %
-This use of ranking to report the
-results of a program analysis is
+The use of ranking to report the
+results of an analysis is
 popular in other problem domains
 \citep[see, \eg][]{Kremenek2003-ck};
 we focus explicitly on the use of

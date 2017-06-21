@@ -101,22 +101,18 @@ Unfortunately, she has called the top-level function |clone| rather than
 |loop| in the |else| branch, this induces a cyclic constraint |'a = 'a list|
 for the |x| argument to |clone|.
 
-\ES{FIX: our first/second predictions are now swapped}
-Our classifier incorrectly predicts that the use of |x| in the recursive
-call is the most likely source of the error.
+Our top prediction coincides with \sherrloc (and \ocaml), blaming the
+the first argument to |clone| rather than the occurrence of |clone| itself.
 %
-Our second prediction coincides with \sherrloc (and \ocaml), blaming the
-the first argument to |clone|.
+% This is also incorrect, but may be more helpful than our first
+% prediction --- if our student decides that she has certainly provided
+% the correct \emph{argument}, an alternative explanation is that
+% perhaps she has called the wrong \emph{function}.
 %
-This is also incorrect, but may be more helpful than our first
-prediction --- if our student decides that she has certainly provided
-the correct \emph{argument}, an alternative explanation is that
-perhaps she has called the wrong \emph{function}.
-
-We confess that both of these predictions are difficult to explain by
+We confess that this prediction is difficult to explain by
 examining the induced paths.
 %
-In particular, both predictions only reference the expression's context,
+In particular, it only references the expression's context,
 which is surprising.
 %
 Much clearer is why we fail to blame the occurrence of |clone|, the two

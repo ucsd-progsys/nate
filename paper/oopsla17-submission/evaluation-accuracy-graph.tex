@@ -125,16 +125,17 @@
                      op+context+type+size/random-forest,
                      op+context+type+size/hidden-10,
                      op+context+type+size/hidden-500},
-  % enlarge x limits=0.5,
+  enlarge x limits=0.07,
   xtick=data,
   xtick style={draw=none},
   xticklabels={\random, \ocaml, \mycroft, \sherrloc,
                \linear, \dectree, \forest, \hiddenT, \hiddenFH},
   %x tick label style={rotate=45, anchor=north east},
   x tick label style={font=\small},
+  y tick label style={font=\small},
   reverse legend,
   transpose legend,
-  legend style={legend pos = north west, legend columns=4},
+  legend style={legend pos = north west, legend columns=4, font=\small},
 ]
 
 % ES: NOTE: ORDER OF PLOTS/LEGEND ENTRIES MATTERS
