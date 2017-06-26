@@ -1,2 +1,2 @@
 model,features,top-1,top-2,top-3,recall
-hidden-500,op+slice,0.536,0.695,0.801,0.563
+hidden-500,op+slice,0.530,0.690,0.795,0.558
