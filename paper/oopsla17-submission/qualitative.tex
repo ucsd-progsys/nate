@@ -135,7 +135,7 @@ Our next example is another ill-fated attempt at |clone|.
       if n < 0 then
         acc
       else
-        (*@\hlSherrloc{loop} \hlTree{(x, (n - 1), (x :: acc))}@*) in
+        (*@\hlTree{\hlSherrloc{loop} (x, (n - 1), (x :: acc))}@*) in
     loop (x, n, [])
 \end{ecode}
 %
@@ -148,8 +148,9 @@ curried and rewrite the calls, however our student decides instead to
 \emph{uncurry} |loop|, making it take a tuple of arguments.
 %
 \sherrloc blames the recursive call to |loop| while our classifier
-blames the tuple of arguments --- a reasonable suggestion, but not
-the answer the student expected.
+blames the entire application.
+% tuple of arguments --- a reasonable suggestion, but not
+% the answer the student expected.
 
 We fail to blame the definition of |loop| because it is defining a
 function.
