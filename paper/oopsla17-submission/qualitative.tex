@@ -115,14 +115,14 @@ examining the induced paths.
 In particular, it only references the expression's context,
 which is surprising.
 %
-Much clearer is why we fail to blame the occurrence of |clone|, the two
-enabled features on the path are:
+More clear is why we fail to blame the occurrence of |clone|, two of
+the enabled features on the path are:
 %
 (1) the parent is an application; and
 %
 (2) |clone| has a function type.
 %
-The model seems to have learned that programmers typically call the
+The model appears to have learned that programmers typically call the
 correct function.
 
 \mypara{Currying Considered Harmful?}
@@ -135,7 +135,7 @@ Our next example is another ill-fated attempt at |clone|.
       if n < 0 then
         acc
       else
-        (*@\hlTree{\hlSherrloc{loop} (x, (n - 1), (x :: acc))}@*) in
+        (*@\hlSherrloc{loop} \hlTree{(x, (n - 1), (x :: acc))}@*) in
     loop (x, n, [])
 \end{ecode}
 %
@@ -148,9 +148,10 @@ curried and rewrite the calls, however our student decides instead to
 \emph{uncurry} |loop|, making it take a tuple of arguments.
 %
 \sherrloc blames the recursive call to |loop| while our classifier
-blames the entire application.
-% tuple of arguments --- a reasonable suggestion, but not
-% the answer the student expected.
+blames the
+% third element of the tuple.
+tuple of arguments --- a reasonable suggestion, but not
+the answer the student expected.
 
 We fail to blame the definition of |loop| because it is defining a
 function.
@@ -236,7 +237,7 @@ An examination of the path induced by the list literal reveals that our
 %
 (2) the child expression is an application, whose return type mentions |int|; and
 %
-(3) the parent expression's type mentions |list|.
+(3) the parent expression is also an application.
 %
 Interestingly, \dectree incorrectly predicts that the child application
 should change as well, but it is less confident of this prediction and
@@ -310,7 +311,6 @@ Our \dectree correctly predicts that the recursive call blamed by
 \sherrloc should not be blamed; a similar examination suggests that the
 crucial observation is that the recursive call's parent is a data
 constructor application.
-%
 
 
 
