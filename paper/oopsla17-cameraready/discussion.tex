@@ -23,7 +23,7 @@ the |list| type cannot easily be translated to new, user-defined
 datatypes the model has never encountered.
 %
 We can mitigate this, to some extent, by adding generic
-syntactic features for data constructors and match expressions, but it
+syntactic features for data constructors and |match| expressions, but it
 remains to be seen how much these help. % \ES{TODO: UW data!}.
 %
 Furthermore, there is no obvious analog for transferring knowledge to
@@ -40,9 +40,9 @@ whose right child has an incompatible type.
 We might symmetrically model the |2| as an integer literal whose type is
 incompatible with its parent.
 %
-Anything we learn about |::| and |2| can now be transferred directly to
+Anything we learn about |::| and |2| can now be transferred to
 yet unseen types, but we run the risk generalizing \emph{too much} ---
-\ie perhaps programmers make different mistakes with |list|s than they
+\ie perhaps programmers make different errors with |list|s than they
 do with other types, and are thus likely to choose different fixes.
 %
 Balancing the trade-off between specificity and generalizability appears

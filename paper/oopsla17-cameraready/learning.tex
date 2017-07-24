@@ -201,7 +201,7 @@ to \emph{traversal bias} \citep{McAdam1998-ub}. For example, the
 |sumList tl| expression might alternatively be assigned the type
 $\tint$.
 %
-Our models will have to learn good localizations in spite this bias (see
+Our models will have to learn good localizations in spite of this bias (see
 \autoref{sec:evaluation}).
 
 \mypara{Type error slice}
@@ -462,9 +462,10 @@ Each node in the tree contains a single predicate of the form
 $v_j \leq t$ for some feature $v_j$ and threshold $t$, which determines
 whether a given input should proceed down the left or right subtree.
 %
-Each leaf is labeled with a prediction and the fraction of training
-samples that would reach it; the latter quantity can be interpreted as
-the decision tree's confidence in its prediction.
+Each leaf is labeled with a prediction and the fraction of
+correctly-labeled training samples that would reach it; the latter
+quantity can be interpreted as the decision tree's confidence in its
+prediction.
 %
 This leads to a prediction rule that can be quite expressive depending
 on the data used to build it.
@@ -549,7 +550,7 @@ also makes the learned model more difficult to interpret.
 \mypara{Neural Networks}
 %
 The last (and most complex) model we use is a type of neural network
-called a \emph{multi-layer perceptron} (see \citealt{Nielsen2015-pu} for
+called a \emph{multi-layer perceptron} (see \citet{Nielsen2015-pu} for
 an introduction to neural networks).
 %
 A multi-layer perceptron can be represented as a directed acyclic
