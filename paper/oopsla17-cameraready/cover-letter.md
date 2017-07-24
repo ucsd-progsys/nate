@@ -1,4 +1,5 @@
-
+We have made the following edits to our paper to address the committee's
+requests.
 
 Clarify focus on helping novice programmers
 -------------------------------------------
