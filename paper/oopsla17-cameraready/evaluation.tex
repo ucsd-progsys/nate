@@ -1,0 +1,253 @@
+\mysection{Evaluation}
+\label{sec:evaluation}
+\input{data}
+
+We have implemented our technique for localizing type errors for a
+purely functional subset of \ocaml with polymorphic types and functions.
+%
+We seek to answer three questions in our evaluation:
+%
+\begin{itemize}
+\item \textbf{Blame Accuracy}
+  %
+  How often does \toolname
+  blame a \emph{correct}
+  location for the type error?
+  (\autoref{sec:quantitative})
+  %
+  % We compare our technique with a variety of off-the-shelf classifiers
+  % and find that our top-ranked blame assignments have an accuracy of
+  % 72\%, compared to a state-of-the-art 56\%.
+  % For how many ill-typed programs can we accurately predict the source
+  % of the error?
+\item \textbf{Feature Utility}
+  %
+  Which program \emph{features are required}
+  to localize errors?
+   (\autoref{sec:feature-utility})
+  % How much do the features described in \autoref{sec:features}
+  % contribute to our predictions?
+\item \textbf{Interpretability}
+  %
+  %% Do the models learned by \toolname
+  %% correspond to our intuition about
+  %% the real causes of errors?
+  Are the models \emph{interpretable} using
+  our intuition about the causes of type errors?
+  (\autoref{sec:qualitative})
+\end{itemize}
+%
+%\mypara{Summary of Results}
+%
+In the sequel we present our experimental
+methodology \autoref{sec:methodology} and
+then drill into how we evaluated each of
+the questions above.
+%
+However, for the impatient reader, we begin
+with a quick summary of our main results:
+%
+%
+%\begin{itemize}
+%
+%\item \textbf
+
+\mypara{1. Data Beats Algorithms}
+Our main result is that for type error
+localization, data is indeed unreasonably
+effective \citep{halevy09}.
+%
+When trained on student errors from one
+instance of an undergraduate course and
+tested on another instance,
+\toolname's most sophisticated
+\emph{neural network}-based
+classifier's top-ranked
+prediction blames the correct
+sub-term \HiddenFhTopOne\% of the time
+--- a good \ToolnameWinSherrloc points
+higher than the state-of-the-art
+\sherrloc's \SherrlocTopOne\%.
+%
+However, even \toolname's simple
+\emph{logistic regression} based
+classifier is correct \LinearTopOne\% of the time,
+\ie \LinearWinSherrloc points better than \sherrloc.
+%
+When the top three predictions are considered,
+\toolname is correct \HiddenFhTopThree\% of the time.
+
+% \item \textbf
+\mypara{2. Slicing Is Critical}
+%
+However, data is effective \emph{only}
+when irrelevant sub-terms have been
+sliced out of consideration.
+%
+In fact, perhaps our most surprising
+result is that type error slicing and
+local syntax alone yields
+a classifier that is \SlicingWinOcaml points
+better than \ocaml and on par with
+\sherrloc.
+%
+That is, once we focus our classifiers on
+slices, purely local syntactic features
+perform as well as the
+state-of-the-art.
+
+%\item \textbf
+\mypara{3. Size Doesn't Matter, Types Do}
+%
+We find that (after slices)
+typing features
+provide the biggest
+improvement in accuracy.
+%
+Furthermore, we find contextual syntactic
+features to be mostly (but not entirely)
+redundant with typing features,
+which supports the hypothesis that
+the context's \emph{type} nicely
+summarizes the properties of the
+surrounding expressions.
+%
+Finally, we found that the \emph{size}
+of the sub-expression was not very useful.
+This was unexpected, as we thought
+smaller expressions would be simpler, and
+hence, more likely causes.
+
+% \item \textbf
+\mypara{4. Models Learn Typing Rules}
+%
+Finally, by investigating a few of the
+predictions made by the \emph{decision tree}-based
+models, we found that the models
+appear to capture some simple and intuitive
+rules for predicting well-typedness.
+%
+For example, if the left child of an application
+is a function, then the application is likely
+correct.
+
+% in an application, if the
+% left argument is a function then the
+% error is likely on the right sub-term;
+% in a function definition
+% \RJ{fixme: orig
+% defining a function is a fine thing
+% to do?}
+%
+%\end{itemize}
+% \RJ{eric please check the numbers -- we say 71, 72, 74, 91, 92, 94?}
+
+
+\mysubsection{Methodology}
+\label{sec:methodology}
+
+We answer our questions on two sets of data gathered from the
+undergraduate Programming Languages course at
+\begin{anonsuppress}
+UC San Diego (IRB \#140608).
+\end{anonsuppress}
+\begin{noanonsuppress}
+AUTHOR's INSTITUTION.
+\end{noanonsuppress}
+%
+We recorded each interaction with the \ocaml top-level system while the
+students worked on 23 programs from the first three homework
+assignments, capturing ill-typed programs and, crucially, their
+subsequent fixes.
+%
+The first dataset comes from the Spring 2014 class (\SPRING), with a
+cohort of 46 students. The second comes from the Fall 2015 class
+(\FALL), with a cohort of 56 students.
+%
+The extracted programs are relatively small, but they demonstrate a
+range of functional programming idioms, \eg higher-order functions and
+(polymorphic) algebraic data types.
+
+\mypara{Feature Selection}
+We extract 282 features from each sub-expression in a
+program, including:
+%
+\begin{enumerate}
+\item 45 local syntactic features. In addition to the syntax of \lang,
+  we support the full range of arithmetic operators (integer and
+  floating point), equality and comparison operators, character and
+  string literals, and a user-defined % |expr| type of simple
+  arithmetic
+  expressions. We discuss the challenge of supporting other
+  % user-defined
+  types in \autoref{sec:discussion}.
+\item 180 contextual syntactic features. For each sub-expression we
+  additionally extract the local syntactic features of its parent and
+  first, second, and third (left-to-right) children. If an expression
+  does not have a parent or children, these features will simply be
+  disabled. If an expression has more than three children, the
+  classifiers will receive no information about the additional
+  children.
+\item 55 typing features. In addition to the types of \lang, we support
+  |int|s, |float|s, |char|s, |string|s, and the user-defined |expr|
+  mentioned above. These features are extracted for each sub-expression
+  and its context. % for the contextual sub-expressions.
+\item One feature denoting the size of each sub-expression.
+\item One feature denoting whether each sub-expression is part of the
+  minimal type error slice. We use this feature as a ``hard''
+  constraint, sub-expressions that are not part of the minimal slice
+  will be preemptively discarded. We justify this decision in
+  \autoref{sec:feature-utility}.
+\end{enumerate}
+
+\mypara{Blame Oracle}
+Recall from \autoref{sec:labels} that we automatically extract a blame
+oracle for each ill-typed program from the (AST) diff between it and the
+student's eventual fix.
+%
+A disadvantage of using diffs in this manner is that students may have
+made many, potentially unrelated, changes between compilations; at some
+point the ``fix'' becomes a ``rewrite''.
+%
+We do not wish to consider the ``rewrites'' in our evaluation, so we
+discard outliers where the fraction of expressions that have changed is
+more than one standard deviation above the mean, establishing a diff
+threshold of 40\%.
+%
+This accounts for roughly 14\% of each dataset, leaving us with
+2,712 program pairs for \SPRING and 2,365 pairs for \FALL.
+
+% we discard any program pairs where more than 40\%
+% of the sub-expressions have changed.
+% %
+% We picked 40\% as an estimate of the inflection point where we could
+% still retain the large majority of program pairs.
+% % FIXME: Can you say that this dataset curation is similar to any other
+% % datasets (e.g., the washington one)? Anything you could cite and discuss
+% % here would take some of the pressure off.
+
+
+\mypara{Accuracy Metric}
+All of the tools we compare (with the exception of the standard \ocaml
+compiler) can produce a list of potential error locations.
+%
+However, in a study of fault localization techniques,
+\citet{Kochhar2016-oc} show that most developers will not consider more
+than around five potential error locations before falling back to manual
+debugging.
+%
+Type errors are relatively simple in comparison to general fault
+localization, thus we limit our evaluation to the top three predictions
+of each tool.
+%
+We evaluate each tool on whether a changed expression occurred in its
+top one, top two, or top three predictions.
+
+\input{evaluation-accuracy}
+\input{evaluation-utility}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

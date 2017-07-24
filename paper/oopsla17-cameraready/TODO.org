@@ -1,0 +1,249 @@
+20 pages total (weird!!)
+
+
+
+
+* Intro [2p]
+
+** Motivation
+   - Type errors are common stumbling block
+   - Errors often *reported* far from *source*
+   - Existing localization techniques based on hand-written heuristics
+     - Occam's Razor
+     - Don't account for errors novices *actually make*
+
+** Data-Driven Diagnosis
+   - Type error localization based on learning a model of novice mistakes
+   - Train classifier to identify error locations
+
+   1. *Data Set*
+      Gather a giant data set of error-fixes by ...
+
+   2. *Programs To Tree-Node-Vectors*
+      - Model programs and fixes as feature vectors (RJ: CRUCIAL: need cool name for model)
+      - Context captured by widening
+
+   3. *Train Classifiers*
+      - Train a variety of classifiers on tree-node-vectors
+      - When is an AST node likely to be a "FIX"
+
+** Large-Scale Evaluation
+
+   - Evaluate competing techniques on >4500 student programs
+   - Judge correctness by student's eventual fix
+   - Compare Ocaml, SherrLoc, Mycroft to D3
+   - Largest evaluation we know of.
+
+* Overview [4p]
+
+  - START WITH
+    - 1, 2 simple examples of programs
+    - What people "know", take them into what's new
+    - where does OCAML complain
+    - where is the REAL error
+    - where is the STUDENT fix
+    - Set up the problem: can we use student fix to
+      choose between "logically equivalent" error
+      locations?
+
+  - *Supervised Classification Problem*:
+    Goal is to predict a *label* ("good" or "bad")
+    Given training set with known-correct labels
+
+  - *Challenge*:
+    How to represent programs to classifier?
+    Program has rich (variable-size) tree structure, classifier expects
+    (fixed-size) "feature vector"
+    *Solution*:
+    Program ==> *SET* of feature vectors (one per sub-expression)
+    Features ==> Predicates on AST
+    Features provide all contextual information
+    (e.g. "I am a function call and my left child has a function type")
+
+  - *Challenge*:
+    How to identify "correct" locations?
+    *Solution*:
+    Use student's fixes!
+    Collect time-series of ill-typed programs and subsequent fixes,
+    AST diff to extract changes
+
+  - *Challenge*:
+    What to present as user feedback?
+    (Probably don't want to show *all* "suspicious" exprs,
+    see fault localization study)
+    *Solution*:
+    Rank predictions by classifier's "confidence",
+    select top-k as final predictions
+
+* Learning To Blame [4p]
+** Features
+*** Local syntactic
+*** Contextual syntactic
+*** Contextual typing
+*** Expression size
+*** Type error slice
+** Labels
+*** Good/Bad
+*** Based on AST diff
+*** Rank by confidence, select top $k$
+** Models
+*** Linear
+*** Decision Tree
+*** Random Forest
+*** Multilayer Perceptron
+* Evaluation [7p]
+** Performance (quantitative)
+*** Start with SP14 data
+*** "Full" model (~300 features)
+**** Linear vs decision vs perceptron
+*** Drop samples outside of slice
+**** Too important to leave up to the model
+**** Also drastically reduces search space
+*** Drop contextual syntax features (~100 features)
+**** Possible source of overfitting?
+**** Remaining features resemble info available to typechecker (+ size)
+*** Generalize to FA15
+*** Compress perceptron model?
+*** Compare to ocaml/sherrloc/mycroft
+*** SOMEDAY Generalize to Seminal data?
+*** SOMEDAY Impact of adding N-Gram features?
+** What did the model learn?
+*** Relative importance of features
+** Qualitative, i.e. mini-gallery
+* Related [3p]
+** Type Errors
+*** Locating
+*** Explaining
+*** Fixing
+** Fault Localization
+** Machine Learning for PL
+*** Predicting Program Properties from BigCode
+*** ??
+
+
+* NOTES
+** sp14/0219.ml
+(3,42)-(3,47): =clone= in =clone ([x] @ acc) (n - 1)=
+- incorrectly predict NOCHANGE
+- only enabled features on path are =F-Is-Type-Fun= and =F-Is-App-P=
+- note that leaf is not clearly in favor of NOCHANGE (only 2 to 1)
+  - possibly need more features to identify?
+
+(3,62)-(3,63): =x= in =clone ([x] @ acc) (n - 1)=
+- incorrectly predict CHANGE
+- only enabled features on path are =F-Is-Type-Var= and =F-Is-List-P=
+- VERY confident in prediction, weird!
+
+(3,48)-(3,69): =([x] @ acc)= in =clone ([x] @ acc) (n - 1)=
+- incorrectly predict CHANGE
+- only enabled features on path are =F-Is-App-P= and =F-Is-Type-List-C3=
+- VERY confident, all training samples were true positive, but only ~20 in total
+- perhaps need more training data? prediction seems totally bogus...
+
+** FROM KAMALIKA
+*** OVERVIEW
+   - [X] point (2) in "key tech challenges": phrasing in CHALLENGE 2 is much
+     clearer
+   - [X] challenge 1: make it clear that we're specifically interested in
+     representations for LOCALIZING TYPE ERRORS
+     - [X] and tie in from SOLUTION
+   - [ ] challenge 2: want blame assignment that is USEFUL and PREDICTABLE
+   - [X] may want to tone down "prior work has often used expert users
+     to judge blame", have also used student fixes
+     - actually unclear: seminal, mycroft, minerrloc all claim expert oracle,
+     - sherrloc seems to claim user oracle
+   - [X] challenge 3: phrase challenge in terms of INTUITIVE PRESENTATION
+*** LEARNING > LABELS
+   - [X] make it clearer that we have a two-stage process
+     1. per-expression labels (good/bad)
+     2. per-program labels (ranked list of blame)
+   - [ ] perhaps an algorithm-style box
+*** EVALUATION
+   - [X] maybe make headlining questions more precise
+     - highlight results too?
+   - [X] add a sentence in 4.3 explaining why we don't use ANOVA/RELIEF
+     - hard to make sense of results when you have a few categorical
+       features expanded into many binary features
+   - [X] "oracle" is the student fixes
+   - [X] "utility": what *classes* of features are contributing most to accuracy
+   - [ ] should threats come earlier?
+   - [X] explain that dropping programs where oracle doesnt recognize
+     sherrloc predcition favors sherlroc, NOT us
+   - [X] crispen the "results" paragraphs, highlight our results (eg put
+     them first?)
+**** qualitative
+     - [X] what is goal of analysis?
+       - qualitiative
+       - featuers used
+     - [X] at beginning: high-level description of examining decision
+       paths to help explain predictions
+**** threat mitigation
+     - [X] make a bigger deal of train/test split
+     - [ ] explaining predictions
+     - [X] point out that we are also doing cross-validation across
+           joint dataset, model appears relatively stable
+* Samples for user-study
+** padZero (data/sp14/0442.ml)
+#+BEGIN_SRC ocaml
+let rec clone x n = if n <= 0 then [] else x :: (clone x (n - 1))
+
+let padZero l1 l2 =
+  let l = (List.length l1) - (List.length l2) in
+  if l < 0
+  then (((clone 0 ((-1) * l)) @ l2), l2)
+  else (l1, ((clone 0 l) :: l2))
+#+END_SRC
+
+NATE: (8,12)-(8,31)
+SHER: (8,13)-(8,24)
+
+** sepConcat (data/sp14/0451.ml)
+#+BEGIN_SRC ocaml
+let rec sepConcat sep sl =
+  match sl with
+  | [] -> ""
+  | h::t ->
+      let f a x = a ^ (sep ^ x) in
+      let base = [] in let l = sl in List.fold_left f base l
+#+END_SRC
+
+NATE: (7,17)-(7,19)
+SHER: (7,37)-(7,60)
+
+
+** mulByDigit (data/sp14/0055.ml)
+#+BEGIN_SRC ocaml
+let rec mulByDigit i l =
+  match List.rev l with | [] -> [] | h::t -> [mulByDigit i t; (h * i) mod 10];;
+#+END_SRC
+
+NATE: (3,45)-(3,77)
+SHER: (3,46)-(3,60)
+
+** sqsum (data/sp14/2428.ml)
+#+BEGIN_SRC ocaml
+let sqsum xs =
+  let f a x = (a * a) + x in let base = [] in List.fold_left f base xs
+#+END_SRC
+
+NATE: (3,40)-(3,42)
+SHER: (3,63)-(3,67)
+
+
+** palindrome (data/sp14/1888.ml)
+#+BEGIN_SRC ocaml
+let explode s =
+  let rec go i =
+    if i >= (String.length s) then [] else (s.[i]) :: (go (i + 1)) in
+  go 0;;
+
+let rec listReverse l =
+  match l with | [] -> [] | a::b -> (listReverse b) @ [a];;
+
+let palindrome w =
+  let wList = explode w in
+  let wReverse = listReverse (explode w) in if true then wList;;
+#+END_SRC
+
+NATE: (12,44)-(12,62)
+SHER: (12,57)-(12,62)

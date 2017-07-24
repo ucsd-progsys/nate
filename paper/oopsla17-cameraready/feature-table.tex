@@ -1,0 +1,31 @@
+
+\begin{table}[ht]
+\caption{Example Feature Vectors}\label{tab:sumList}
+\begin{tabular}{lrrrrrr}
+\toprule
+\textbf{Expression}
+  & \IsNil & \IsCaseListP & \ExprSize
+  & \HasTypeIntCOne & \HasTypeList & \InSlice \\
+\midrule
+|[]|
+  & 1 & 1 & 1 & 0 & 1 & 1 \\
+|hd + sumList tl|
+  & 0 & 1 & 5 & 1 & 0 & 1 \\
+|sumList tl|
+  & 0 & 0 & 3 & 0 & 1 & 1 \\
+|tl|
+  & 0 & 0 & 1 & 0 & 1 & 0 \\
+\bottomrule
+\end{tabular}
+\bigskip
+\caption*{A selection of the features we would extract from the
+\lstinline!sumList! program in \autoref{fig:sumList}. A feature is
+considered \emph{enabled} if it has a non-zero value, and
+\emph{disabled} otherwise. A ``-P'' suffix indicates that the feature
+describes the parent of the current expression, a ``-C$n$'' suffix
+indicates that the feature describes the $n$-th (left-to-right) child of
+the current expression.  Note that, since we rely on a partial typing
+derivation, we are subject to the well-known traversal bias and label
+the expression \lstinline!sumList tl! as having type
+$\tlist{\cdot}$. The model will have to learn to correct for this bias.}
+\end{table}

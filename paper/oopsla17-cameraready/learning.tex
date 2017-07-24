@@ -1,0 +1,672 @@
+\mysection{Learning to Blame}
+\label{sec:learning}
+In this section, we describe our approach to localizing type errors, in the
+context
+of \lang (\autoref{fig:syntax}), a simple lambda calculus with integers,
+booleans, pairs, and lists.
+%
+Our goal is to instantiate the $\blamesym$ function of
+\autoref{fig:api}, which takes as input a $\Model$ of type errors and an
+ill-typed program $e$, and returns an ordered list of subexpressions
+from $e$ paired with the confidence score $\Runit$ that they should be
+blamed.
+
+A $\Model$ is produced by $\trainsym$, which performs
+supervised learning on a training set of feature vectors $\V$ and
+(boolean) labels $\B$.
+%
+Once trained, we can $\evalsym$uate a $\Model$ on a new input,
+producing the confidence $\Runit$ that the blame label should be
+applied.
+%
+We describe multiple $\Model$s and their instantiations of
+$\trainsym$ and $\evalsym$
+(\autoref{sec:models}).
+
+Of course, the $\Model$ expects feature vectors $\V$ and blame labels
+$\B$, but we are given program pairs.
+%
+So our first step must be to define a suitable translation from program
+pairs to feature vectors and labels, \ie we must define the
+$\extractsym$ function in \autoref{fig:api}.
+%
+We model features as real-valued functions of
+terms, and extract a feature vector for each \emph{subterm}
+of the ill-typed program (\autoref{sec:features}).
+%
+Then we define the blame labels for the training set to be the
+subexpressions that changed between the ill-typed program and its
+subsequent fix, and model $\blamesym$ as a function from a program pair
+to the set of expressions that changed (\autoref{sec:labels}).
+%
+The $\extractsym$ function, then, extracts $\featuresym$ from each
+subexpression and computes the blamed expressions according to
+$\labelsym$.
+
+% First, we define the inputs to the model, a set of \emph{features}
+% (\autoref{sec:features}) that we will use to describe programs.
+% %
+% Second, we define the expected outputs of the model, a set of
+% \emph{labels} (\autoref{sec:labels}) that we will use to assign blame.
+% %
+% Third, we describe the actual \emph{models} (\autoref{sec:models}) that we
+% will evaluate.
+
+\input{syntax}
+
+\mysubsection{Features}
+\label{sec:features}
+
+% \begin{figure}[ht]
+% \begin{minipage}{0.6\linewidth}
+% \begin{code}
+%   let rec sumList xs =
+%     match xs with
+%     | []     -> []
+%     | hd::tl -> hd + sumList tl
+% \end{code}
+% \end{minipage}
+% \begin{minipage}{0.3\linewidth}
+% \begin{code}[numbers=left]
+% []
+% hd + sumList tl
+% sumList tl
+% tl
+% \end{code}
+% \end{minipage}
+% \caption{An ill-typed program (left) and a selection of its
+%   sub-expressions (right).}
+% \label{fig:sumList}
+% \end{figure}
+
+
+The first issue we must tackle is formulating our learning task in
+machine learning terms.
+%
+We are given programs over \lang, but learning algorithms expect to work
+with \emph{feature vectors} $\V$ --- vectors of real numbers, where each
+column describes a particular aspect of the input.
+%
+Thus, our first task is to convert programs to feature vectors.
+
+We choose to model a program as a \emph{set} of feature vectors, where
+each element corresponds an expression in the program.
+%
+Thus, given the |sumList| program in \autoref{fig:sumList} we
+would first split it into its constituent sub-expressions and then
+transform each sub-expression into a single feature vector.
+%
+We group the features into five categories, using \autoref{tab:sumList}
+as a running example of the feature extraction process.
+
+\mypara{Local syntactic features}
+These features describe the syntactic category of each expression $e$.
+%
+In other words, for each production of $e$ in \autoref{fig:syntax} we
+introduce a feature that is enabled (set to $1$) if the expression was
+built with that production, and disabled (set to $0$) otherwise.
+%
+For example, the \IsNil feature in \autoref{tab:sumList} describes
+whether an expression is the empty list $\enil$.
+
+We distinguish between matching on a list vs.\ on a pair, as this
+affects the typing derivation.
+%
+We also assume that all pattern matches are well-formed --- \ie all
+patterns must match on the same type.
+%
+Ill-formed match expressions would lead to a type error; however, they
+are already effectively localized to the match expression itself.
+%
+We note that this is not a \emph{fundamental} limitation, and one could
+easily add features that specify whether a match \emph{contains} a
+particular pattern, and thus have a match expression that enables multiple
+features.
+
+\mypara{Contextual syntactic features}
+These are similar to local syntactic features, but lifted to describe the
+parent and children of an expression.
+%
+For example, the \IsCaseListP feature in \autoref{tab:sumList} describes
+whether an expression's \emph{parent} matches on a list.
+%
+If a particular $e$ does not have children (\eg a variable $x$) or a
+parent (\ie the root expression), we leave the corresponding features
+disabled.
+%
+This gives us a notion of the \emph{context} in which an expression
+occurs, similar to the \emph{n-grams} used in linguistic
+models \citep{Hindle2012-hf,Gabel2010-el}.
+
+% Instead of just describing the immediate context, we could describe
+% whether a particular syntax element occurs in the neighboring
+% expressions (or even a count of how many times it occurs).
+% %
+% For example, the \CountVarP feature in \autoref{tab:sumList} describes
+% how many variables are contained in the expression \emph{rooted} at the
+% current expression's parent.
+% %
+% Such fuzzier notions of context may enable increased precision in the
+% model, but they also introduce opportunities for \emph{overfitting} ---
+% where the model memorizes particular inputs rather than learning general
+% patterns.
+% %
+% We will investigate (\ES{maybe..}) the impact of these alternatives
+% in \autoref{sec:evaluation}.
+
+\mypara{Expression size}
+We also propose a feature representing the \emph{size} of each expression,
+\ie how many sub-expressions does it contain?
+%
+For example, the \ExprSize feature in \autoref{tab:sumList} is set to three
+for the expression |sumList tl| as it contains three expressions:
+the two variables and the application itself.
+%
+This allows the model to learn that, \eg, expressions closer to the
+leaves are more likely to be blamed than expressions closer to the root.
+
+\mypara{Typing features}
+A natural way of summarizing the context in which an expression occurs
+is with \emph{types}.
+%
+Of course, the programs we are given are \emph{untypeable}, but we can
+still extract a \emph{partial} typing derivation from the type checker
+and use it to provide more information to the model.
+
+A difficulty that arises here is that, due to the parametric type
+constructors $\tfun{\cdot}{\cdot}$, $\tprod{\cdot}{\cdot}$, and
+$\tlist{\cdot}$, there is an \emph{infinite} set of possible types ---
+but we must have a \emph{finite} set of features.
+%
+Thus, we abstract the type of an expression to the set of type
+constructors it \emph{mentions}, and add features for each type
+constructor that describe whether a given type mentions the type
+constructor.
+%
+For example, the type $\tint$ would only enable the $\tint$ feature,
+while the type $\tfun{\tint}{\tbool}$ would enable the
+$\tfun{\cdot}{\cdot}$, $\tint$, and $\tbool$ features.
+
+We add these features for parent and child expressions to summarize the
+context, but also for the current expression, as the type of an
+expression is not always clear \emph{syntactically}.
+%
+For example, the expressions |tl| and |sumList tl|
+in \autoref{tab:sumList} both enable \HasTypeList, as they
+are both inferred to have a type that mentions $\tlist{\cdot}$.
+%constructor.
+
+Note that our use of typing features in an ill-typed program subjects us
+to \emph{traversal bias} \citep{McAdam1998-ub}. For example, the
+|sumList tl| expression might alternatively be assigned the type
+$\tint$.
+%
+Our models will have to learn good localizations in spite this bias (see
+\autoref{sec:evaluation}).
+
+\mypara{Type error slice}
+Finally, we wish to distinguish between changes that could fix the
+error, and changes that \emph{cannot possibly} fix the error.
+%
+Thus, we compute a minimal type error \emph{slice} for the program
+(\ie the set of expressions that contribute to the error), and add a
+feature that is enabled for expressions that are part of the slice.
+%
+The \InSlice feature in \autoref{tab:sumList} indicates whether an
+expression is part of such a minimal slice, and is enabled for all of
+the sampled expressions except for |tl|, which does not affect
+the type error.
+%
+If the program contains multiple type errors, we compute
+a minimal slice for each error.
+
+In practice, we have found that \InSlice is a particularly important
+feature, and thus include a post-processing step that discards all
+expressions where it is disabled.
+%
+As a result, the |tl| expression would never actually be shown to the
+classifier.
+%
+ We will demonstrate the importance of \InSlice empirically in
+\autoref{sec:feature-utility}.
+
+\mysubsection{Labels}
+\label{sec:labels}
+Recall that we make predictions in two stages.
+%
+First, we use $\evalsym$ to predict for each subexpression whether it
+should be blamed, and extract a confidence score $\Runit$ from the
+$\Model$.
+%
+Thus, we define the output of the $\Model$ to be a boolean label, where
+``false'' means the expression \emph{should not} change and ``true''
+means the expression \emph{should} change.
+%
+This allows us to predict whether any individual expression should
+change, but we would actually like to predict the \emph{most likely}
+expressions to change.
+%
+Second, we \emph{rank} each subexpression by the confidence $\Runit$
+that it should be blamed, and return to the user the top $k$
+most likely blame assignments (in practice $k=3$).
+
+% Many learning algorithms produce not only a prediction, but also a
+% metric that can be interpreted as a \emph{confidence} in the prediction.
+% %
+% Thus, we \emph{rank} the expressions by the model's confidence that they
+% will change, and select only the top $k$ (in practice $k=3$) to present
+% to the user.
+
+We identify the fixes for each ill-typed program with an
+expression-level diff~\citep{Lempsink2009-xf}.
+%
+We consider two sources of changes.
+%
+%\begin{enumerate}
+%\item 
+First, if an expression has been removed wholesale, \eg if $\eapp{f}{x}$
+  is rewritten to $\eapp{g}{x}$, we will mark the expression $f$ as
+  changed, as it has been replaced by $g$.
+Second, if a new expression has been inserted \emph{around} an existing
+  expression, \eg if $\eapp{f}{x}$ is rewritten to
+  $\eplus{\eapp{f}{x}}{1}$, we will mark the application expression
+  $\eapp{f}{x}$ (but not $f$ or $x$) as changed, as the $+$ operator now
+  occupies the original location of the application.
+%\end{enumerate}
+
+\mysubsection{Learning Algorithms}
+\label{sec:models}
+\lstDeleteShortInline{|} % sigh...
+
+Recall that we formulate type error detection at a single expression as
+a supervised classification problem.
+%
+This means that we are given a training data set
+%$S = \{ \langle v_i, b_i \rangle \}_{i=1}^n$
+$S : \List{\V \times \B}$
+of labeled examples, and
+our goal is to use it to build a \emph{classifier}, \ie a rule
+that can predict a label $b$ for an input $v$.
+%
+Since we apply the classifier on each expression in the program to
+determine those that are the most likely to be type errors, we also
+require the classifier to output a \emph{confidence score} that measures
+how sure the classifier is about its prediction.
+
+
+%Recall that we formulate type error localization as a supervised
+%classification problem.
+%
+%This means that we assume the existence of a training set
+%$S = \{\langle \mathbf{v}_i, b_i \rangle\}_{i=1}^{n}$
+%of sample inputs $\mathbf{v}$ and their corresponding labels $b$.
+%
+%The learning task is to model the probability $Pr(b\ |\ \mathbf{v})$
+%of a label being assigned to a given input.
+
+There are many learning algorithms to choose from, existing on a
+spectrum that balances expressiveness with ease of training (and of
+interpreting the learned model).
+%
+In this section we consider four standard learning algorithms: (1)
+logistic regression, (2) decision trees, (3) random forests, and (4)
+neural networks.
+%
+A thorough introduction to these techniques can be found in introductory
+machine learning textbooks \citep[\eg][]{Hastie2009-bn}.
+% \ES{TODO: huma/kamalika?}).
+%
+
+Below we briefly introduce each technique by describing the rules it
+learns, and summarize its advantages and disadvantages.
+%
+For our application, we are particularly interested in three properties
+-- expressiveness, interpretability and ease of generalization.
+%
+Expressiveness measures how complex prediction rules are allowed to be,
+and interpretability measures how easy it is to explain the cause of
+prediction to a human.
+%
+Finally ease of generalization measures how easily the rule generalizes
+to examples that are not in the training set; a rule that is not
+easily generalizable might perform poorly on an unseen test set even
+when its training performance is high.
+
+%We will briefly introduce each technique by describing the model it
+%learns, the training procedure, any hyper-parameters that must be tuned
+%by a human, and a summary of its advantages and disadvantages.
+
+% \ES{FIXME: Wes thinks the entire rest of this section, up to ``4. Evaluation'',
+% contains much more detail than an OOPSLA audience wants on
+% introductory/undergraduate machine learning. (Especially since nothing
+% after this point is a novel contribution we make.) Perhaps we can cut some
+% space by focusing on the pros and cons of each technique rather than
+% describing the details? This is a PL paper. } \ES{KC: I completely agree. Perhaps we can add a table here. Judging from what we use, the features we need are: (a) expressivity (b) proneness to overfitting and (c) interpretability. We can rate the four classifiers in these three areas.
+% }
+
+\mypara{Logistic Regression}
+The simplest classifier we investigate is logistic regression:
+a linear model where the goal is to learn a set of weights $W$
+that describe the following model for predicting a label
+$b$ from a feature vector $v$:
+%
+\[ \Pr(b = 1 | v) = \frac{1}{1 + e^{-W^{\top} v}} \]
+%
+The weights $W$ are learnt from training data, and the value of
+$\Pr(b | v)$ naturally leads to a confidence score $\Runit$.
+%
+Logistic regression is a widely used classification algorithm, preferred
+for its simplicity, ease of generalization, and interpretability.
+%
+Its main limitation is that the prediction rule is constrained to be a
+linear combination of the features, and hence relatively simple.
+%
+While this can be somewhat mitigated by adding higher order (quadratic
+or cubic) features, this often requires substantial domain knowledge.
+
+% The simplest model we investigate is logistic regression, which learns a
+% linear function of the features.
+% %
+% The goal is to learn a set of weights $W$ and biases $b$ such that the
+% function
+% %
+% $$
+% Pr(y\ |\ \mathbf{x}) = \frac{1}{1 + \mathsf{exp}(-W\mathbf{x} - b)}
+% $$
+% %
+% effectively maps feature vectors $\mathbf{x}$ to labels $y$.
+
+% \ES{TODO: talk about logistic regression and the loss function?}
+
+%The simplest model we investigate is logistic regression, which can be
+%understood in two steps.
+%
+%First, we compute the \emph{evidence} for a label $b$ as a linear
+%function of the feature vector $\mathbf{v}$, using a weight vector
+%$\mathbf{w}$ and a bias $w_0$ that will be learned from the training set.
+%$$
+%\mathsf{ev} = \sum_j w_j v_j + w_0
+%$$
+%Then we use the logistic function (also called a sigmoid function)
+%$\sigma(x) = 1 / (1 + e^{-x})$ to compress the evidence term into the
+%$[0,1]$ interval, which can then be interpreted as the probability that
+%the label $b$ should be applied.
+%
+%This gives us the final model:
+%$$
+%Pr(b\ |\ \mathbf{v}) = \frac{1}{1 + \mathsf{exp}(-\sum_j w_j v_j - w_0)}
+%$$
+% $$
+% Pr(y\ |\ \mathbf{x}) = \frac{1}{1 + e^{-\mathsf{ev}}}
+% $$
+
+%Training a logistic regression entails finding optimal values for the
+%weights and bias, such that a \emph{cost} function is minimized.
+%
+%In practice, the cost function used for logistic regression is the
+%\emph{cross entropy}, a measure of the similarity between two
+%probability distributions, between the predicted labels and the ground
+%truth.
+%
+%The search for optimal values is typically done via \emph{stochastic
+%  gradient descent}, an iterative method for optimizing a cost function.
+%
+%Starting with an initial estimate of the weights (\eg a normal
+%distribution), one repeatedly makes predictions for the training data,
+%computes the cost function for the predictions, and updates the
+%parameters according to the gradient of the cost function.
+%
+%This process is repeated until the parameters converge, or until a time
+%limit is exhausted.
+%
+%Stochastic gradient descent requires a hyper-parameter $\eta$, often
+%called the \emph{learning rate}, which controls how much the weights and
+%bias are updated at each iteration.
+
+%It has been observed that large weights often coincide with
+%\emph{overfitting} of the model --- where the model performs well on the
+%training samples but not on the testing samples.
+%
+%Thus, it is common to add a \emph{regularization} term to the cost
+%function, a popular choice is the $L_2$ norm of the weights
+%$\sum_j w_j^2$, which has the effect of penalizing the model for
+%learning large weights \citep{Park2008-no}.
+%
+%The contribution of the regularization term to the overall cost function
+%is controlled by another hyper-parameter $\lambda$, often called the
+%regularization rate.
+
+%As a generalized linear model, logistic regression is popular for its
+%ease of training and of interpreting the resulting model; however, it
+%can be limited in its applicability.
+%
+%In particular, it may perform poorly when asked to learn an inherently
+%\emph{nonlinear} function.
+%
+%This limitation can be mitigated by adding transformed or compound
+%features to the model --- \eg if one knows that the label has a
+%quadratic relationship with a feature $v$, the transformed feature $v^2$
+%can be added --- but this typically requires knowledge of the underlying
+%model.
+
+% This limitation can be mitigated to some extent by adding more features
+% to the model (\eg combinations of the existing features \ES{CITE?}), but
+% the fundamental issue remains.
+
+\mypara{Decision Trees}
+Decision tree algorithms learn a tree of binary predicates over the
+features, recursively partitioning the input space until a final
+classification can be made.
+%
+Each node in the tree contains a single predicate of the form
+$v_j \leq t$ for some feature $v_j$ and threshold $t$, which determines
+whether a given input should proceed down the left or right subtree.
+%
+Each leaf is labeled with a prediction and the fraction of training
+samples that would reach it; the latter quantity can be interpreted as
+the decision tree's confidence in its prediction.
+%
+This leads to a prediction rule that can be quite expressive depending
+on the data used to build it.
+
+Training a decision tree entails finding both a set of good partitioning
+predicates and a good ordering of the predicates based on data.
+%
+This is usually done in a top-down greedy manner, and there are several
+standard training algorithms such as C4.5 \citep{Quinlan1993-de} and
+CART \citep{Breiman1984-qy}.
+
+Another advantage of decision trees is their ease of interpretation ---
+the decision rule is a white-box model that can be readily described to
+a human, especially when the tree is small.
+%
+However, the main limitation is that these trees often do not generalize
+well, though this can be somewhat mitigated by \emph{pruning} the tree.
+% this is still a well-known problem.
+
+
+%predicates and a good ordering of the predicates.
+%
+%This is usually done in a top-down greedy manner by selecting the
+%predicate the best partitions the entire training set, and recursively
+%partitioning the subsets.
+%
+%Standard algorithms for training decision trees include C4.5
+%\citep{Quinlan1993-de} and CART \citep{Breiman1984-qy}.
+%
+%Overfitting can also be a problem for decision trees; the countermeasure
+%is usually either halting the learning process before the tree grows too
+%deep, or pruning the resulting tree.
+
+%The advantages of decision trees are that they are relatively easy to
+%train and that they produce a \emph{white-box} model, making it trivial
+%to analyze the entire model and explain individual predictions.
+%
+%The disadvantages are that they are prone to overfitting and that the
+%model can be unstable, \ie small changes to the training data may
+%produce large changes in the model.
+%
+%Both disadvantages are addressed by random forests.
+
+\mypara{Random Forests}
+%
+Random forests improve generalization by training an
+\emph{ensemble} of distinct decision trees and using a majority
+vote to make a prediction.
+%
+The agreement among the trees forms a natural
+confidence score.
+%
+Since each classifier in the ensemble is a decision tree, this still
+allows for complex and expressive classifiers.
+%\ES{Huma: is this the confidence score that we are using?}
+
+%One technique for increasing the accuracy of a classifier is to train an
+%\emph{ensemble} of distinct classifiers and use a majority vote
+%to make the final prediction.
+%
+%Random forests are an instance of this method, with decision
+%trees as the underlying classifiers.
+%
+The training process involves taking $N$ random subsets of the training
+data and training a separate decision tree on each subset --- the
+training process for the decision trees is often modified slightly to
+reduce correlation between trees, by forcing each tree to pick features
+from a random subset of all features at each node.
+%
+%In order to make a prediction for an unseen sample, the random forest
+%asks each decision tree to make a prediction, and then predicts the most
+%common label.
+
+The diversity of the underlying models tends to make random forests less
+susceptible to the overfitting, but it
+also makes the learned model more difficult to interpret.
+%
+%Furthermore, the number of trees in the forest, $N$, becomes an important
+%hyper-parameter that must be set manually.
+
+
+\mypara{Neural Networks}
+%
+The last (and most complex) model we use is a type of neural network
+called a \emph{multi-layer perceptron} (see \citealt{Nielsen2015-pu} for
+an introduction to neural networks).
+%
+A multi-layer perceptron can be represented as a directed acyclic
+graph whose nodes are arranged in layers that are fully connected by
+weighted edges.
+%
+The first layer corresponds to the input features, and the final to the
+output.
+%
+%The output of a node $v$ in an internal layer is given by:
+The output of an internal node $v$ is
+%
+\[ h_v = g(\sum_{j \in N(v)} W_{jv} h_j ) \]
+%
+where $N(v)$ is the set of nodes in the previous layer that are adjacent
+to $v$, $W_{jv}$ is the weight of the $(j, v)$ edge and $h_j$ is the
+output of node $j$ in the previous layer.
+%
+Finally $g$ is a non-linear function, called the activation function,
+which in recent work is commonly chosen to be the \emph{rectified linear
+  unit} (ReLU), defined as $g(x) = \mathsf{max}(0,x)$
+\citep{Nair2010-xg}.
+%
+The number of layers, the number of neurons per layer, and the
+connections between layers constitute the \emph{architecture} of a
+neural network.
+%
+In this work, we use relatively simple neural networks which have an
+input layer, a single hidden layer and an output layer.
+
+A major advantage of neural networks is their ability to discover
+interesting combinations of features through non-linearity, which
+significantly reduces the need for manual feature engineering, and
+allows high expressivity.
+%
+On the other hand, this makes the networks particularly difficult to
+interpret and also difficult to generalize unless vast amounts of
+training data are available.
+
+%HEREHERE
+%
+%Neural networks can be understood as a collection of linear models, just
+%like the one used in logistic regression, arranged in a directed graph.
+%
+%Each node in the graph corresponds to a single linear model, called a
+%\emph{neuron}, and the edges propagate signals from the input features,
+%through the neurons, to the output labels.
+%
+%The linear model in each neuron is wrapped in an \emph{activation
+%  function}, which controls whether (or how strongly) the signal will be
+%propagated out.
+%
+%These activation functions are what allow neural networks to accurately
+%model nonlinear functions.
+%
+%A common choice of activation function is the same sigmoid function used
+%by logistic regression, alternatives include the hyperbolic $\tanh$
+%function, and more recently the \emph{rectified linear unit} (ReLU),
+%defined as $f(x) = \mathsf{max}(0,x)$ \citep{Nair2010-xg}.
+
+%The neurons are arranged in \emph{layers}; each layer contains a set of
+%neurons that take in signals from the previous layer and propagate
+%signals to the next layer.
+%
+% and are all important hyper-parameters.
+%
+%We consider a particular class of neural networks called
+%\emph{multi-layer perceptrons} (MLP), where the layers a fully connected to
+%each other, \ie each neuron propagates its signal to every neuron in the
+%subsequent layer.
+%
+%We will only consider MLPs with a single layer of neurons, but we will
+%vary the number of neurons in our experiments.
+
+%Neural networks are trained similarly to logistic regression using
+%stochastic gradient descent, and thus the learning rate $\eta$ and
+%regularization rate $\lambda$ are also important hyper-parameters.
+%
+%They are, however, much more difficult to train as they require larger
+%training sets.
+
+%Neural networks are popular for their ability to uncover ``hidden''
+%features in the data.
+%
+%Each neuron learns a different linear combination of the signals from
+%the previous layer; combined with the activation function this can be
+%thought of as the neuron learning to respond to a new, \emph{compound}
+%feature of its inputs.
+%
+%This ability to discover interesting combinations of features makes
+%neural networks easier to use in some respect; they can reduce the
+%importance of manual \emph{feature engineering} (selecting interesting
+%features to provide as inputs).
+%
+%However, the sheer size and complexity of neural networks makes the
+%model particularly difficult to interpret --- they are generally regarded
+%as ``black boxes.''
+%
+%Neural networks are also very susceptible to overfitting, so
+%regularization methods like the $L_2$ norm used for logistic regression
+%are important.
+
+%\ES{should mention that logistic regression can be thought of as a degenerate MLP with 0 layers, and perhaps add a diagram?}
+
+%\ES{need to say something about neurons corresponding to ``hidden'' features, give intuition..}
+
+% The fundamental building block of an ANN is the linear model, the
+% nonlinearity arises from the \emph{activation functions} that govern
+% whether an individual linear model propagates its signal to the next layer.
+
+
+
+
+% ES: keep this at the bottom... sigh
+\lstMakeShortInline{|}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

@@ -1,0 +1,186 @@
+
+% colors from http://colorbrewer2.org/?type=sequential&scheme=Blues&n=3
+\definecolor{blue1}{HTML}{DEEBF7}
+\definecolor{blue2}{HTML}{9ECAE1}
+\definecolor{blue3}{HTML}{3182BD}
+
+\definecolor{green1}{HTML}{e5f5e0}
+\definecolor{green2}{HTML}{a1d99b}
+\definecolor{green3}{HTML}{31a354}
+
+% \begin{figure}[ht]
+% \centering
+% \begin{tikzpicture}
+% \begin{axis}[
+%   % ybar stacked,
+%   width=12cm,
+%   height=8cm,
+%   title={Impact of Feature Set on Accuracy},
+%   ylabel={Accuracy},
+%   %ymin=0.2,
+%   ymax=1,
+%   yticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\,\%},
+%   ytick style={draw=none},
+%   ymajorgrids = true,
+%   symbolic x coords={op+type+size, op+context+type+size, op+context-has+type+size, op+context-count+type+size},
+%   % enlarge x limits=0.25,
+%   xtick=data,
+%   xtick style={draw=none},
+%   xticklabels={Type, Context-Is, Context-Has, Context-Count},
+%   x tick label style={rotate=45},
+%   reverse legend,
+%   transpose legend,
+%   legend style={legend pos = outer north east, legend columns=4},
+% ]
+% % \addplot[draw=black, fill=blue1] table[x=tool, y=top-1] {\HiddenBench};
+% % \addplot[draw=black, fill=blue2] table[x=tool, y expr=\thisrow{top-2} - \thisrow{top-1}] {\HiddenBench};
+% % \addplot[draw=black, fill=blue3] table[x=tool, y expr=\thisrow{top-3} - \thisrow{top-2}] {\HiddenBench};
+
+% \addplot[mark options={fill=blue1, scale=1.5}, mark=square*]
+%   table[x=features, y=top-1] {\FeatureHiddenFHBench};
+% \addplot[mark options={fill=blue2, scale=1.5}, mark=square*]
+%   table[x=features, y=top-2] {\FeatureHiddenFHBench};
+% \addplot[mark options={fill=blue3, scale=1.5}, mark=square*]
+%   table[x=features, y=top-3] {\FeatureHiddenFHBench};
+% \addlegendentry{Top-1}
+% \addlegendentry{Top-2}
+% \addlegendentry{Top-3}
+% \addlegendimage{empty legend}
+% \addlegendentry{\hiddenFH}
+
+% \addplot[mark options={fill=blue1, scale=1.5}, mark=*]
+%   table[x=features, y=top-1] {\FeatureLinearBench};
+% \addplot[mark options={fill=blue2, scale=1.5}, mark=*]
+%   table[x=features, y=top-2] {\FeatureLinearBench};
+% \addplot[mark options={fill=blue3, scale=1.5}, mark=*]
+%   table[x=features, y=top-3] {\FeatureLinearBench};
+% \addlegendentry{Top-1}
+% \addlegendentry{Top-2}
+% \addlegendentry{Top-3}
+% \addlegendimage{empty legend}
+% \addlegendentry{\linear}
+
+% \end{axis}
+% \end{tikzpicture}
+% \caption{reuslts!}
+% \label{fig:results}
+% \end{figure}
+
+% \begin{figure}[ht]
+% \centering
+% \begin{tikzpicture}
+% \begin{axis}[
+%   ybar stacked,
+%   width=12cm,
+%   height=8cm,
+%   title={Impact of Hidden Layer Size on Accuracy},
+%   ylabel={Accuracy},
+%   bar width=20pt,
+%   %ymin=0.2,
+%   ymax=1,
+%   yticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\,\%},
+%   ytick style={draw=none},
+%   ymajorgrids = true,
+%   symbolic x coords={op+type+size/hidden-10, op+type+size/hidden-25, op+type+size/hidden-50,
+%                      op+type+size/hidden-100, op+type+size/hidden-250, op+type+size/hidden-500},
+%   % enlarge x limits=0.25,
+%   xtick=data,
+%   xtick style={draw=none},
+%   xticklabels={\hiddenT, \hiddenTF, \hiddenF, \hiddenH, \hiddenTHF, \hiddenFH},
+%   x tick label style={rotate=45},
+%   reverse legend,
+%   legend style={legend pos = north west},
+% ]
+% \addplot[draw=black, fill=blue1] table[x=tool, y=top-1] {\HiddenBench};
+% \addplot[draw=black, fill=blue2] table[x=tool, y expr=\thisrow{top-2} - \thisrow{top-1}] {\HiddenBench};
+% \addplot[draw=black, fill=blue3] table[x=tool, y expr=\thisrow{top-3} - \thisrow{top-2}] {\HiddenBench};
+% % \addplot[draw=black, fill=blue1] table[x=tool, y=top-1] {\HiddenBench};
+% % \addplot[draw=black, fill=blue2] table[x=tool, y=top-2] {\HiddenBench};
+% % \addplot[draw=black, fill=blue3] table[x=tool, y=top-3] {\HiddenBench};
+% \legend{Top-1, Top-2, Top-3}
+% \end{axis}
+% \end{tikzpicture}
+% \caption{reuslts!}
+% \label{fig:results}
+% \end{figure}
+
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+  ybar stacked,
+  width=\linewidth,
+  height=8cm,
+  title={Accuracy of Type Error Localization Techniques},
+  ylabel={Accuracy},
+  bar width=0.5cm,
+  ymin=0.2,
+  ymax=1,
+  ytick={0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0},
+  yticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\,\%},
+  ytick style={draw=none},
+  ymajorgrids = true,
+  symbolic x coords={baseline, ocaml, spacer1, mycroft, sherrloc, spacer2,
+                     op+context+type+size/linear,
+                     op+context+type+size/decision-tree,
+                     op+context+type+size/random-forest,
+                     op+context+type+size/hidden-10,
+                     op+context+type+size/hidden-500},
+  % enlarge x limits=0.5,
+  xtick=data,
+  xtick style={draw=none},
+  xticklabels={\random, \ocaml, \mycroft, \sherrloc,
+               \linear, \dectree, \forest, \hiddenT, \hiddenFH},
+  x tick label style={rotate=45, anchor=north east},
+  reverse legend,
+  transpose legend,
+  legend style={legend pos = north west, legend columns=5},
+]
+
+% ES: NOTE: ORDER OF PLOTS/LEGEND ENTRIES MATTERS
+\addplot+[stack plots=false, draw=black, fill=none, thick, bar shift=.25cm] table[x=tool, y=recall] {\FallBench};
+\addlegendentry{Recall}
+\addplot[draw=black, fill=green1, bar shift=.25cm] table[x=tool, y=top-1] {\FallBench};
+\addlegendentry{Top-1}
+\addplot[draw=black, fill=green2, bar shift=.25cm] table[x=tool, y expr=\thisrow{top-2} - \thisrow{top-1}] {\FallBench};
+\addlegendentry{Top-2}
+\addplot[draw=black, fill=green3, bar shift=.25cm] table[x=tool, y expr=\thisrow{top-3} - \thisrow{top-2}] {\FallBench};
+\addlegendentry{Top-3}
+\addlegendimage{empty legend}
+\addlegendentry{\FALL}
+
+\resetstackedplots
+
+\addplot+[stack plots=false, draw=black, fill=none, thick, bar shift=-.25cm] table[x=tool, y=recall] {\SpringBench};
+\addlegendentry{Recall}
+\addplot[draw=black, fill=blue1, bar shift=-.25cm] table[x=tool, y=top-1] {\SpringBench};
+\addlegendentry{Top-1}
+\addplot[draw=black, fill=blue2, bar shift=-.25cm] table[x=tool, y expr=\thisrow{top-2} - \thisrow{top-1}] {\SpringBench};
+\addlegendentry{Top-2}
+\addplot[draw=black, fill=blue3, bar shift=-.25cm] table[x=tool, y expr=\thisrow{top-3} - \thisrow{top-2}] {\SpringBench};
+\addlegendentry{Top-3}
+\addlegendimage{empty legend}
+\addlegendentry{\SPRING}
+
+
+%\legend{Top-1, Top-2, Top-3}
+\end{axis}
+\end{tikzpicture}
+\caption{
+  %
+  Results of our comparison of type error localization
+  techniques.
+  %
+  We evaluate all techniques separately on two cohorts of
+  students from different instances of an undergraduate
+  Programming Languages course.
+  %
+  Our classifiers were trained on one cohort and evaluated on the other.
+  %
+  All of our classifiers outperform the state-of-the-art techniques
+  \mycroft and \sherrloc by a 10--15\% margin in Top-1 accuracy (with
+  the exception of \linear which is only slightly better than \sherrloc).
+%
+}
+\label{fig:accuracy-results}
+\end{figure}

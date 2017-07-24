@@ -1,0 +1,322 @@
+%% For double-blind review submission
+%%\documentclass[acmsmall,anonymous,review]{acmart}\settopmatter{printfolios=true}
+%% For single-blind review submission
+%\documentclass[acmsmall,review]{acmart}\settopmatter{printfolios=true}
+%% For final camera-ready submission
+\documentclass[acmsmall]{acmart}\settopmatter{}
+
+%% Note: Authors migrating a paper from PACMPL format to traditional
+%% SIGPLAN proceedings format should change 'acmlarge' to
+%% 'sigplan,10pt'.
+
+
+%% Some recommended packages.
+\usepackage{booktabs}   %% For formal tables:
+                        %% http://ctan.org/pkg/booktabs
+\usepackage{subcaption} %% For complex figures with subfigures/subcaptions
+                        %% http://ctan.org/pkg/subcaption
+
+
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.12}
+\usepackage{pgfplotstable}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xspace}
+\usepackage{booktabs}
+\usepackage{listings}
+\lstset{
+  language=Caml,
+  basicstyle=\ttfamily,
+  keywordstyle=\ttfamily,
+}
+\lstnewenvironment{code}{
+\lstset{
+  language=Caml,
+  basicstyle=\ttfamily,
+  keywordstyle=\ttfamily,
+}}
+{}
+
+\lstnewenvironment{ecode}{
+\lstset{
+  language=Caml,
+  basicstyle=\ttfamily,
+  keywordstyle=\ttfamily,
+  numbers=left,
+  frame=leftline,
+  xleftmargin=7.5mm,
+  moredelim=[is][\bfseries]{==}{==},
+  moredelim=[is][\underbar]{__}{__},
+  moredelim=[is][\bfseries\underbar]{_=}{=_},
+  escapeinside={(*@}{@*)},
+}}
+{}
+
+\lstMakeShortInline{|}
+
+\usepackage{tcolorbox}
+
+% colors from http://colorbrewer2.org/?type=qualitative&scheme=Set2&n=3
+% \definecolor{tree}{HTML}{66C2A5}
+% \definecolor{sherrloc}{HTML}{FC8D62}
+% \definecolor{fix}{HTML}{8DA0CB}
+% \definecolor{sherrloc}{HTML}{FC8D62}
+\definecolor{tree}{HTML}{8dd3c7}
+\definecolor{sherrloc}{HTML}{FFFFB3}
+\definecolor{fix}{HTML}{bebada}
+
+\tcbset{every box/.style={on line,colframe=black,size=fbox,boxrule=1pt}}
+\newtcbox{\hlTree}{colback=tree,toprule=0pt,bottomrule=0pt}
+\newtcbox{\hlSherrloc}{colback=sherrloc,leftrule=0pt,rightrule=0pt}
+\newtcbox{\hlFix}{colback=fix!50}
+% \newtcbox{\hlTree}{on line,boxrule=1pt,arc=0pt,boxsep=0pt,left=1mm,right=1mm,top=1mm,bottom=1mm,colback=tree,colframe=black}
+% \newtcbox{\hlSherrloc}{on line,boxrule=1pt,arc=0pt,boxsep=0pt,left=1mm,right=1mm,top=1mm,bottom=1mm,colback=sherrloc,colframe=black}
+% \newtcbox{\hlFix}{on line,boxrule=1pt,arc=0pt,boxsep=0pt,left=1mm,right=1mm,top=1mm,bottom=1mm,colback=fix!50,colframe=black}
+
+% \newcommand\hlTree[1]{\fcolorbox{black}{tree}{#1}}
+% \newcommand\hlSherrloc[1]{\fcolorbox{black}{sherrloc}{#1}}
+% \newcommand\hlFix[1]{\fcolorbox{black}{fix!50}{#1}}
+
+\usepackage{commands}
+\def\sectionautorefname{\S}
+\def\subsectionautorefname{\S}
+
+\synctex=1
+
+\makeatletter\if@ACM@journal\makeatother
+%% Journal information (used by PACMPL format)
+%% Supplied to authors by publisher for camera-ready submission
+%%% RJDELETED THIS TOO   \acmJournal{PACMPL}
+%%% RJDELETED THIS TOO   \acmVolume{1}
+%%% RJDELETED THIS TOO   \acmNumber{1}
+%%% RJDELETED THIS TOO   \acmArticle{1}
+%%% RJDELETED THIS TOO   \acmYear{2017}
+%%% RJDELETED THIS TOO   \acmMonth{1}
+%%% RJDELETED THIS TOO   \acmDOI{10.1145/nnnnnnn.nnnnnnn}
+%%% RJDELETED THIS TOO   \startPage{1}
+%%% RJDELETED THIS TOO   \else\makeatother
+%%% RJDELETED THIS TOO   %% Conference information (used by SIGPLAN proceedings format)
+%%% RJDELETED THIS TOO   %% Supplied to authors by publisher for camera-ready submission
+%%% RJDELETED THIS TOO   \acmConference[PL'17]{ACM SIGPLAN Conference on Programming Languages}{January 01--03, 2017}{New York, NY, USA}
+%%% RJDELETED THIS TOO   \acmYear{2017}
+%%% RJDELETED THIS TOO   \acmISBN{978-x-xxxx-xxxx-x/YY/MM}
+%%% RJDELETED THIS TOO   \acmDOI{10.1145/nnnnnnn.nnnnnnn}
+%%% RJDELETED THIS TOO   \startPage{1}
+%%% RJDELETED THIS TOO   \fi
+
+
+%% Copyright information
+%% Supplied to authors (based on authors' rights management selection;
+%% see authors.acm.org) by publisher for camera-ready submission
+\setcopyright{none}             %% For review submission
+%\setcopyright{acmcopyright}
+%\setcopyright{acmlicensed}
+%\setcopyright{rightsretained}
+%\copyrightyear{2017}           %% If different from \acmYear
+
+
+%% Bibliography style
+\bibliographystyle{ACM-Reference-Format}
+%% Citation style
+%% Note: author/year citations are required for papers published as an
+%% issue of PACMPL.
+\citestyle{acmauthoryear}   %% For author/year citations
+
+
+
+\begin{document}
+
+%% Title information
+%% [Short Title] is optional; when present, will be used in header
+%% instead of Full Title.
+\title{Learning to Blame}
+
+% \titlenote{with title note}             %% \titlenote is optional;
+%                                         %% can be repeated if necessary;
+%                                         %% contents suppressed with 'anonymous'
+%% \subtitle is optional
+\subtitle{Localizing Novice Type Errors with Data-Driven Diagnosis}
+
+% \subtitlenote{with subtitle note}       %% \subtitlenote is optional;
+%                                         %% can be repeated if necessary;
+%                                         %% contents suppressed with 'anonymous'
+
+
+%% Author information
+%% Contents and number of authors suppressed with 'anonymous'.
+%% Each author should be introduced by \author, followed by
+%% \authornote (optional), \orcid (optional), \affiliation, and
+%% \email.
+%% An author may have multiple affiliations and/or emails; repeat the
+%% appropriate command.
+%% Many elements are not rendered, but should be provided for metadata
+%% extraction tools.
+
+%% Author with single affiliation.
+\author{Eric L. Seidel}
+% \authornote{with author1 note}          %% \authornote is optional;
+%                                         %% can be repeated if necessary
+\orcid{0000-0002-2529-7790}               %% \orcid is optional
+\affiliation{
+  \department{Department of Computer Science}              %% \department is recommended
+  \institution{UC San Diego}            %% \institution is required
+  \city{La Jolla}
+  \state{CA}
+  \country{USA}
+}
+\email{eseidel@cs.ucsd.edu}          %% \email is recommended
+
+\author{Huma Sibghat}
+% \authornote{with author1 note}          %% \authornote is optional;
+%                                         %% can be repeated if necessary
+% \orcid{nnnn-nnnn-nnnn-nnnn}             %% \orcid is optional
+\affiliation{
+  \department{Department of Computer Science}              %% \department is recommended
+  \institution{UC San Diego}            %% \institution is required
+  \city{La Jolla}
+  \state{CA}
+  \country{USA}
+}
+\email{hsibghat@cs.ucsd.edu}          %% \email is recommended
+
+\author{Kamalika Chaudhuri}
+% \authornote{with author1 note}          %% \authornote is optional;
+%                                         %% can be repeated if necessary
+% \orcid{nnnn-nnnn-nnnn-nnnn}             %% \orcid is optional
+\affiliation{
+  \department{Department of Computer Science}              %% \department is recommended
+  \institution{UC San Diego}            %% \institution is required
+  \city{La Jolla}
+  \state{CA}
+  \country{USA}
+}
+\email{kamalika@cs.ucsd.edu}          %% \email is recommended
+
+\author{Westley Weimer}
+% \authornote{with author1 note}          %% \authornote is optional;
+%                                         %% can be repeated if necessary
+% \orcid{nnnn-nnnn-nnnn-nnnn}             %% \orcid is optional
+\affiliation{
+  \department{Department of Computer Science}              %% \department is recommended
+  \institution{University of Virginia}            %% \institution is required
+  % \city{La Jolla}
+  % \state{CA}
+  \country{USA}
+}
+\email{weimer@cs.virginia.edu}          %% \email is recommended
+
+\author{Ranjit Jhala}
+% \authornote{with author1 note}          %% \authornote is optional;
+%                                         %% can be repeated if necessary
+% \orcid{nnnn-nnnn-nnnn-nnnn}             %% \orcid is optional
+\affiliation{
+  \department{Department of Computer Science}              %% \department is recommended
+  \institution{UC San Diego}            %% \institution is required
+  \city{La Jolla}
+  \state{CA}
+  \country{USA}
+}
+\email{jhala@cs.ucsd.edu}          %% \email is recommended
+
+%% Paper note
+%% The \thanks command may be used to create a "paper note" ---
+%% similar to a title note or an author note, but not explicitly
+%% associated with a particular element.  It will appear immediately
+%% above the permission/copyright statement.
+% \thanks{with paper note}                %% \thanks is optional
+%                                         %% can be repeated if necesary
+%                                         %% contents suppressed with 'anonymous'
+
+
+%% Abstract
+%% Note: \begin{abstract}...\end{abstract} environment must come
+%% before \maketitle command
+
+\input{abstract}
+
+%%% RJDELETED THIS %% 2012 ACM Computing Classification System (CSS) concepts
+%%% RJDELETED THIS %% Generate at 'http://dl.acm.org/ccs/ccs.cfm'.
+%%% RJDELETED THIS \begin{CCSXML}
+%%% RJDELETED THIS <ccs2012>
+%%% RJDELETED THIS <concept>
+%%% RJDELETED THIS <concept_id>10011007.10011006.10011008</concept_id>
+%%% RJDELETED THIS <concept_desc>Software and its engineering~General programming languages</concept_desc>
+%%% RJDELETED THIS <concept_significance>500</concept_significance>
+%%% RJDELETED THIS </concept>
+%%% RJDELETED THIS <concept>
+%%% RJDELETED THIS <concept_id>10003752.10003790.10011740</concept_id>
+%%% RJDELETED THIS <concept_desc>Theory of computation~Type theory</concept_desc>
+%%% RJDELETED THIS <concept_significance>500</concept_significance>
+%%% RJDELETED THIS </concept>
+%%% RJDELETED THIS <concept>
+%%% RJDELETED THIS <concept_id>10010147.10010257</concept_id>
+%%% RJDELETED THIS <concept_desc>Computing methodologies~Machine learning</concept_desc>
+%%% RJDELETED THIS <concept_significance>300</concept_significance>
+%%% RJDELETED THIS </concept>
+%%% RJDELETED THIS </ccs2012>
+%%% RJDELETED THIS \end{CCSXML}
+%%% RJDELETED THIS
+%%% RJDELETED THIS \ccsdesc[500]{Software and its engineering~General programming languages}
+%%% RJDELETED THIS \ccsdesc[500]{Theory of computation~Type theory}
+%%% RJDELETED THIS \ccsdesc[300]{Computing methodologies~Machine learning}
+%%% RJDELETED THIS %% End of generated code
+%%% RJDELETED THIS
+%%% RJDELETED THIS
+%%% RJDELETED THIS %% Keywords
+%%% RJDELETED THIS %% comma separated list
+%%% RJDELETED THIS \keywords{type errors, fault localization}  %% \keywords is optional
+
+
+%% \maketitle
+%% Note: \maketitle command must come after title commands, author
+%% commands, abstract environment, Computing Classification System
+%% environment and commands, and keywords command.
+\maketitle
+
+
+
+% \input{introduction}
+\input{intro2}
+\input{overview}
+\input{learning}
+\input{evaluation}
+\input{qualitative}
+\input{threats}
+\input{discussion}
+\input{related}
+\input{conclusion}
+
+
+%% Acknowledgments
+\begin{acks}                            %% acks environment is optional
+                                        %% contents suppressed with 'anonymous'
+  %% Commands \grantsponsor{<sponsorID>}{<name>}{<url>} and
+  %% \grantnum[<url>]{<sponsorID>}{<number>} should be used to
+  %% acknowledge financial support and will be used by metadata
+  %% extraction tools.
+  This material is based upon work supported by the
+  \grantsponsor{GS100000001}{National Science
+    Foundation}{http://dx.doi.org/10.13039/100000001} under Grant
+  No.~\grantnum{GS100000001}{nnnnnnn} and Grant
+  No.~\grantnum{GS100000001}{mmmmmmm}.  Any opinions, findings, and
+  conclusions or recommendations expressed in this material are those
+  of the author and do not necessarily reflect the views of the
+  National Science Foundation.
+\end{acks}
+
+
+%% Bibliography
+\bibliography{main}
+
+
+%% Appendix
+% \appendix
+% \section{Appendix}
+
+% Text of appendix \ldots
+
+\end{document}
