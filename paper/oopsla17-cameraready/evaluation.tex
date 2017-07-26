@@ -5,7 +5,7 @@
 We have implemented our technique for localizing type errors for a
 purely functional subset of \ocaml with polymorphic types and functions.
 %
-We seek to answer three questions in our evaluation:
+We seek to answer four questions in our evaluation:
 %
 \begin{itemize}
 \item \textbf{Blame Accuracy}
@@ -35,6 +35,11 @@ We seek to answer three questions in our evaluation:
   Are the models \emph{interpretable} using
   our intuition about type errors?
   (\autoref{sec:qualitative})
+
+\item \textbf{Blame Utility}
+  Do \toolname's blame assignments help
+  users diagnose type errors?
+  (\autoref{sec:user-study})
 \end{itemize}
 %
 %\mypara{Summary of Results}
@@ -243,8 +248,28 @@ of each tool.
 We evaluate each tool on whether a changed expression occurred in its
 top one, top two, or top three predictions.
 
+\mypara{Blame Utility}
+Finally, to test the explanatory power of our blame assigments, we
+ran a user study at the University of Virginia (UVA IRB \#2014009900).
+%
+We included three problems in an exam in the Spring 2017 session of UVA's
+undergraduate Programming Languages course (CS 4501).
+%
+We presented the 31 students in the course with ill-typed \ocaml\
+programs and asked them to
+%
+(1) \emph{explain} the type error, and
+%
+(2) \emph{fix} the type error.
+%
+For each problem the student was given the ill-typed program and
+either \sherrloc or \toolname's blame assignment, with no error message.
+
+\input{threats}
 \input{evaluation-accuracy}
 \input{evaluation-utility}
+\input{qualitative}
+\input{evaluation-user-study}
 
 
 %%% Local Variables:
