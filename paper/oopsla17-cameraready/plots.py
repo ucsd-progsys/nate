@@ -43,6 +43,10 @@ def plot_user_study():
     ind = np.arange(3)
     width = 0.35
 
+    print 'EXPLAIN'
+    print 'sherrloc'
+    print [100*np.average(sepconcat_a), 100*np.average(padzero_b), 100*np.average(mulbydigit_a)]
+    print map(err, [sepconcat_a, padzero_b, mulbydigit_a])
     fig = plt.figure()
     p_o = plt.bar(ind,
                   [100*np.average(sepconcat_a), 100*np.average(padzero_b), 100*np.average(mulbydigit_a)],
@@ -51,6 +55,9 @@ def plot_user_study():
                   yerr=map(err, [sepconcat_a, padzero_b, mulbydigit_a]),
                   error_kw={'linewidth': 3, 'ecolor': 'gray', 'capsize': 6, 'capthick': 3}
     )
+    print 'nate'
+    print [100*np.average(sepconcat_b), 100*np.average(padzero_a), 100*np.average(mulbydigit_b)]
+    print map(err, [sepconcat_b, padzero_a, mulbydigit_b])
     p_n = plt.bar(ind + width,
                   [100*np.average(sepconcat_b), 100*np.average(padzero_a), 100*np.average(mulbydigit_b)],
                   width,
@@ -59,11 +66,11 @@ def plot_user_study():
                   error_kw={'linewidth': 3, 'ecolor': 'gray', 'capsize': 6, 'capthick': 3}
     )
 
-    plt.title('Explanation',fontsize=24)
+    plt.title('Explanation',fontsize=30)
     # plt.xlabel('Problem', fontsize=20)
-    plt.ylabel('% Correct', fontsize=20)
-    plt.xticks(ind + width, ['sepconcat\n(p = 0.48)', 'padzero\n(p = 0.097)', 'mulbydigit\n(p = 0.083)'], fontsize='large')
-    plt.legend(('SHErrLoc', 'Nate'), loc='lower right', fontsize=16)
+    plt.ylabel('% Correct', fontsize=24)
+    plt.xticks(ind + width, ['sepConcat\n(p = 0.48)', 'padZero\n(p = 0.097)', 'mulByDigit\n(p = 0.083)'], fontsize=20)
+    plt.legend(('SHErrLoc', 'Nate'), loc='lower right', fontsize=20)
     # autolabel(plt, p_o)
     # autolabel(plt, p_n)
 
@@ -83,6 +90,10 @@ def plot_user_study():
     ind = np.arange(3)
     width = 0.35
 
+    print 'FIX'
+    print 'sherrloc'
+    print [100*np.average(sepconcat_a), 100*np.average(padzero_b), 100*np.average(mulbydigit_a)]
+    print map(err, [sepconcat_a, padzero_b, mulbydigit_a])
     fig = plt.figure()
     p_o = plt.bar(ind,
                   [100*np.average(sepconcat_a), 100*np.average(padzero_b), 100*np.average(mulbydigit_a)],
@@ -91,6 +102,9 @@ def plot_user_study():
                   yerr=map(err, [sepconcat_a, padzero_b, mulbydigit_a]),
                   error_kw={'linewidth': 3, 'ecolor': 'gray', 'capsize': 6, 'capthick': 3}
     )
+    print 'nate'
+    print [100*np.average(sepconcat_b), 100*np.average(padzero_a), 100*np.average(mulbydigit_b)]
+    print map(err, [sepconcat_b, padzero_a, mulbydigit_b])
     p_n = plt.bar(ind + width,
                   [100*np.average(sepconcat_b), 100*np.average(padzero_a), 100*np.average(mulbydigit_b)],
                   width,
@@ -99,11 +113,11 @@ def plot_user_study():
                   error_kw={'linewidth': 3, 'ecolor': 'gray', 'capsize': 6, 'capthick': 3}
     )
 
-    plt.title('Fix',fontsize=24)
+    plt.title('Fix',fontsize=30)
     # plt.xlabel('Problem', fontsize=20)
-    plt.ylabel('% Correct', fontsize=20)
-    plt.xticks(ind + width, ['sepConcat\n(p = 0.57)', 'padZero\n(p = 0.33)', 'mulByDigit\n(p = 0.31)'], fontsize='large')
-    plt.legend(('SHErrLoc', 'Nate'), loc='lower right', fontsize=16)
+    plt.ylabel('% Correct', fontsize=24)
+    plt.xticks(ind + width, ['sepConcat\n(p = 0.57)', 'padZero\n(p = 0.33)', 'mulByDigit\n(p = 0.31)'], fontsize=20)
+    plt.legend(('SHErrLoc', 'Nate'), loc='lower right', fontsize=20)
     # autolabel(plt, p_o)
     # autolabel(plt, p_n)
 

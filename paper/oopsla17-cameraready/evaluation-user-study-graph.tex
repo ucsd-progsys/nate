@@ -1,0 +1,112 @@
+\begin{figure}[t]
+\centering
+%% EXPLAIN
+\begin{tikzpicture}
+\begin{axis}[
+  ybar,
+  % width=6cm,
+  height=6cm,
+  title={\large Explanation},
+  ylabel={\% Correct},
+  bar width=0.5cm,
+  ymin=0,
+  ymax=1,
+  yticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\,\%},
+  ytick style={draw=none},
+  ymajorgrids = true,
+  enlarge x limits=0.25,
+  symbolic x coords={{sepConcat}, {padZero}, {mulByDigit}},
+  xtick=data,
+  xtick style={draw=none},
+  xticklabel style={align=center},
+  xticklabels={
+    {\texttt{sepConcat}\\($p=0.48$)},
+    {\texttt{padZero}\\($p=0.097$)},
+    {\texttt{mulByDigit}\\($p=0.083$)}
+  },
+  % x tick label style={rotate=45, anchor=north east},
+  %x tick label style={font=\small},
+  y tick label style={font=\small},
+  reverse legend,
+  transpose legend,
+  legend style={legend pos = south west, font=\footnotesize},
+]
+
+% ES: NOTE: ORDER OF PLOTS/LEGEND ENTRIES MATTERS
+
+\addplot[draw=black, fill=green2, bar shift=.25cm, error bars/.cd, y dir=both, y explicit] coordinates {
+  (sepConcat, 0.8125)  +- (0, 0.0976)
+  (padZero, 1.00)      +- (0, 0)
+  (mulByDigit, 0.8125) +- (0, 0.0976)
+};
+\addlegendentry{\toolname}
+
+\addplot[draw=black, fill=blue2, bar shift=-.25cm, error bars/.cd, y dir=both, y explicit] coordinates {
+  (sepConcat, 0.80)    +- (0, 0.1033)
+  (padZero, 0.875)     +- (0, 0.0827)
+  (mulByDigit, 0.5714) +- (0, 0.1323)
+};
+\addlegendentry{\sherrloc}
+\end{axis}
+\end{tikzpicture}
+%% FIX
+\begin{tikzpicture}
+\begin{axis}[
+  ybar,
+  % width=6cm,
+  height=6cm,
+  title={\large Fix},
+  ylabel={\% Correct},
+  bar width=0.5cm,
+  ymin=0,
+  ymax=1,
+  yticklabel={\pgfmathparse{\tick*100}\pgfmathprintnumber{\pgfmathresult}\,\%},
+  ytick style={draw=none},
+  ymajorgrids = true,
+  enlarge x limits=0.25,
+  symbolic x coords={{sepConcat}, {padZero}, {mulByDigit}},
+  xtick=data,
+  xtick style={draw=none},
+  xticklabel style={align=center},
+  xticklabels={
+    {\texttt{sepConcat}\\($p=0.57$)},
+    {\texttt{padZero}\\($p=0.33$)},
+    {\texttt{mulByDigit}\\($p=0.31$)}
+  },
+  % x tick label style={rotate=45, anchor=north east},
+  %x tick label style={font=\small},
+  y tick label style={font=\small},
+  reverse legend,
+  transpose legend,
+  legend style={legend pos = south west, font=\footnotesize},
+]
+
+% ES: NOTE: ORDER OF PLOTS/LEGEND ENTRIES MATTERS
+
+\addplot[draw=black, fill=green2, bar shift=.25cm, error bars/.cd, y dir=both, y explicit] coordinates {
+  (sepConcat, 0.8125)  +- (0, 0.0976)
+  (padZero, 0.9286)    +- (0, 0.0688)
+  (mulByDigit, 0.7143) +- (0, 0.1207)
+};
+\addlegendentry{\toolname}
+
+\addplot[draw=black, fill=blue2, bar shift=-.25cm, error bars/.cd, y dir=both, y explicit] coordinates {
+  (sepConcat, 0.83)    +- (0, 0.1076)
+  (padZero, 0.875)     +- (0, 0.0827)
+  (mulByDigit, 0.6154) +- (0, 0.1349)
+};
+\addlegendentry{\sherrloc}
+\end{axis}
+\end{tikzpicture}
+\caption[A classification of students' explanations and fixes for type
+  errors, given either \sherrloc or \toolname's blame assignment.]
+  {A classification of students' explanations and fixes for type
+  errors, given either \sherrloc or \toolname's blame assignment.
+  %
+  The students given \toolname's location generally scored
+  better than those given \sherrloc's.
+  %
+  We report the result of a one-sided Mann-Whitney $U$ test for
+  statistical significance in parentheses.}
+\label{fig:user-study-results}
+\end{figure}
