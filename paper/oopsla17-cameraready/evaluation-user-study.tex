@@ -19,9 +19,18 @@
 % For each problem the student was given the ill-typed program and
 % either \sherrloc or \toolname's blame assignment, with no error message.
 
-We assigned three problems to the students: the |padZero| and
-|mulByDigit| programs from \autoref{sec:qualitative}, as well as
-the following |sepConcat| program
+We have demonstrated in the preceding sections that we can produce
+more \emph{accurate} blame assignments by learning from the collective
+mistakes of prior students; however, users are the final judge of
+the \emph{utility} of an error message.
+%
+Thus, in this final experiment we ask whether \toolname's correct blame
+assignments aid users in \emph{understanding} type errors
+more than incorrect assignments.
+
+We assigned three problems to the students in our user study: the
+|padZero| and |mulByDigit| programs from \autoref{sec:qualitative}, as
+well as the following |sepConcat| program
 %
 \begin{ecode}
   let rec sepConcat sep sl =
@@ -37,6 +46,9 @@ where the student has erroneously returned the empty list, rather than
 the empty string, in the base case of the fold.
 % which triggers an error on line 7.
 %
+For each problem the students were additionally given either \toolname's
+correct blame assignment or \sherrloc's incorrect blame assignment,
+with no error message.
 % For each problem the students were given the ill-typed program and
 % either \ocaml's error or \toolname's jump-compressed trace;
 %
@@ -80,6 +92,57 @@ is that \toolname had a \emph{positive} effect on the responses.
 We reject the null hypothesis in favor of the alternative if the test
 produces a significance level $p < 0.05$, a standard threshold for
 determining statistical significance.
+
+\input{evaluation-user-study-graph}
+
+% \begin{figure}[t]
+% \centering
+% % \centerline{
+% % \begin{minipage}{1.2\textwidth}
+% % \centering
+% \includegraphics[width=0.49\linewidth]{user-study-reason.png}
+% \includegraphics[width=0.49\linewidth]{user-study-fix.png}
+% % \end{minipage}
+% % }
+% % \vspace{3ex}
+% \caption[A classification of students' explanations and fixes for type
+%   errors, given either \sherrloc or \toolname's blame assignment.]
+%   {A classification of students' explanations and fixes for type
+%   errors, given either \sherrloc or \toolname's blame assignment.
+%   %
+%   The students given \toolname's location generally scored
+%   better than those given \sherrloc's.
+%   %
+%   We report the result of a one-sided Mann-Whitney $U$ test for
+%   statistical significance in parentheses.}
+% \label{fig:results-user-study}
+% \end{figure}
+
+\mypara{Results}
+%
+The measured kappa values were $\kappa = 0.68$ for the explanations and
+$\kappa = 0.77$ for the fixes; while there is no formal notion for what
+consititutes strong agreement~\cite{Krippendorff2012-wd}, kappa values
+above $0.60$ are often called ``substantial''
+agreement~\cite{Landis1977-ey}.
+%
+Figure~\ref{fig:results-user-study} summarizes a single annotator's
+results, which show that students given \toolname's blame assignment
+were generally more likely to correctly explain and fix the type error
+than those given \sherrloc's.
+%
+There was no discernible difference between \toolname and
+\sherrloc for |sepConcat|; however, \toolname responses for |padZero| and
+|mulByDigit| were marked correct 5--25\% more often than the \sherrloc
+responses.
+%
+While the results appear to show a trend in favor of \toolname,
+they do not rise to the level of statistical significance
+in this experiment; further investigation is merited.
+% The results appear to show a trend in favor of \toolname;
+% %
+% however, none rise to the level of statistical significance.
+%
 
 \mypara{Threats to Validity}
 %
@@ -137,54 +200,3 @@ a maximum of 15 or 16 per program-tool pair.
 % collecting more responses per test pair was not possible as it
 % would require having students answer the same problem twice (once with
 % \sherrloc and once with \toolname).
-
-\input{evaluation-user-study-graph}
-
-% \begin{figure}[t]
-% \centering
-% % \centerline{
-% % \begin{minipage}{1.2\textwidth}
-% % \centering
-% \includegraphics[width=0.49\linewidth]{user-study-reason.png}
-% \includegraphics[width=0.49\linewidth]{user-study-fix.png}
-% % \end{minipage}
-% % }
-% % \vspace{3ex}
-% \caption[A classification of students' explanations and fixes for type
-%   errors, given either \sherrloc or \toolname's blame assignment.]
-%   {A classification of students' explanations and fixes for type
-%   errors, given either \sherrloc or \toolname's blame assignment.
-%   %
-%   The students given \toolname's location generally scored
-%   better than those given \sherrloc's.
-%   %
-%   We report the result of a one-sided Mann-Whitney $U$ test for
-%   statistical significance in parentheses.}
-% \label{fig:results-user-study}
-% \end{figure}
-
-\mypara{Results}
-%
-The measured kappa values were $\kappa = 0.68$ for the explanations and
-$\kappa = 0.77$ for the fixes; while there is no formal notion for what
-consititutes strong agreement~\cite{Krippendorff2012-wd}, kappa values
-above $0.60$ are often called ``substantial''
-agreement~\cite{Landis1977-ey}.
-%
-Figure~\ref{fig:results-user-study} summarizes a single annotator's
-results, which show that students given \toolname's blame assignment
-were generally more likely to correctly explain and fix the type error
-than those given \sherrloc's.
-%
-There was no discernible difference between \toolname and
-\sherrloc for |sepConcat|; however, \toolname responses for |padZero| and
-|mulByDigit| were marked correct 5--25\% more often than the \sherrloc
-responses.
-%
-While the results appear to show a trend in favor of \toolname,
-they do not rise to the level of statistical significance;
-further investigation is merited.
-% The results appear to show a trend in favor of \toolname;
-% %
-% however, none rise to the level of statistical significance.
-%
