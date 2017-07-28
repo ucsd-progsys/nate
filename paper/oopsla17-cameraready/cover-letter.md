@@ -44,3 +44,11 @@ If these changes are not sufficient and the reviewers have a specific
 sentence or section that they believe claims our models can generalize
 from a single program to others, we will happily revise that section
 as well in the camera-ready.
+
+
+Additional Changes
+------------------
+
+Since the initial submission we have completed a user study in which
+we compared the efficacy of our blame assignments against SherrLoc's.
+We describe the study and results in the new section "4.6 Blame Utility".
