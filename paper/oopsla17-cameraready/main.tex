@@ -3,7 +3,8 @@
 %% For single-blind review submission
 %\documentclass[acmsmall,review]{acmart}\settopmatter{printfolios=true}
 %% For final camera-ready submission
-\documentclass[acmsmall]{acmart}\settopmatter{}
+\documentclass[acmsmall,screen]{acmart}\settopmatter{}
+\citestyle{acmauthoryear}
 
 %% Note: Authors migrating a paper from PACMPL format to traditional
 %% SIGPLAN proceedings format should change 'acmlarge' to
@@ -112,7 +113,17 @@
 %% Copyright information
 %% Supplied to authors (based on authors' rights management selection;
 %% see authors.acm.org) by publisher for camera-ready submission
-\setcopyright{none}             %% For review submission
+%\setcopyright{none}             %% For review submission
+\setcopyright{rightsretained}
+\acmPrice{}
+\acmDOI{10.1145/3133884}
+\acmYear{2017}
+\copyrightyear{2017}
+\acmJournal{PACMPL}
+\acmVolume{1}
+\acmNumber{OOPSLA}
+\acmArticle{60}
+\acmMonth{10}
 %\setcopyright{acmcopyright}
 %\setcopyright{acmlicensed}
 %\setcopyright{rightsretained}
@@ -138,6 +149,10 @@
 % \titlenote{with title note}             %% \titlenote is optional;
 %                                         %% can be repeated if necessary;
 %                                         %% contents suppressed with 'anonymous'
+\titlenote{This work was supported by NSF grants CCF-1422471, CCF-1223850,
+  CCF-1218344, CCF-1116289, CCF-0954024, IIS-1617157, Air Force grant
+  FA8750-15-2-0075, and a gift from Microsoft Research.}
+
 %% \subtitle is optional
 \subtitle{Localizing Novice Type Errors with Data-Driven Diagnosis}
 
@@ -238,37 +253,37 @@
 
 \input{abstract}
 
-%%% RJDELETED THIS %% 2012 ACM Computing Classification System (CSS) concepts
-%%% RJDELETED THIS %% Generate at 'http://dl.acm.org/ccs/ccs.cfm'.
-%%% RJDELETED THIS \begin{CCSXML}
-%%% RJDELETED THIS <ccs2012>
-%%% RJDELETED THIS <concept>
-%%% RJDELETED THIS <concept_id>10011007.10011006.10011008</concept_id>
-%%% RJDELETED THIS <concept_desc>Software and its engineering~General programming languages</concept_desc>
-%%% RJDELETED THIS <concept_significance>500</concept_significance>
-%%% RJDELETED THIS </concept>
-%%% RJDELETED THIS <concept>
-%%% RJDELETED THIS <concept_id>10003752.10003790.10011740</concept_id>
-%%% RJDELETED THIS <concept_desc>Theory of computation~Type theory</concept_desc>
-%%% RJDELETED THIS <concept_significance>500</concept_significance>
-%%% RJDELETED THIS </concept>
-%%% RJDELETED THIS <concept>
-%%% RJDELETED THIS <concept_id>10010147.10010257</concept_id>
-%%% RJDELETED THIS <concept_desc>Computing methodologies~Machine learning</concept_desc>
-%%% RJDELETED THIS <concept_significance>300</concept_significance>
-%%% RJDELETED THIS </concept>
-%%% RJDELETED THIS </ccs2012>
-%%% RJDELETED THIS \end{CCSXML}
-%%% RJDELETED THIS
-%%% RJDELETED THIS \ccsdesc[500]{Software and its engineering~General programming languages}
-%%% RJDELETED THIS \ccsdesc[500]{Theory of computation~Type theory}
-%%% RJDELETED THIS \ccsdesc[300]{Computing methodologies~Machine learning}
-%%% RJDELETED THIS %% End of generated code
-%%% RJDELETED THIS
-%%% RJDELETED THIS
-%%% RJDELETED THIS %% Keywords
-%%% RJDELETED THIS %% comma separated list
-%%% RJDELETED THIS \keywords{type errors, fault localization}  %% \keywords is optional
+%% 2012 ACM Computing Classification System (CSS) concepts
+%% Generate at 'http://dl.acm.org/ccs/ccs.cfm'.
+\begin{CCSXML}
+<ccs2012>
+<concept>
+<concept_id>10011007.10011006.10011008</concept_id>
+<concept_desc>Software and its engineering~General programming languages</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10003752.10003790.10011740</concept_id>
+<concept_desc>Theory of computation~Type theory</concept_desc>
+<concept_significance>500</concept_significance>
+</concept>
+<concept>
+<concept_id>10010147.10010257</concept_id>
+<concept_desc>Computing methodologies~Machine learning</concept_desc>
+<concept_significance>300</concept_significance>
+</concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Software and its engineering~General programming languages}
+\ccsdesc[500]{Theory of computation~Type theory}
+\ccsdesc[300]{Computing methodologies~Machine learning}
+%% End of generated code
+
+
+%% Keywords
+%% comma separated list
+\keywords{type errors, fault localization}  %% \keywords is optional
 
 
 %% \maketitle
