@@ -52,7 +52,11 @@ with no error message.
 % For each problem the students were given the ill-typed program and
 % either \ocaml's error or \toolname's jump-compressed trace;
 %
-The full user study is available in \autoref{sec:user-study-exams}.
+The full user study is available in
+\ifthenelse{\equal{\isTechReport}{true}}
+{\autoref{sec:user-study-exams}.}
+{Appendix A of the accompanying tech report~\cite{Seidel2017Learning-TechRep}.}
+
 %
 Due to the nature of an in-class exam, not every student answered every
 question, but we always received at least 12 (out of a possible 15 or
