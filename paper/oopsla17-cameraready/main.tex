@@ -18,7 +18,7 @@
                         %% http://ctan.org/pkg/subcaption
 
 \usepackage{ifthen}
-\newcommand{\isTechReport}{false} % true or false
+\newcommand{\isTechReport}{true} % true or false
 \newcommand\includeTechReport[1]{%
   \ifthenelse{\equal{\isTechReport}{true}}
     {{#1}}
@@ -124,9 +124,9 @@
 % \ifthenelse{\equal{\isTechReport}{true}}
 % {\setcopyright{none}}
 % {
-\setcopyright{rightsretained}
+\setcopyright{none}
 \acmPrice{}
-\acmDOI{10.1145/3133884}
+\acmDOI{10.1145/3138818}
 \acmYear{2017}
 \acmJournal{PACMPL}
 \acmVolume{1}
@@ -142,6 +142,8 @@
 %% issue of PACMPL.
 \citestyle{acmauthoryear}   %% For author/year citations
 
+\acmBadgeL[https://www.acm.org/publications/policies/artifact-review-badging]{artifacts_available.jpg}
+\acmBadgeR[https://www.acm.org/publications/policies/artifact-review-badging]{artifacts_evaluated_functional.jpg}
 
 
 \begin{document}
