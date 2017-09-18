@@ -1680,17 +1680,16 @@ Computing Machinery]
     \advance\@ACM@title@width by -\@ACM@badge@skip
   \fi
   \setbox\mktitle@bx=\vbox{\noindent\@titlefont
-    \ifx\@acmBadgeL@image\@empty\else
-      \raisebox{-.5\baselineskip}[\z@][\z@]{\href{\@acmBadgeL@url}{%
-          \includegraphics[width=\@ACM@badge@width]{\@acmBadgeL@image}}}%
-      \hskip\@ACM@badge@skip
-    \fi
     \parbox[t]{\@ACM@title@width}{\raggedright
       \@titlefont\noindent
       \@title
   \ifx\@subtitle\@empty\else
     \par\noindent{\@subtitlefont\@subtitle}
   \fi}%
+    \ifx\@acmBadgeL@image\@empty\else
+      \raisebox{-.5\baselineskip}[\z@][\z@]{\href{\@acmBadgeL@url}{%
+          \includegraphics[width=\@ACM@badge@width]{\@acmBadgeL@image}}}%
+    \fi
   \ifx\@acmBadgeR@image\@empty\else
     \hskip\@ACM@badge@skip
     \raisebox{-.5\baselineskip}[\z@][\z@]{\href{\@acmBadgeR@url}{%
